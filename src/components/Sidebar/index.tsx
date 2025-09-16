@@ -81,12 +81,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
       {/* <!-- SIDEBAR HEADER --> */}
       <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
         <NavLink to="/admin/dashboard" className="flex items-center gap-3">
-          <img
-            src={UCCLogo}
-            alt="Logo"
-            width={55}
-            className="drop-shadow-[0_0_1px_white]"
-          />
+          <img src={UCCLogo} alt="Logo" width={55} className="drop-shadow" />
 
           <div className="leading-tight">
             <h1 className="font-bold text-sm text-white">
