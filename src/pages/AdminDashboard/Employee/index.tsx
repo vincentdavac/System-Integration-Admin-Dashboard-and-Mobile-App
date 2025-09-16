@@ -1,5 +1,5 @@
 const Employee = () => {
-  return <>Employee Layout</>;
+  return <>Employee</>;
 };
 
 export default Employee;
