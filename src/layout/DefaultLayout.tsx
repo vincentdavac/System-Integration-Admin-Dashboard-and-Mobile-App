@@ -2,8 +2,13 @@ import React, { useState } from 'react';
 import Header from '../components/Header/index';
 import Sidebar from '../components/Sidebar/index';
 import { Outlet } from 'react-router-dom';
+import { AlertsContainerRef } from '../components/Alert/AlertsContainer';
 
-const DefaultLayout: React.FC = () => {
+interface DefaultLayoutProps {
+  alertsRef: React.RefObject<AlertsContainerRef>;
+}
+
+const DefaultLayout = ({ alertsRef }: DefaultLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -17,7 +22,11 @@ const DefaultLayout: React.FC = () => {
         {/* <!-- ===== Content Area Start ===== --> */}
         <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
           {/* <!-- ===== Header Start ===== --> */}
-          <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+          <Header
+            sidebarOpen={sidebarOpen}
+            setSidebarOpen={setSidebarOpen}
+            alertsRef={alertsRef}
+          />
           {/* <!-- ===== Header End ===== --> */}
 
           {/* <!-- ===== Main Content Start ===== --> */}

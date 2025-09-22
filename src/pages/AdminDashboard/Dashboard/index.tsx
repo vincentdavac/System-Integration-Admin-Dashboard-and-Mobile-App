@@ -1,7 +1,12 @@
 import CardDataStats from '../../../components/CardDataStats';
 import { IdCardLanyard, FolderOpen, Handshake, Wallet } from 'lucide-react';
+import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
 
-const Dashboard = () => {
+interface DashboardProps {
+  alertsRef: React.RefObject<AlertsContainerRef>;
+}
+
+const Dashboard = ({ alertsRef }: DashboardProps) => {
   return (
     <>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">

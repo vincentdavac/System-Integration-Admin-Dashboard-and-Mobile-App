@@ -1,9 +1,63 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import LogoDark from '../../images/logo/logo-dark.svg';
 import Logo from '../../images/logo/logo.svg';
+import { AppContext } from '../../context/AppContext';
+import { AlertsContainerRef } from '../../components/Alert/AlertsContainer';
 
-const SignIn: React.FC = () => {
+interface LoginProps {
+  alertsRef: React.RefObject<AlertsContainerRef>;
+}
+
+const SignIn = ({ alertsRef }: LoginProps) => {
+  const { setToken } = useContext(AppContext)!;
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+
+  async function handleLogin(e: { preventDefault: () => void }) {
+    e.preventDefault();
+
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      // backend returned 401 or other error
+      alertsRef.current?.addAlert('error', data.message || 'Login failed');
+      return;
+    }
+
+    if (data.errors) {
+      // Loop through errors and display each one
+      Object.values(data.errors).forEach((messages) => {
+        (messages as string[]).forEach((msg) => {
+          alertsRef.current?.addAlert('error', msg);
+        });
+      });
+      console.log(data.errors);
+    } else {
+      console.log(data);
+
+      // get token from data.data.token
+      const newToken = data.data.token;
+
+      localStorage.setItem('token', newToken);
+      setToken(newToken);
+      navigate('/admin/dashboard');
+      console.log({ newToken });
+
+      // navigate('/admin/dashboard');
+      alertsRef.current?.addAlert('success', 'Login successful!');
+    }
+  }
+
   return (
     <>
       <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900">
@@ -155,13 +209,20 @@ const SignIn: React.FC = () => {
                   Login your account
                 </h2>
 
-                <form>
+                <form onSubmit={handleLogin}>
                   <div className="mb-4">
                     <label className="mb-2.5 block font-medium text-black dark:text-white">
                       Email
                     </label>
                     <div className="relative">
                       <input
+                        value={formData.email}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            email: e.target.value,
+                          })
+                        }
                         type="email"
                         placeholder="Enter your email"
                         className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -189,10 +250,17 @@ const SignIn: React.FC = () => {
 
                   <div className="mb-6">
                     <label className="mb-2.5 block font-medium text-black dark:text-white">
-                      Re-type Password
+                      Password
                     </label>
                     <div className="relative">
                       <input
+                        value={formData.password}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            password: e.target.value,
+                          })
+                        }
                         type="password"
                         placeholder="6+ Characters, 1 Capital letter"
                         className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"

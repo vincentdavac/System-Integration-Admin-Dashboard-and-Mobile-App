@@ -31,17 +31,19 @@ import ArchiveLeaveType from './pages/AdminDashboard/Archive/LeaveType';
 import ArchiveCredits from './pages/AdminDashboard/Archive/Credits';
 import Payroll from './pages/AdminDashboard/Payroll';
 import Attendance from './pages/AdminDashboard/Attendance';
-function App() {
+import { AlertsContainerRef } from './components/Alert/AlertsContainer';
+import ProtectedRoute from './authentication/ProtectedRoute';
+import UserRoute from './authentication/UserRoute';
+interface AppProps {
+  alertsRef: React.RefObject<AlertsContainerRef>;
+}
+
+function App({ alertsRef }: AppProps) {
   const [loading, setLoading] = useState<boolean>(true);
   const { pathname } = useLocation();
 
   // Define routes that should trigger loader
-  const showLoaderRoutes = [
-    '/',
-    '/admin/dashboard',
-    '/admin/login',
-    '/admin/register',
-  ];
+  const showLoaderRoutes = ['/admin/login', '/admin/register'];
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -69,27 +71,27 @@ function App() {
   return (
     <Routes>
       {/* ADMIN DASHBOARD LAYOUT */}
-      <Route element={<DefaultLayout />}>
+      <Route element={<DefaultLayout alertsRef={alertsRef} />}>
         <Route
           index
           element={
             <>
               <PageTitle title="UCC | Dashboard" />
-              <AdminDashboard />
+              <AdminDashboard alertsRef={alertsRef} />
             </>
           }
         />
-
         <Route
           path="/admin/dashboard"
           element={
-            <>
-              <PageTitle title="Dashboard | Human Resource Management" />
-              <AdminDashboard />
-            </>
+            <ProtectedRoute alertsRef={alertsRef}>
+              <>
+                <PageTitle title="Dashboard | Human Resource Management" />
+                <AdminDashboard alertsRef={alertsRef} />
+              </>
+            </ProtectedRoute>
           }
         />
-
         <Route
           path="/admin/employee"
           element={
@@ -99,7 +101,6 @@ function App() {
             </>
           }
         />
-
         <Route
           path="/admin/payroll"
           element={
@@ -109,7 +110,6 @@ function App() {
             </>
           }
         />
-
         <Route
           path="/admin/attendance"
           element={
@@ -119,7 +119,6 @@ function App() {
             </>
           }
         />
-
         <Route
           path="/admin/loan-approval"
           element={
@@ -129,7 +128,6 @@ function App() {
             </>
           }
         />
-
         <Route
           path="/admin/management/relations"
           element={
@@ -139,7 +137,6 @@ function App() {
             </>
           }
         />
-
         <Route
           path="/admin/management/meeting"
           element={
@@ -149,7 +146,6 @@ function App() {
             </>
           }
         />
-
         <Route
           path="/admin/management/actions"
           element={
@@ -159,7 +155,6 @@ function App() {
             </>
           }
         />
-
         <Route
           path="/admin/leave/request"
           element={
@@ -169,7 +164,6 @@ function App() {
             </>
           }
         />
-
         <Route
           path="/admin/leave/credits"
           element={
@@ -179,7 +173,6 @@ function App() {
             </>
           }
         />
-
         <Route
           path="/admin/leave/type"
           element={
@@ -189,7 +182,6 @@ function App() {
             </>
           }
         />
-
         <Route
           path="/admin/archive/employee"
           element={
@@ -199,7 +191,6 @@ function App() {
             </>
           }
         />
-
         <Route
           path="/admin/archive/leave-type"
           element={
@@ -209,7 +200,6 @@ function App() {
             </>
           }
         />
-
         <Route
           path="/admin/archive/credits"
           element={
@@ -219,7 +209,6 @@ function App() {
             </>
           }
         />
-
         {/* DESIGN AND LAYOUT REFERENCE */}
         <Route
           path="/ecommerce"
@@ -316,20 +305,24 @@ function App() {
       <Route
         path="/admin/login"
         element={
-          <>
-            <PageTitle title="Login | Human Resource Management" />
-            <SignIn />
-          </>
+          <UserRoute alertsRef={alertsRef}>
+            <>
+              <PageTitle title="Login | Human Resource Management" />
+              <SignIn alertsRef={alertsRef} />
+            </>
+          </UserRoute>
         }
       />
 
       <Route
         path="/admin/register"
         element={
-          <>
-            <PageTitle title="Register | Human Resource Management" />
-            <SignUp />
-          </>
+          <UserRoute alertsRef={alertsRef}>
+            <>
+              <PageTitle title="Register | Human Resource Management" />
+              <SignUp alertsRef={alertsRef} />
+            </>
+          </UserRoute>
         }
       />
     </Routes>
