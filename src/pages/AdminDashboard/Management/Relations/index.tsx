@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import Breadcrumb from "../../../../components/Breadcrumbs/Breadcrumb";
+import React, { useState } from 'react';
+import Breadcrumb from '../../../../components/Breadcrumbs/Breadcrumb';
 
 const Relations = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [showView, setShowView] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any>(null);
@@ -12,35 +12,35 @@ const Relations = () => {
   const initialCases = [
     {
       id: 1,
-      accountNo: "20220041",
-      personInvolved: "Lourine Ashanti Puno",
-      caseType: "Dispute",
-      caseTitle: "Work Schedule Conflict",
-      description: "Employee reported a conflict in work schedule",
-      reportedBy: "Ahron Vincent Davac",
-      dateReported: "2025-09-15",
-      status: "Open",
-      resolution: "",
-      disciplinaryLevel: "",
-      handledBy: "",
-      dateResolved: "",
-      remarks: "",
+      accountNo: '20220041',
+      personInvolved: 'Lourine Ashanti Puno',
+      caseType: 'Dispute',
+      caseTitle: 'Work Schedule Conflict',
+      description: 'Employee reported a conflict in work schedule',
+      reportedBy: 'Ahron Vincent Davac',
+      dateReported: '2025-09-15',
+      status: 'Open',
+      resolution: '',
+      disciplinaryLevel: '',
+      handledBy: '',
+      dateResolved: '',
+      remarks: '',
     },
     ...Array.from({ length: 20 }, (_, i) => ({
       id: i + 2,
       accountNo: `202200${i + 42}`,
       personInvolved: `User ${i}`,
-      caseType: "Dispute",
+      caseType: 'Dispute',
       caseTitle: `Case ${i}`,
-      description: "Reported issue description",
+      description: 'Reported issue description',
       reportedBy: `Reporter ${i}`,
-      dateReported: "2025-09-15",
-      status: "Open",
-      resolution: "",
-      disciplinaryLevel: "",
-      handledBy: "",
-      dateResolved: "",
-      remarks: "",
+      dateReported: '2025-09-15',
+      status: 'Open',
+      resolution: '',
+      disciplinaryLevel: '',
+      handledBy: '',
+      dateResolved: '',
+      remarks: '',
     })),
   ];
 
@@ -50,30 +50,35 @@ const Relations = () => {
   const filteredCases = casesData.filter(
     (c) =>
       c.accountNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.personInvolved.toLowerCase().includes(searchTerm.toLowerCase())
+      c.personInvolved.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Pagination
   const totalPages = Math.ceil(filteredCases.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedCases = filteredCases.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedCases = filteredCases.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
 
   // Highlight search matches
   const highlightMatch = (text: string) => {
     if (!searchTerm) return text;
-    const regex = new RegExp(`(${searchTerm})`, "gi");
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
     return text.split(regex).map((part, i) =>
       regex.test(part) ? (
-        <span key={i} className="bg-yellow-200">{part}</span>
+        <span key={i} className="bg-yellow-200">
+          {part}
+        </span>
       ) : (
         part
-      )
+      ),
     );
   };
 
   return (
     <>
-      <Breadcrumb pageName="Relations / Cases" />
+      <Breadcrumb pageName="Relation Cases" />
 
       {/* Search Bar */}
       <div className="mt-4 mb-4">
@@ -108,7 +113,10 @@ const Relations = () => {
             <tbody>
               {paginatedCases.length > 0 ? (
                 paginatedCases.map((c, index) => (
-                  <tr key={c.id} className="border-b hover:bg-gray-50 text-center">
+                  <tr
+                    key={c.id}
+                    className="border-b hover:bg-gray-50 text-center"
+                  >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
                     <td className="px-6 py-3">{highlightMatch(c.accountNo)}</td>
                     <td className="px-6 py-3">{c.dateReported}</td>
@@ -135,7 +143,10 @@ const Relations = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={8} className="px-6 py-3 text-center text-gray-500 italic">
+                  <td
+                    colSpan={8}
+                    className="px-6 py-3 text-center text-gray-500 italic"
+                  >
                     No matching records found.
                   </td>
                 </tr>
@@ -162,8 +173,8 @@ const Relations = () => {
               onClick={() => setCurrentPage(page)}
               className={
                 page === currentPage
-                  ? "bg-blue-500 text-white px-3 py-1 rounded"
-                  : "px-3 py-1 border rounded"
+                  ? 'bg-blue-500 text-white px-3 py-1 rounded'
+                  : 'px-3 py-1 border rounded'
               }
             >
               {page}
@@ -172,7 +183,9 @@ const Relations = () => {
         </div>
 
         <button
-          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
           disabled={currentPage === totalPages}
           className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
         >
@@ -184,11 +197,13 @@ const Relations = () => {
       {showView && selectedRow && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
           <div className="bg-white rounded-lg shadow-lg w-full max-w-lg max-h-[90vh] overflow-y-auto flex flex-col">
-
             {/* Header */}
             <div className="bg-[#2D3F99] text-white px-4 py-2 flex justify-between items-center rounded-t-lg sticky top-0 z-10">
               <h3 className="font-semibold">View Case</h3>
-              <button onClick={() => setShowView(false)} className="text-white text-lg font-bold">
+              <button
+                onClick={() => setShowView(false)}
+                className="text-white text-lg font-bold"
+              >
                 ✖
               </button>
             </div>
@@ -196,21 +211,48 @@ const Relations = () => {
             {/* Body */}
             <div className="px-6 py-4 flex-1 overflow-y-auto space-y-2">
               <h3 className="font-bold border-b pb-1 mb-2">Case Information</h3>
-              <p><strong>Person Involved:</strong> {selectedRow.personInvolved}</p>
-              <p><strong>Case Type:</strong> {selectedRow.caseType}</p>
-              <p><strong>Case Title:</strong> {selectedRow.caseTitle}</p>
-              <p><strong>Details:</strong> {selectedRow.description}</p>
-              <p><strong>Reported By:</strong> {selectedRow.reportedBy}</p>
-              <p><strong>Date Reported:</strong> {selectedRow.dateReported}</p>
-              <p><strong>Status:</strong> {selectedRow.status}</p>
+              <p>
+                <strong>Person Involved:</strong> {selectedRow.personInvolved}
+              </p>
+              <p>
+                <strong>Case Type:</strong> {selectedRow.caseType}
+              </p>
+              <p>
+                <strong>Case Title:</strong> {selectedRow.caseTitle}
+              </p>
+              <p>
+                <strong>Details:</strong> {selectedRow.description}
+              </p>
+              <p>
+                <strong>Reported By:</strong> {selectedRow.reportedBy}
+              </p>
+              <p>
+                <strong>Date Reported:</strong> {selectedRow.dateReported}
+              </p>
+              <p>
+                <strong>Status:</strong> {selectedRow.status}
+              </p>
 
               <hr className="my-2" />
 
-              <p><strong>Resolution:</strong> {selectedRow.resolution || "------"}</p>
-              <p><strong>Disciplinary Level:</strong> {selectedRow.disciplinaryLevel || "------"}</p>
-              <p><strong>Handled By:</strong> {selectedRow.handledBy || "------"}</p>
-              <p><strong>Date Resolved:</strong> {selectedRow.dateResolved || "------"}</p>
-              <p><strong>Remarks:</strong> {selectedRow.remarks || "------"}</p>
+              <p>
+                <strong>Resolution:</strong>{' '}
+                {selectedRow.resolution || '------'}
+              </p>
+              <p>
+                <strong>Disciplinary Level:</strong>{' '}
+                {selectedRow.disciplinaryLevel || '------'}
+              </p>
+              <p>
+                <strong>Handled By:</strong> {selectedRow.handledBy || '------'}
+              </p>
+              <p>
+                <strong>Date Resolved:</strong>{' '}
+                {selectedRow.dateResolved || '------'}
+              </p>
+              <p>
+                <strong>Remarks:</strong> {selectedRow.remarks || '------'}
+              </p>
             </div>
 
             {/* Footer */}

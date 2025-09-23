@@ -34,6 +34,27 @@ import Attendance from './pages/AdminDashboard/Attendance';
 import { AlertsContainerRef } from './components/Alert/AlertsContainer';
 import ProtectedRoute from './authentication/ProtectedRoute';
 import UserRoute from './authentication/UserRoute';
+import MobileLayout from './layout/MobileLayout';
+import MobileLogin from './pages/MobileApplication/Login/MobileLogin';
+import MobileHome from './pages/MobileApplication/Home';
+import MobileLeaveRequest from './pages/MobileApplication/Leave';
+import MobileRelations from './pages/MobileApplication/Relations';
+import MobileProfile from './pages/MobileApplication/Profile';
+import MobileCredits from './pages/MobileApplication/Credits';
+import MobileLoan from './pages/MobileApplication/Loan';
+import MobileLoanRequest from './pages/MobileApplication/Loan/LoanRequestView';
+import MobileLeaveApply from './pages/MobileApplication/Leave/LeaveApply';
+import MobileLeaveRequestView from './pages/MobileApplication/Leave/LeaveRequestView';
+import MobileRelationsSubmit from './pages/MobileApplication/Relations/RelationsSubmit';
+import MobileRelationsView from './pages/MobileApplication/Relations/RelationsRequestView';
+import MobilePayrollHistory from './pages/MobileApplication/Payroll';
+import MobilePayrollView from './pages/MobileApplication/Payroll/PayrollView';
+import MobileAttendanceHistory from './pages/MobileApplication/Attendance';
+import MobileAttendanceView from './pages/MobileApplication/Attendance/AttendanceView';
+import MobileMeetingHistory from './pages/MobileApplication/Meeting';
+import MobileMeetingView from './pages/MobileApplication/Meeting/MeetingView';
+import MobileActionsHistory from './pages/MobileApplication/Actions';
+import MobileActionsView from './pages/MobileApplication/Actions/ActionsView';
 interface AppProps {
   alertsRef: React.RefObject<AlertsContainerRef>;
 }
@@ -71,6 +92,31 @@ function App({ alertsRef }: AppProps) {
   return (
     <Routes>
       {/* ADMIN DASHBOARD LAYOUT */}
+
+      <Route
+        path="/admin/login"
+        element={
+          <UserRoute alertsRef={alertsRef}>
+            <>
+              <PageTitle title="Login | Human Resource Management" />
+              <SignIn alertsRef={alertsRef} />
+            </>
+          </UserRoute>
+        }
+      />
+
+      <Route
+        path="/admin/register"
+        element={
+          <UserRoute alertsRef={alertsRef}>
+            <>
+              <PageTitle title="Register | Human Resource Management" />
+              <SignUp alertsRef={alertsRef} />
+            </>
+          </UserRoute>
+        }
+      />
+
       <Route element={<DefaultLayout alertsRef={alertsRef} />}>
         <Route
           index
@@ -84,12 +130,12 @@ function App({ alertsRef }: AppProps) {
         <Route
           path="/admin/dashboard"
           element={
-            <ProtectedRoute alertsRef={alertsRef}>
-              <>
-                <PageTitle title="Dashboard | Human Resource Management" />
-                <AdminDashboard alertsRef={alertsRef} />
-              </>
-            </ProtectedRoute>
+            // <ProtectedRoute alertsRef={alertsRef}>
+            <>
+              <PageTitle title="Dashboard | Human Resource Management" />
+              <AdminDashboard alertsRef={alertsRef} />
+            </>
+            // </ProtectedRoute>
           }
         />
         <Route
@@ -209,6 +255,7 @@ function App({ alertsRef }: AppProps) {
             </>
           }
         />
+
         {/* DESIGN AND LAYOUT REFERENCE */}
         <Route
           path="/ecommerce"
@@ -302,29 +349,60 @@ function App({ alertsRef }: AppProps) {
         />
       </Route>
 
-      <Route
-        path="/admin/login"
-        element={
-          <UserRoute alertsRef={alertsRef}>
-            <>
-              <PageTitle title="Login | Human Resource Management" />
-              <SignIn alertsRef={alertsRef} />
-            </>
-          </UserRoute>
-        }
-      />
-
-      <Route
-        path="/admin/register"
-        element={
-          <UserRoute alertsRef={alertsRef}>
-            <>
-              <PageTitle title="Register | Human Resource Management" />
-              <SignUp alertsRef={alertsRef} />
-            </>
-          </UserRoute>
-        }
-      />
+      {/* MOBILE ROUTES */}
+      <Route path="/mobile/login" element={<MobileLogin />} />
+      <Route element={<MobileLayout />}>
+        {/* LEAVE */}
+        <Route path="/mobile/leave" element={<MobileLeaveRequest />} />
+        <Route path="/mobile/leave-apply" element={<MobileLeaveApply />} />
+        <Route path="/mobile/leave-view" element={<MobileLeaveRequestView />} />
+        {/* LOAN */}
+        <Route path="/mobile/loan" element={<MobileLoan />} />
+        <Route path="/mobile/loan-view" element={<MobileLoanRequest />} />
+        {/* HOME */}
+        <Route path="/mobile/home" element={<MobileHome />} />
+        {/* RELATIONS */}
+        <Route path="/mobile/relations" element={<MobileRelations />} />
+        <Route
+          path="/mobile/relations-submit"
+          element={<MobileRelationsSubmit />}
+        />{' '}
+        <Route
+          path="/mobile/relations-view"
+          element={<MobileRelationsView />}
+        />
+        {/* PROFILE */}
+        <Route path="/mobile/profile" element={<MobileProfile />} />
+        {/* CREDITS */}
+        <Route path="/mobile/credits" element={<MobileCredits />} />
+        {/* PAYROlL */}
+        <Route
+          path="/mobile/payroll-history"
+          element={<MobilePayrollHistory />}
+        />
+        <Route path="/mobile/payroll-view" element={<MobilePayrollView />} />
+        {/* ATTENDANCE */}
+        <Route
+          path="/mobile/attendance-history"
+          element={<MobileAttendanceHistory />}
+        />
+        <Route
+          path="/mobile/attendance-view"
+          element={<MobileAttendanceView />}
+        />
+        {/* MEETING */}
+        <Route
+          path="/mobile/meeting-history"
+          element={<MobileMeetingHistory />}
+        />
+        <Route path="/mobile/meeting-view" element={<MobileMeetingView />} />
+        {/* ACTIONS */}
+        <Route
+          path="/mobile/actions-history"
+          element={<MobileActionsHistory />}
+        />
+        <Route path="/mobile/actions-view" element={<MobileActionsView />} />
+      </Route>
     </Routes>
   );
 }

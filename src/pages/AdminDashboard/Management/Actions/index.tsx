@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import Breadcrumb from "../../../../components/Breadcrumbs/Breadcrumb";
+import React, { useState } from 'react';
+import Breadcrumb from '../../../../components/Breadcrumbs/Breadcrumb';
 
 const Actions = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [showAdd, setShowAdd] = useState(false);
   const [showView, setShowView] = useState(false);
@@ -10,9 +10,9 @@ const Actions = () => {
   const [selectedRow, setSelectedRow] = useState<any>(null);
 
   // Form States
-  const [meetingId, setMeetingId] = useState("");
-  const [actionType, setActionType] = useState("");
-  const [description, setDescription] = useState("");
+  const [meetingId, setMeetingId] = useState('');
+  const [actionType, setActionType] = useState('');
+  const [description, setDescription] = useState('');
 
   const itemsPerPage = 10;
 
@@ -22,14 +22,14 @@ const Actions = () => {
     accountNo: `ACCT-${2000 + i}`,
     date: `2025-09-${(i % 30) + 1}`,
     caseId: `CASE-${1000 + i}`,
-    actionType: "Verbal Warning",
+    actionType: 'Verbal Warning',
     description: `Sample description for case ${1000 + i}`,
     handledBy: `Admin ${i + 1}`,
   }));
 
   // Filtered results
   const filteredMeetings = meetings.filter((m) =>
-    m.caseId.toLowerCase().includes(searchTerm.toLowerCase())
+    m.caseId.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Pagination
@@ -37,7 +37,7 @@ const Actions = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedMeetings = filteredMeetings.slice(
     startIndex,
-    startIndex + itemsPerPage
+    startIndex + itemsPerPage,
   );
 
   return (
@@ -58,9 +58,9 @@ const Actions = () => {
         />
         <button
           onClick={() => {
-            setMeetingId("");
-            setActionType("");
-            setDescription("");
+            setMeetingId('');
+            setActionType('');
+            setDescription('');
             setShowAdd(true);
           }}
           className="bg-[#54B847] hover:bg-[#44973A] text-white px-4 py-2 rounded"
@@ -156,8 +156,8 @@ const Actions = () => {
               onClick={() => setCurrentPage(page)}
               className={
                 page === currentPage
-                  ? "bg-blue-500 text-white px-3 py-1 rounded"
-                  : "px-3 py-1 border rounded"
+                  ? 'bg-blue-500 text-white px-3 py-1 rounded'
+                  : 'px-3 py-1 border rounded'
               }
             >
               {page}
