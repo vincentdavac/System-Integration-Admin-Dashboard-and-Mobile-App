@@ -23,8 +23,8 @@ const SignUp = ({ alertsRef }: RegisterProps) => {
     last_name: '',
     email: '',
     contact_number: '',
-    password: '',
-    password_confirmation: '',
+    hrm_password: '',
+    hrm_password_confirmation: '',
   });
 
   async function handleRegister(e: { preventDefault: () => void }) {
@@ -316,11 +316,11 @@ const SignUp = ({ alertsRef }: RegisterProps) => {
                     </label>
                     <div className="relative">
                       <input
-                        value={formData.password}
+                        value={formData.hrm_password}
                         onChange={(e) =>
                           setFormData({
                             ...formData,
-                            password: e.target.value,
+                            hrm_password: e.target.value,
                           })
                         }
                         type="password"
@@ -340,11 +340,11 @@ const SignUp = ({ alertsRef }: RegisterProps) => {
                     </label>
                     <div className="relative">
                       <input
-                        value={formData.password_confirmation}
+                        value={formData.hrm_password_confirmation}
                         onChange={(e) =>
                           setFormData({
                             ...formData,
-                            password_confirmation: e.target.value,
+                            hrm_password_confirmation: e.target.value,
                           })
                         }
                         type="password"

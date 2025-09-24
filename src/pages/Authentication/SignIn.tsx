@@ -15,7 +15,7 @@ const SignIn = ({ alertsRef }: LoginProps) => {
 
   const [formData, setFormData] = useState({
     email: '',
-    password: '',
+    hrm_password: '',
   });
 
   async function handleLogin(e: { preventDefault: () => void }) {
@@ -254,11 +254,11 @@ const SignIn = ({ alertsRef }: LoginProps) => {
                     </label>
                     <div className="relative">
                       <input
-                        value={formData.password}
+                        value={formData.hrm_password}
                         onChange={(e) =>
                           setFormData({
                             ...formData,
-                            password: e.target.value,
+                            hrm_password: e.target.value,
                           })
                         }
                         type="password"
