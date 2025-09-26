@@ -1,8 +1,10 @@
-import React, { useState, useMemo } from "react";
-import Breadcrumb from "../../../../components/Breadcrumbs/Breadcrumb";
+import React, { useState, useMemo } from 'react';
+import Breadcrumb from '../../../../components/Breadcrumbs/Breadcrumb';
+import { ArchiveRestore } from 'lucide-react';
+import CreditsRecoverModal from './CreditsRecover';
 
 const ArchiveCredits = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [showRecover, setShowRecover] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -20,16 +22,16 @@ const ArchiveCredits = () => {
         earned: Math.floor(Math.random() * 20),
         used: Math.floor(Math.random() * 10),
         remaining: Math.floor(Math.random() * 20),
-        status: "Archived",
+        status: 'Archived',
       })),
-    []
+    [],
   );
 
   // Filter table
   const filteredCredits = credits.filter(
     (c) =>
       c.accountNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.fullName.toLowerCase().includes(searchTerm.toLowerCase())
+      c.fullName.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Pagination
@@ -37,13 +39,13 @@ const ArchiveCredits = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedCredits = filteredCredits.slice(
     startIndex,
-    startIndex + itemsPerPage
+    startIndex + itemsPerPage,
   );
 
   // Highlight search
   const highlightMatch = (text: string) => {
     if (!searchTerm) return text;
-    const regex = new RegExp(`(${searchTerm})`, "gi");
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
     return text.split(regex).map((part, i) =>
       regex.test(part) ? (
         <span key={i} className="bg-yellow-200">
@@ -51,7 +53,7 @@ const ArchiveCredits = () => {
         </span>
       ) : (
         part
-      )
+      ),
     );
   };
 
@@ -80,13 +82,10 @@ const ArchiveCredits = () => {
             <thead className="bg-gray-100 text-xs uppercase text-gray-600 sticky top-0">
               <tr>
                 <th className="px-6 py-3 text-center">No.</th>
-                <th className="px-6 py-3 text-center">Account No.</th>
+                <th className="px-6 py-3 text-center">Employee No.</th>
                 <th className="px-6 py-3 text-center">Full Name</th>
                 <th className="px-6 py-3 text-center">Year</th>
-                <th className="px-6 py-3 text-center">Earned</th>
-                <th className="px-6 py-3 text-center">Used</th>
                 <th className="px-6 py-3 text-center">Remaining</th>
-                <th className="px-6 py-3 text-center">Status</th>
                 <th className="px-6 py-3 text-center">Actions</th>
               </tr>
             </thead>
@@ -105,23 +104,14 @@ const ArchiveCredits = () => {
                       {highlightMatch(row.fullName)}
                     </td>
                     <td className="px-6 py-3">{row.year}</td>
-                    <td className="px-6 py-3">{row.earned}</td>
-                    <td className="px-6 py-3">{row.used}</td>
                     <td className="px-6 py-3">{row.remaining}</td>
-                    <td className="px-6 py-3">
-                      <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium">
-                        {row.status}
-                      </span>
-                    </td>
+
                     <td className="px-6 py-3">
                       <button
-                        onClick={() => {
-                          setSelectedRow(row);
-                          setShowRecover(true);
-                        }}
-                        className="bg-[#EB1D25] hover:bg-[#c5161e] text-white px-3 py-1 rounded"
+                        onClick={() => setShowRecover(true)}
+                        className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded"
                       >
-                        Recover
+                        <ArchiveRestore size={18} />
                       </button>
                     </td>
                   </tr>
@@ -157,8 +147,8 @@ const ArchiveCredits = () => {
               onClick={() => setCurrentPage(page)}
               className={
                 page === currentPage
-                  ? "bg-blue-500 text-white px-3 py-1 rounded"
-                  : "px-3 py-1 border rounded"
+                  ? 'bg-blue-500 text-white px-3 py-1 rounded'
+                  : 'px-3 py-1 border rounded'
               }
             >
               {page}
@@ -166,7 +156,9 @@ const ArchiveCredits = () => {
           ))}
         </div>
         <button
-          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
           disabled={currentPage === totalPages}
           className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
         >
@@ -175,32 +167,8 @@ const ArchiveCredits = () => {
       </div>
 
       {/* Recover Modal */}
-      {showRecover && selectedRow && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg w-96">
-            <div
-              className="text-white px-4 py-2 flex justify-between items-center rounded-t-lg"
-              style={{ backgroundColor: "#EB1D25" }}
-            >
-              <h3 className="font-semibold">Recover Credits</h3>
-              <button onClick={() => setShowRecover(false)}>✖</button>
-            </div>
-            <div className="p-4">
-              <p>Do you want to recover this account?</p>
-              <div className="flex justify-end space-x-2 mt-3">
-                <button
-                  className="bg-gray-300 px-3 py-1 rounded"
-                  onClick={() => setShowRecover(false)}
-                >
-                  No
-                </button>
-                <button className="bg-[#EB1D25] text-white px-3 py-1 rounded">
-                  Yes
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+      {showRecover && (
+        <CreditsRecoverModal onClose={() => setShowRecover(false)} />
       )}
     </>
   );

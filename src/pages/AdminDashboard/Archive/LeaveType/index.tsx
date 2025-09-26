@@ -1,8 +1,10 @@
-import React, { useState } from "react";
-import Breadcrumb from "../../../../components/Breadcrumbs/Breadcrumb";
+import React, { useState } from 'react';
+import Breadcrumb from '../../../../components/Breadcrumbs/Breadcrumb';
+import { ArchiveRestore } from 'lucide-react';
+import LeaveTypeRecoverModal from './LeaveTypeRecover';
 
 const ArchiveLeaveType = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [showRecover, setShowRecover] = useState(false);
   const itemsPerPage = 10;
@@ -14,14 +16,14 @@ const ArchiveLeaveType = () => {
     createdAt: `2025-09-${(i % 30) + 1}`,
     name: `Archived Type ${i + 1}`,
     description: `Archived description ${i + 1}`,
-    status: "Archived",
+    status: 'Archived',
   }));
 
   // Filtered results
   const filteredTypes = archivedTypes.filter(
     (t) =>
       t.accountNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      t.name.toLowerCase().includes(searchTerm.toLowerCase())
+      t.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Pagination
@@ -29,12 +31,12 @@ const ArchiveLeaveType = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedTypes = filteredTypes.slice(
     startIndex,
-    startIndex + itemsPerPage
+    startIndex + itemsPerPage,
   );
 
   const highlightMatch = (text: string) => {
     if (!searchTerm) return text;
-    const regex = new RegExp(`(${searchTerm})`, "gi");
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
     return text.split(regex).map((part, i) =>
       regex.test(part) ? (
         <span key={i} className="bg-yellow-200">
@@ -42,7 +44,7 @@ const ArchiveLeaveType = () => {
         </span>
       ) : (
         part
-      )
+      ),
     );
   };
 
@@ -71,11 +73,10 @@ const ArchiveLeaveType = () => {
             <thead className="bg-gray-100 text-xs uppercase text-gray-600 sticky top-0">
               <tr>
                 <th className="px-6 py-3">No.</th>
-                <th className="px-6 py-3">Account No.</th>
-                <th className="px-6 py-3">Created At</th>
-                <th className="px-6 py-3">Status</th>
                 <th className="px-6 py-3">Name</th>
                 <th className="px-6 py-3">Description</th>
+                <th className="px-6 py-3">Created At</th>
+
                 <th className="px-6 py-3">Actions</th>
               </tr>
             </thead>
@@ -87,21 +88,19 @@ const ArchiveLeaveType = () => {
                     className="border-b hover:bg-gray-50 text-center"
                   >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
-                    <td className="px-6 py-3">{highlightMatch(t.accountNo)}</td>
-                    <td className="px-6 py-3">{t.createdAt}</td>
-                    <td className="px-6 py-3">
-                      <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium">
-                        {t.status}
-                      </span>
-                    </td>
+
                     <td className="px-6 py-3">{highlightMatch(t.name)}</td>
-                    <td className="px-6 py-3">{highlightMatch(t.description)}</td>
+                    <td className="px-6 py-3">
+                      {highlightMatch(t.description)}
+                    </td>
+                    <td className="px-6 py-3">{t.createdAt}</td>
+
                     <td className="px-6 py-3">
                       <button
                         onClick={() => setShowRecover(true)}
-                        className="bg-[#EB1D25] hover:bg-[#c5161e] text-white px-3 py-1 rounded"
+                        className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded"
                       >
-                        Recover
+                        <ArchiveRestore size={18} />
                       </button>
                     </td>
                   </tr>
@@ -138,8 +137,8 @@ const ArchiveLeaveType = () => {
               onClick={() => setCurrentPage(page)}
               className={
                 page === currentPage
-                  ? "bg-blue-500 text-white px-3 py-1 rounded"
-                  : "px-3 py-1 border rounded"
+                  ? 'bg-blue-500 text-white px-3 py-1 rounded'
+                  : 'px-3 py-1 border rounded'
               }
             >
               {page}
@@ -160,31 +159,7 @@ const ArchiveLeaveType = () => {
 
       {/* Recover Modal */}
       {showRecover && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg w-96">
-            <div
-              className="text-white px-4 py-2 flex justify-between items-center rounded-t-lg"
-              style={{ backgroundColor: "#EB1D25" }}
-            >
-              <h3 className="font-semibold">Recover Leave Type</h3>
-              <button onClick={() => setShowRecover(false)}>✖</button>
-            </div>
-            <div className="p-4">
-              <p>Do you want to recover this account?</p>
-              <div className="flex justify-end space-x-2 mt-3">
-                <button
-                  className="bg-gray-300 px-3 py-1 rounded"
-                  onClick={() => setShowRecover(false)}
-                >
-                  No
-                </button>
-                <button className="bg-[#EB1D25] text-white px-3 py-1 rounded">
-                  Yes
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <LeaveTypeRecoverModal onClose={() => setShowRecover(false)} />
       )}
     </>
   );

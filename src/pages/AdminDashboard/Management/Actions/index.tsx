@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import Breadcrumb from '../../../../components/Breadcrumbs/Breadcrumb';
+import { CalendarPlus2, ClipboardPen, Eye, Search } from 'lucide-react';
+import AddActionsModal from './AddActions';
+import ViewActionsModal from './ViewActions';
+import UpdateActionsModal from './UpdateActions';
 
 const Actions = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -42,20 +46,24 @@ const Actions = () => {
 
   return (
     <>
-      <Breadcrumb pageName="Actions" />
+      <Breadcrumb pageName="Management Action" />
 
       {/* Search bar and Add button */}
       <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center mt-4 mb-4 space-y-2 md:space-y-0">
-        <input
-          type="text"
-          placeholder="Search by Case ID..."
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setCurrentPage(1);
-          }}
-          className="w-full md:w-1/3 border rounded px-4 py-2 shadow-sm focus:ring focus:ring-blue-200"
-        />
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            placeholder="Search by Actions ID..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="w-full md:w-full border rounded px-4 py-2 shadow-sm focus:ring focus:ring-blue-200"
+          />
+          <Search />
+        </div>
+
         <button
           onClick={() => {
             setMeetingId('');
@@ -63,10 +71,11 @@ const Actions = () => {
             setDescription('');
             setShowAdd(true);
           }}
-          className="bg-[#54B847] hover:bg-[#44973A] text-white px-4 py-2 rounded"
+          className="bg-yellow-600 hover:bg-yellow-500 text-white px-4 py-2 rounded"
         >
-          Add
+          <CalendarPlus2 size={20} />
         </button>
+        <AddActionsModal isOpen={showAdd} onClose={() => setShowAdd(false)} />
       </div>
 
       {/* Table */}
@@ -105,10 +114,11 @@ const Actions = () => {
                           setSelectedRow(m);
                           setShowView(true);
                         }}
-                        className="bg-[#2D3F99] hover:bg-[#24327A] text-white px-3 py-1 rounded"
+                        className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded"
                       >
-                        View
+                        <Eye size={18} />
                       </button>
+
                       <button
                         onClick={() => {
                           setSelectedRow(m);
@@ -117,9 +127,9 @@ const Actions = () => {
                           setDescription(m.description);
                           setShowUpdate(true);
                         }}
-                        className="bg-[#2D3F99] hover:bg-[#24327A] text-white px-3 py-1 rounded"
+                        className="bg-[#2D3F99] hover:bg-blue-500 text-white px-4 py-2 rounded"
                       >
-                        Update
+                        <ClipboardPen size={18} />
                       </button>
                     </td>
                   </tr>
@@ -138,6 +148,12 @@ const Actions = () => {
           </table>
         </div>
       </div>
+
+      <ViewActionsModal isOpen={showView} onClose={() => setShowView(false)} />
+      <UpdateActionsModal
+        isOpen={showUpdate}
+        onClose={() => setShowUpdate(false)}
+      />
 
       {/* Pagination */}
       <div className="flex justify-between items-center mt-4">
@@ -175,131 +191,6 @@ const Actions = () => {
           Next
         </button>
       </div>
-
-      {/* Add Modal */}
-      {showAdd && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg w-96">
-            <div className="bg-[#54B847] text-white px-4 py-2 flex justify-between items-center rounded-t-lg">
-              <h3 className="font-semibold">Add Case Action</h3>
-              <button onClick={() => setShowAdd(false)}>✖</button>
-            </div>
-            <div className="p-4 space-y-3">
-              <input
-                type="search"
-                placeholder="Search Case ID"
-                value={meetingId}
-                onChange={(e) => setMeetingId(e.target.value)}
-                className="w-full border p-2 rounded"
-              />
-              <select
-                value={actionType}
-                onChange={(e) => setActionType(e.target.value)}
-                className="w-full border p-2 rounded"
-              >
-                <option value="">None</option>
-                <option value="Verbal Warning">Verbal Warning</option>
-                <option value="Written Warning">Written Warning</option>
-                <option value="Final Warning">Final Warning</option>
-                <option value="Suspension">Suspension</option>
-                <option value="Termination">Termination</option>
-              </select>
-              <textarea
-                placeholder="Description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={5}
-                className="w-full border p-2 rounded resize-none"
-              />
-              <div className="flex justify-end space-x-2 mt-2">
-                <button
-                  className="bg-gray-300 px-3 py-1 rounded"
-                  onClick={() => setShowAdd(false)}
-                >
-                  Cancel
-                </button>
-                <button className="bg-[#54B847] text-white px-3 py-1 rounded">
-                  Save
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* View Modal */}
-      {showView && selectedRow && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg w-96">
-            <div className="bg-[#2D3F99] text-white px-4 py-2 flex justify-between items-center rounded-t-lg">
-              <h3 className="font-semibold">View Case Action</h3>
-              <button onClick={() => setShowView(false)}>✖</button>
-            </div>
-            <div className="p-4 space-y-3">
-              <p>
-                <strong>Case ID:</strong> {selectedRow.caseId}
-              </p>
-              <p>
-                <strong>Action Type:</strong> {selectedRow.actionType}
-              </p>
-              <p>
-                <strong>Description:</strong> {selectedRow.description}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Update Modal */}
-      {showUpdate && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg w-96">
-            <div className="bg-[#2D3F99] text-white px-4 py-2 flex justify-between items-center rounded-t-lg">
-              <h3 className="font-semibold">Update Case Action</h3>
-              <button onClick={() => setShowUpdate(false)}>✖</button>
-            </div>
-            <div className="p-4 space-y-3">
-              <input
-                type="text"
-                placeholder="Case ID"
-                value={meetingId}
-                onChange={(e) => setMeetingId(e.target.value)}
-                className="w-full border p-2 rounded"
-              />
-              <select
-                value={actionType}
-                onChange={(e) => setActionType(e.target.value)}
-                className="w-full border p-2 rounded"
-              >
-                <option value="">None</option>
-                <option value="Verbal Warning">Verbal Warning</option>
-                <option value="Written Warning">Written Warning</option>
-                <option value="Final Warning">Final Warning</option>
-                <option value="Suspension">Suspension</option>
-                <option value="Termination">Termination</option>
-              </select>
-              <textarea
-                placeholder="Description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={5}
-                className="w-full border p-2 rounded resize-none"
-              />
-              <div className="flex justify-end space-x-2 mt-2">
-                <button
-                  className="bg-gray-300 px-3 py-1 rounded"
-                  onClick={() => setShowUpdate(false)}
-                >
-                  Cancel
-                </button>
-                <button className="bg-[#2D3F99] text-white px-3 py-1 rounded">
-                  Save Changes
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };
