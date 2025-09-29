@@ -1,8 +1,10 @@
-import React, { useState } from "react";
-import Breadcrumb from "../../../../components/Breadcrumbs/Breadcrumb";
+import React, { useState } from 'react';
+import Breadcrumb from '../../../../components/Breadcrumbs/Breadcrumb';
+import { ArchiveRestore } from 'lucide-react';
+import EmployeeRecoverModal from './EmployeeRecover';
 
 const ArchiveEmployee = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [showRecover, setShowRecover] = useState(false);
   const itemsPerPage = 10;
@@ -12,7 +14,7 @@ const ArchiveEmployee = () => {
     id: i + 1,
     accountNo: `20230${i + 41}`,
     date: `0${(i % 9) + 1} May 2021`,
-    status: "Archived",
+    status: 'Archived',
     name: `Archived Employee ${i + 1}`,
     email: `archived${i + 1}@email.com`,
   }));
@@ -21,7 +23,7 @@ const ArchiveEmployee = () => {
   const filteredEmployees = employees.filter(
     (emp) =>
       emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.email.toLowerCase().includes(searchTerm.toLowerCase())
+      emp.email.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Pagination
@@ -29,13 +31,13 @@ const ArchiveEmployee = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedEmployees = filteredEmployees.slice(
     startIndex,
-    startIndex + itemsPerPage
+    startIndex + itemsPerPage,
   );
 
   // Highlight search matches
   const highlightMatch = (text: string) => {
     if (!searchTerm) return text;
-    const regex = new RegExp(`(${searchTerm})`, "gi");
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
     return text.split(regex).map((part, i) =>
       regex.test(part) ? (
         <span key={i} className="bg-yellow-200">
@@ -43,7 +45,7 @@ const ArchiveEmployee = () => {
         </span>
       ) : (
         part
-      )
+      ),
     );
   };
 
@@ -72,11 +74,11 @@ const ArchiveEmployee = () => {
             <thead className="bg-gray-100 text-xs uppercase text-gray-600 sticky top-0">
               <tr>
                 <th className="px-6 py-3">No.</th>
-                <th className="px-6 py-3">Account No</th>
-                <th className="px-6 py-3">Date</th>
-                <th className="px-6 py-3">Status</th>
+                <th className="px-6 py-3">Employee No.</th>
                 <th className="px-6 py-3">Name</th>
                 <th className="px-6 py-3">Email</th>
+                <th className="px-6 py-3">Date</th>
+
                 <th className="px-6 py-3">Actions</th>
               </tr>
             </thead>
@@ -88,21 +90,20 @@ const ArchiveEmployee = () => {
                     className="border-b hover:bg-gray-50 text-center"
                   >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
-                    <td className="px-6 py-3">{highlightMatch(emp.accountNo)}</td>
-                    <td className="px-6 py-3">{emp.date}</td>
                     <td className="px-6 py-3">
-                      <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium">
-                        {emp.status}
-                      </span>
+                      {highlightMatch(emp.accountNo)}
                     </td>
+
                     <td className="px-6 py-3">{highlightMatch(emp.name)}</td>
                     <td className="px-6 py-3">{highlightMatch(emp.email)}</td>
+                    <td className="px-6 py-3">{emp.date}</td>
+
                     <td className="px-6 py-3">
                       <button
                         onClick={() => setShowRecover(true)}
-                        className="bg-[#EB1D25] hover:bg-[#c5161e] text-white px-3 py-1 rounded"
+                        className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded"
                       >
-                        Recover
+                        <ArchiveRestore size={18} />
                       </button>
                     </td>
                   </tr>
@@ -139,8 +140,8 @@ const ArchiveEmployee = () => {
               onClick={() => setCurrentPage(page)}
               className={
                 page === currentPage
-                  ? "bg-blue-500 text-white px-3 py-1 rounded"
-                  : "px-3 py-1 border rounded"
+                  ? 'bg-blue-500 text-white px-3 py-1 rounded'
+                  : 'px-3 py-1 border rounded'
               }
             >
               {page}
@@ -161,28 +162,7 @@ const ArchiveEmployee = () => {
 
       {/* Recover Modal */}
       {showRecover && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg w-96">
-            <div className="bg-[#EB1D25] text-white px-4 py-2 flex justify-between items-center rounded-t-lg">
-              <h3 className="font-semibold">Recover Account</h3>
-              <button onClick={() => setShowRecover(false)}>✖</button>
-            </div>
-            <div className="p-4">
-              <p>Do you want to recover this account?</p>
-              <div className="flex justify-end space-x-2 mt-3">
-                <button
-                  className="bg-gray-300 px-3 py-1 rounded"
-                  onClick={() => setShowRecover(false)}
-                >
-                  No
-                </button>
-                <button className="bg-[#EB1D25] hover:bg-[#c5161e] text-white px-3 py-1 rounded">
-                  Yes
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <EmployeeRecoverModal onClose={() => setShowRecover(false)} />
       )}
     </>
   );
