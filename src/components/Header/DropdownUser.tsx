@@ -12,7 +12,7 @@ interface DropdownUserProps {
 
 const DropdownUser = ({ alertsRef }: DropdownUserProps) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { user, token, setUser, setToken } = useContext(AppContext)!;
+  const { user, token, setUser, setToken, setUserId, setStudentNo } = useContext(AppContext)!;
 
   const navigate = useNavigate();
 
@@ -31,7 +31,11 @@ const DropdownUser = ({ alertsRef }: DropdownUserProps) => {
     if (res.ok) {
       setUser(null);
       setToken(null);
+      setUserId(null);
+      setStudentNo(null);
       localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('studentNo');
       alertsRef.current?.addAlert(
         'success',
         data.message || 'Logout successfully',

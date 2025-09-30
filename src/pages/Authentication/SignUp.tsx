@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import LogoDark from '../../images/logo/logo-dark.svg';
 import Logo from '../../images/logo/logo.svg';
-import { User, Mail, Lock, Phone } from 'lucide-react';
+import { User, Mail, Lock, Phone, IdCard } from 'lucide-react';
 
 import { AppContext } from '../../context/AppContext';
 import { AlertsContainerRef } from '../../components/Alert/AlertsContainer';
@@ -15,12 +15,13 @@ const SignUp = ({ alertsRef }: RegisterProps) => {
   // Navigate Users when Logged in
   const navigate = useNavigate();
 
-  const { setToken } = useContext(AppContext)!;
+  const { setToken, setStudentNo, setUserId } = useContext(AppContext)!;
 
   // Form Data
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
+    student_no: '', // Add this
     email: '',
     contact_number: '',
     hrm_password: '',
@@ -50,11 +51,18 @@ const SignUp = ({ alertsRef }: RegisterProps) => {
 
       // get token from data.data.token
       const newToken = data.data.token;
+      const userId = data.data.user.id;
+      const studentNo = data.data.user.student_no;
 
       localStorage.setItem('token', newToken);
-      setToken(newToken);
+      localStorage.setItem('userId', userId);
+      localStorage.setItem('studentNo', studentNo);
 
-      console.log({ newToken });
+      setToken(newToken);
+      setStudentNo(studentNo);
+      setUserId(userId);
+
+      console.log({ newToken, studentNo, userId });
 
       alertsRef.current?.addAlert('success', 'Registration successful!');
       navigate('/admin/dashboard');
@@ -286,27 +294,53 @@ const SignUp = ({ alertsRef }: RegisterProps) => {
                     </div>
                   </div>
 
-                  <div className="mb-4">
-                    <label className="mb-2.5 block font-medium text-black dark:text-white">
-                      Contact Number
-                    </label>
-                    <div className="relative">
-                      <input
-                        value={formData.contact_number}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            contact_number: e.target.value,
-                          })
-                        }
-                        type="number"
-                        placeholder="Enter your phone number"
-                        className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      />
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <div className="mb-4 w-full md:w-1/2">
+                      <label className="mb-2.5 block font-medium text-black dark:text-white">
+                        Contact Number
+                      </label>
+                      <div className="relative">
+                        <input
+                          value={formData.contact_number}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              contact_number: e.target.value,
+                            })
+                          }
+                          type="number"
+                          placeholder="Enter your phone number"
+                          className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
 
-                      <span className="absolute right-4 top-4">
-                        <Phone />
-                      </span>
+                        <span className="absolute right-4 top-4">
+                          <Phone />
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="mb-4 w-full md:w-1/2">
+                      <label className="mb-2.5 block font-medium text-black dark:text-white">
+                        Employee No.
+                      </label>
+                      <div className="relative">
+                        <input
+                          value={formData.student_no}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              student_no: e.target.value,
+                            })
+                          }
+                          type="text"
+                          placeholder="Enter employee number"
+                          className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+
+                        <span className="absolute right-4 top-4">
+                          <IdCard />
+                        </span>
+                      </div>
                     </div>
                   </div>
 

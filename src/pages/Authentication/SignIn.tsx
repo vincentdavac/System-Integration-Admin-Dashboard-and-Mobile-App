@@ -10,7 +10,7 @@ interface LoginProps {
 }
 
 const SignIn = ({ alertsRef }: LoginProps) => {
-  const { setToken } = useContext(AppContext)!;
+  const { setToken, setStudentNo, setUserId } = useContext(AppContext)!;
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -47,11 +47,18 @@ const SignIn = ({ alertsRef }: LoginProps) => {
 
       // get token from data.data.token
       const newToken = data.data.token;
+      const userId = data.data.user.id;
+      const studentNo = data.data.user.student_no;
 
       localStorage.setItem('token', newToken);
+      localStorage.setItem('userId', userId);
+      localStorage.setItem('studentNo', studentNo);
+
       setToken(newToken);
+      setStudentNo(studentNo);
+      setUserId(userId);
       navigate('/admin/dashboard');
-      console.log({ newToken });
+      console.log({ newToken, studentNo, userId });
 
       // navigate('/admin/dashboard');
       alertsRef.current?.addAlert('success', 'Login successful!');

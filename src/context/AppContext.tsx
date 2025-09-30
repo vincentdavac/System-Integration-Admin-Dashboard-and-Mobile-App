@@ -21,6 +21,10 @@ interface UserType {
 interface AppContextType {
   token: string | null;
   setToken: Dispatch<SetStateAction<string | null>>;
+  userId: string | null;
+  setUserId: Dispatch<SetStateAction<string | null>>;
+  studentNo: string | null;
+  setStudentNo: Dispatch<SetStateAction<string | null>>;
   user: UserType | null;
   setUser: Dispatch<SetStateAction<UserType | null>>;
   loading: boolean; // 👈 NEW
@@ -35,6 +39,8 @@ interface MyComponentProps {
 
 export default function AppProvider({ children }: MyComponentProps) {
   const [token, setToken] = useState(localStorage.getItem('token'));
+  const [userId, setUserId] = useState(localStorage.getItem('userId'));
+  const [studentNo, setStudentNo] = useState(localStorage.getItem('studentNo'));
 
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true); // 👈 NEW
@@ -70,7 +76,7 @@ export default function AppProvider({ children }: MyComponentProps) {
 
   return (
     <AppContext.Provider
-      value={{ token, setToken, user, setUser, loading, setLoading }}
+      value={{ token, setToken, user, setUser, loading, setLoading, userId, setUserId,studentNo, setStudentNo }}
     >
       {loading ? <div>Loading...</div> : children}{' '}
       {/* 👈 don’t render routes yet */}

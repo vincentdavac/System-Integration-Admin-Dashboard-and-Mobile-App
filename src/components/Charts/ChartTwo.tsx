@@ -1,66 +1,7 @@
 import { ApexOptions } from 'apexcharts';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import ReactApexChart from 'react-apexcharts';
-
-const options: ApexOptions = {
-  colors: ['#3C50E0', '#80CAEE'],
-  chart: {
-    fontFamily: 'Satoshi, sans-serif',
-    type: 'bar',
-    height: 335,
-    stacked: true,
-    toolbar: {
-      show: false,
-    },
-    zoom: {
-      enabled: false,
-    },
-  },
-
-  responsive: [
-    {
-      breakpoint: 1536,
-      options: {
-        plotOptions: {
-          bar: {
-            borderRadius: 0,
-            columnWidth: '25%',
-          },
-        },
-      },
-    },
-  ],
-  plotOptions: {
-    bar: {
-      horizontal: false,
-      borderRadius: 0,
-      columnWidth: '25%',
-      borderRadiusApplication: 'end',
-      borderRadiusWhenStacked: 'last',
-    },
-  },
-  dataLabels: {
-    enabled: false,
-  },
-
-  xaxis: {
-    categories: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-  },
-  legend: {
-    position: 'top',
-    horizontalAlign: 'left',
-    fontFamily: 'Satoshi',
-    fontWeight: 500,
-    fontSize: '14px',
-
-    markers: {
-      radius: 99,
-    },
-  },
-  fill: {
-    opacity: 1,
-  },
-};
+import { AppContext } from '../../context/AppContext'; // Adjust path as needed
 
 interface ChartTwoState {
   series: {
@@ -69,46 +10,182 @@ interface ChartTwoState {
   }[];
 }
 
+interface ChartTwoData {
+  series: {
+    name: string;
+    data: number[];
+  }[];
+  labels: string[];
+  period: string;
+  startDate: string;
+  endDate: string;
+}
+
+type PeriodType = 'this_week' | 'last_week';
+
 const ChartTwo: React.FC = () => {
+  const { token } = useContext(AppContext)!;
+  const [selectedPeriod, setSelectedPeriod] = useState<PeriodType>('this_week');
+  const [loading, setLoading] = useState(false);
   const [state, setState] = useState<ChartTwoState>({
     series: [
       {
         name: 'Submitted Relations',
-        data: [44, 55, 41, 67, 22, 43, 65],
+        data: [],
       },
       {
         name: 'Completed Actions',
-        data: [13, 23, 20, 8, 13, 27, 15],
+        data: [],
       },
     ],
   });
+  const [labels, setLabels] = useState<string[]>([]);
+  const [dateRange, setDateRange] = useState({ start: '', end: '' });
 
-  const handleReset = () => {
-    setState((prevState) => ({
-      ...prevState,
-    }));
+  useEffect(() => {
+    fetchChartData(selectedPeriod);
+  }, [selectedPeriod]);
+
+  const fetchChartData = async (period: PeriodType) => {
+    try {
+      setLoading(true);
+
+      const res = await fetch(`/api/dashboard/chart-two?period=${period}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const response = await res.json();
+
+      if (!res.ok) {
+        console.error('Failed to fetch chart data:', response.message);
+        return;
+      }
+
+      const chartData: ChartTwoData = response.data;
+
+      // Update chart series
+      setState({
+        series: chartData.series,
+      });
+
+      // Update labels
+      setLabels(chartData.labels);
+
+      // Update date range
+      setDateRange({
+        start: chartData.startDate,
+        end: chartData.endDate,
+      });
+    } catch (error) {
+      console.error('Error fetching chart data:', error);
+    } finally {
+      setLoading(false);
+    }
   };
-  handleReset;
+
+  const handlePeriodChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedPeriod(e.target.value as PeriodType);
+  };
+
+  const options: ApexOptions = {
+    colors: ['#3C50E0', '#80CAEE'],
+    chart: {
+      fontFamily: 'Satoshi, sans-serif',
+      type: 'bar',
+      height: 335,
+      stacked: true,
+      toolbar: {
+        show: false,
+      },
+      zoom: {
+        enabled: false,
+      },
+    },
+    responsive: [
+      {
+        breakpoint: 1536,
+        options: {
+          plotOptions: {
+            bar: {
+              borderRadius: 0,
+              columnWidth: '25%',
+            },
+          },
+        },
+      },
+    ],
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        borderRadius: 0,
+        columnWidth: '25%',
+        borderRadiusApplication: 'end',
+        borderRadiusWhenStacked: 'last',
+      },
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    xaxis: {
+      categories: labels,
+    },
+    legend: {
+      position: 'top',
+      horizontalAlign: 'left',
+      fontFamily: 'Satoshi',
+      fontWeight: 500,
+      fontSize: '14px',
+      markers: {
+        radius: 99,
+      },
+    },
+    fill: {
+      opacity: 1,
+    },
+  };
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric',
+    });
+  };
 
   return (
     <div className="col-span-12 rounded-sm border border-stroke bg-white p-7.5 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
       <div className="mb-4 justify-between gap-4 sm:flex">
         <div>
           <h4 className="text-xl font-semibold text-black dark:text-white">
-            Management this week
+            Management{' '}
+            {selectedPeriod === 'this_week' ? 'This Week' : 'Last Week'}
           </h4>
+          {dateRange.start && dateRange.end && (
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              {formatDate(dateRange.start)} - {formatDate(dateRange.end)}
+            </p>
+          )}
         </div>
         <div>
           <div className="relative z-20 inline-block">
             <select
-              name="#"
-              id="#"
+              name="period"
+              id="period"
+              value={selectedPeriod}
+              onChange={handlePeriodChange}
+              disabled={loading}
               className="relative z-20 inline-flex appearance-none bg-transparent py-1 pl-3 pr-8 text-sm font-medium outline-none"
             >
-              <option value="" className="dark:bg-boxdark">
+              <option value="this_week" className="dark:bg-boxdark">
                 This Week
               </option>
-              <option value="" className="dark:bg-boxdark">
+              <option value="last_week" className="dark:bg-boxdark">
                 Last Week
               </option>
             </select>
@@ -137,14 +214,20 @@ const ChartTwo: React.FC = () => {
       </div>
 
       <div>
-        <div id="chartTwo" className="-ml-5 -mb-9">
-          <ReactApexChart
-            options={options}
-            series={state.series}
-            type="bar"
-            height={350}
-          />
-        </div>
+        {loading ? (
+          <div className="flex items-center justify-center h-[350px]">
+            <p>Loading chart data...</p>
+          </div>
+        ) : (
+          <div id="chartTwo" className="-ml-5 -mb-9">
+            <ReactApexChart
+              options={options}
+              series={state.series}
+              type="bar"
+              height={350}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
