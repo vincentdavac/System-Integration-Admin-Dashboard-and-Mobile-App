@@ -1,6 +1,9 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const MobileLeaveApply = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="w-full min-h-screen bg-white flex flex-col">
       {/* Green Background Section */}
@@ -14,7 +17,7 @@ const MobileLeaveApply = () => {
 
         {/* Header */}
         <div className="absolute top-4 left-4 flex items-center text-white">
-          <button className="mr-2">
+          <button onClick={() => navigate('/mobile/leave')} className="mr-2">
             <ArrowLeft size={24} />
           </button>
           <h1 className="text-lg font-semibold">Apply Leave</h1>

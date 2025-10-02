@@ -1,6 +1,9 @@
-import { ArrowLeft, Search } from "lucide-react";
+import { ArrowLeft, Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const MobileLeaveRequest = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="w-full min-h-screen bg-white flex flex-col">
       {/* Green Background Section */}
@@ -14,9 +17,9 @@ const MobileLeaveRequest = () => {
 
         {/* Header */}
         <div className="absolute top-4 left-4 flex items-center text-white">
-          <button className="mr-2">
+          {/* <button className="mr-2">
             <ArrowLeft size={24} />
-          </button>
+          </button> */}
           <h1 className="text-lg font-semibold">Leave</h1>
         </div>
 
@@ -34,7 +37,10 @@ const MobileLeaveRequest = () => {
 
         {/* Apply Button */}
         <div className="absolute top-4 right-4">
-          <button className="bg-[#2D3F99] text-white text-sm px-4 py-1 rounded-md">
+          <button
+            onClick={() => navigate('/mobile/leave-apply')}
+            className="bg-[#2D3F99] text-white text-sm px-4 py-1 rounded-md"
+          >
             Apply
           </button>
         </div>
@@ -50,10 +56,10 @@ const MobileLeaveRequest = () => {
         {/* Leave Request Cards */}
         <div className="space-y-4">
           {[
-            { type: "Vacation Leave", status: "Pending Approval" },
-            { type: "Maternity Leave", status: "Approved" },
-            { type: "Sick Leave", status: "Cancelled" },
-            { type: "Vacation Leave", status: "Pending Approval" },
+            { type: 'Vacation Leave', status: 'Pending Approval' },
+            { type: 'Maternity Leave', status: 'Approved' },
+            { type: 'Sick Leave', status: 'Cancelled' },
+            { type: 'Vacation Leave', status: 'Pending Approval' },
           ].map((leave, index) => (
             <div
               key={index}
@@ -65,9 +71,14 @@ const MobileLeaveRequest = () => {
                   <p className="text-lg font-semibold text-gray-800">
                     {leave.type}
                   </p>
-                  <p className="text-sm text-gray-600">Status: {leave.status}</p>
+                  <p className="text-sm text-gray-600">
+                    Status: {leave.status}
+                  </p>
                 </div>
-                <button className="bg-[#2D3F99] text-white text-sm px-4 py-1 rounded-md">
+                <button
+                  onClick={() => navigate('/mobile/leave-view')}
+                  className="bg-[#2D3F99] text-white text-sm px-4 py-1 rounded-md"
+                >
                   View Now
                 </button>
               </div>
@@ -75,7 +86,8 @@ const MobileLeaveRequest = () => {
               {/* Date + Leave ID */}
               <div className="flex items-center justify-between text-xs text-gray-600 mt-3">
                 <p>
-                  <span className="font-semibold">Date:</span> September 14, 2025
+                  <span className="font-semibold">Date:</span> September 14,
+                  2025
                 </p>
                 <p>
                   <span className="font-semibold">Leave ID:</span> 2022041

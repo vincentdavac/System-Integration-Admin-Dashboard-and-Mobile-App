@@ -1,6 +1,9 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const MobileMeetingView = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="w-full min-h-screen bg-white flex flex-col">
       {/* Green Background Section */}
@@ -14,7 +17,10 @@ const MobileMeetingView = () => {
 
         {/* Header */}
         <div className="absolute top-4 left-4 flex items-center text-white">
-          <button className="mr-2">
+          <button
+            onClick={() => navigate('/mobile/meeting-history')}
+            className="mr-2"
+          >
             <ArrowLeft size={24} />
           </button>
           <h1 className="text-lg font-semibold">Relations Meeting</h1>
@@ -97,7 +103,9 @@ const MobileMeetingView = () => {
 
         {/* Meeting Date */}
         <div className="mb-4">
-          <label className="block text-sm text-gray-700 mb-1">Meeting Date</label>
+          <label className="block text-sm text-gray-700 mb-1">
+            Meeting Date
+          </label>
           <input
             type="text"
             value="September 15, 2025"
@@ -108,7 +116,9 @@ const MobileMeetingView = () => {
 
         {/* Meeting Time */}
         <div className="mb-4">
-          <label className="block text-sm text-gray-700 mb-1">Meeting Time</label>
+          <label className="block text-sm text-gray-700 mb-1">
+            Meeting Time
+          </label>
           <input
             type="text"
             value="10:00 AM"
@@ -130,7 +140,9 @@ const MobileMeetingView = () => {
 
         {/* Participants */}
         <div className="mb-4">
-          <label className="block text-sm text-gray-700 mb-1">Participants</label>
+          <label className="block text-sm text-gray-700 mb-1">
+            Participants
+          </label>
           <input
             type="text"
             value="Guidance Office"

@@ -392,10 +392,6 @@ function App({ alertsRef }: AppProps) {
           path="/mobile/attendance-history"
           element={<MobileAttendanceHistory />}
         />
-        <Route
-          path="/mobile/attendance-view"
-          element={<MobileAttendanceView />}
-        />
         {/* MEETING */}
         <Route
           path="/mobile/meeting-history"

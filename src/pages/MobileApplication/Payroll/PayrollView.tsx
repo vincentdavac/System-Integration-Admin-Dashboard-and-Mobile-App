@@ -1,6 +1,9 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const MobilePayrollView = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="w-full min-h-screen bg-white flex flex-col">
       {/* Green Background Section */}
@@ -14,7 +17,10 @@ const MobilePayrollView = () => {
 
         {/* Header */}
         <div className="absolute top-4 left-4 flex items-center text-white">
-          <button className="mr-2">
+          <button
+            onClick={() => navigate('/mobile/payroll-history')}
+            className="mr-2"
+          >
             <ArrowLeft size={24} />
           </button>
           <h1 className="text-lg font-semibold">View Payroll</h1>
@@ -26,7 +32,8 @@ const MobilePayrollView = () => {
             <span className="font-semibold">Date:</span> September 27, 2025
           </p>
           <p>
-            <span className="font-semibold">Full Name:</span> Vincent Ahron M. Davac
+            <span className="font-semibold">Full Name:</span> Vincent Ahron M.
+            Davac
           </p>
           <p>
             <span className="font-semibold">Employee No.:</span> 20220041
@@ -42,7 +49,9 @@ const MobilePayrollView = () => {
 
         {/* Cutoff Start */}
         <div className="mb-4">
-          <label className="block text-sm text-gray-700 mb-1">Cutoff Start</label>
+          <label className="block text-sm text-gray-700 mb-1">
+            Cutoff Start
+          </label>
           <input
             type="text"
             value="September 27, 2025"
@@ -64,7 +73,9 @@ const MobilePayrollView = () => {
 
         {/* Gross Salary */}
         <div className="mb-4">
-          <label className="block text-sm text-gray-700 mb-1">Gross Salary</label>
+          <label className="block text-sm text-gray-700 mb-1">
+            Gross Salary
+          </label>
           <input
             type="text"
             value="₱ 25,000.00"
@@ -75,7 +86,9 @@ const MobilePayrollView = () => {
 
         {/* Total Deduction */}
         <div className="mb-4">
-          <label className="block text-sm text-gray-700 mb-1">Total Deduction</label>
+          <label className="block text-sm text-gray-700 mb-1">
+            Total Deduction
+          </label>
           <input
             type="text"
             value="₱ 5,000.00"

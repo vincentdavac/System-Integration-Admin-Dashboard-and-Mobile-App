@@ -1,6 +1,9 @@
-import { ArrowLeft, Search } from "lucide-react";
+import { ArrowLeft, Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const MobilePayrollHistory = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="w-full min-h-screen bg-white flex flex-col">
       {/* Green Header Section */}
@@ -14,7 +17,7 @@ const MobilePayrollHistory = () => {
 
         {/* Header (Back Button + Title) */}
         <div className="absolute top-4 left-4 flex items-center text-white">
-          <button className="mr-2">
+          <button onClick={() => navigate('/mobile/home')} className="mr-2">
             <ArrowLeft size={24} />
           </button>
           <h1 className="text-lg font-semibold">Payroll</h1>
@@ -48,22 +51,27 @@ const MobilePayrollHistory = () => {
             >
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-xl font-bold text-gray-900">Net: 20,000.00</p>
-                  <p className="text-sm text-gray-600">
-                    Employee No. 20220041
+                  <p className="text-xl font-bold text-gray-900">
+                    Net: 20,000.00
                   </p>
+                  <p className="text-sm text-gray-600">Employee No. 20220041</p>
                 </div>
-                <button className="bg-[#2D3F99] text-white text-sm px-4 py-1 rounded-md">
+                <button
+                  onClick={() => navigate('/mobile/payroll-view')}
+                  className="bg-[#2D3F99] text-white text-sm px-4 py-1 rounded-md"
+                >
                   View Now
                 </button>
               </div>
 
               <div className="flex items-center justify-between text-xs text-gray-600 mt-3">
                 <p>
-                  <span className="font-semibold">Date:</span> September 14, 2025
+                  <span className="font-semibold">Date:</span> September 14,
+                  2025
                 </p>
                 <p>
-                  <span className="font-semibold">Cutoff End:</span> September 30, 2025
+                  <span className="font-semibold">Cutoff End:</span> September
+                  30, 2025
                 </p>
               </div>
             </div>

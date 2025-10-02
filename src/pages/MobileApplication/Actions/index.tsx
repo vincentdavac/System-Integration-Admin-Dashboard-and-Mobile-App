@@ -1,6 +1,9 @@
-import { ArrowLeft, Search } from "lucide-react";
+import { ArrowLeft, Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const MobileActionsHistory = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="w-full min-h-screen bg-white flex flex-col">
       {/* Green Background Section */}
@@ -14,7 +17,7 @@ const MobileActionsHistory = () => {
 
         {/* Header (Back Button + Title) */}
         <div className="absolute top-4 left-4 flex items-center text-white">
-          <button className="mr-2">
+          <button onClick={() => navigate('/mobile/home')} className="mr-2">
             <ArrowLeft size={24} />
           </button>
           <h1 className="text-lg font-semibold">Actions</h1>
@@ -43,10 +46,10 @@ const MobileActionsHistory = () => {
         {/* Leave Request Cards */}
         <div className="space-y-4">
           {[
-            { type: "Complaint", status: "open" },
-            { type: "Grievance", status: "open" },
-            { type: "Disciplinary", status: "open" },
-            { type: "Dispute", status: "open" },
+            { type: 'Complaint', status: 'open' },
+            { type: 'Grievance', status: 'open' },
+            { type: 'Disciplinary', status: 'open' },
+            { type: 'Dispute', status: 'open' },
           ].map((leave, index) => (
             <div
               key={index}
@@ -58,9 +61,14 @@ const MobileActionsHistory = () => {
                   <p className="text-lg font-semibold text-gray-800">
                     {leave.type}
                   </p>
-                  <p className="text-sm text-gray-600">Status: {leave.status}</p>
+                  <p className="text-sm text-gray-600">
+                    Status: {leave.status}
+                  </p>
                 </div>
-                <button className="bg-[#2D3F99] text-white text-sm px-4 py-1 rounded-md">
+                <button
+                  onClick={() => navigate('/mobile/actions-view')}
+                  className="bg-[#2D3F99] text-white text-sm px-4 py-1 rounded-md"
+                >
                   View Now
                 </button>
               </div>
@@ -68,7 +76,8 @@ const MobileActionsHistory = () => {
               {/* Date + Leave ID */}
               <div className="flex items-center justify-between text-xs text-gray-600 mt-3">
                 <p>
-                  <span className="font-semibold">Date:</span> September 14, 2025
+                  <span className="font-semibold">Date:</span> September 14,
+                  2025
                 </p>
                 <p>
                   <span className="font-semibold">Leave ID:</span> 2022041

@@ -1,6 +1,9 @@
-import { ArrowLeft, Search } from "lucide-react";
+import { ArrowLeft, Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const MobileLoan = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="w-full min-h-screen bg-white flex flex-col">
       {/* Green Background Section */}
@@ -14,9 +17,9 @@ const MobileLoan = () => {
 
         {/* Header (Back Button + Title) */}
         <div className="absolute top-4 left-4 flex items-center text-white">
-          <button className="mr-2">
+          {/* <button className="mr-2">
             <ArrowLeft size={24} />
-          </button>
+          </button> */}
           <h1 className="text-lg font-semibold">Loan</h1>
         </div>
 
@@ -49,10 +52,11 @@ const MobileLoan = () => {
             >
               {/* Amount + Button */}
               <div className="flex items-center justify-between mb-1">
-                <p className="text-2xl font-bold text-black-700">
-                  ₱ 20,000.00
-                </p>
-                <button className="bg-[#2D3F99] text-white text-sm px-4 py-1 rounded-md">
+                <p className="text-2xl font-bold text-black-700">₱ 20,000.00</p>
+                <button
+                  onClick={() => navigate('/mobile/loan-view')}
+                  className="bg-[#2D3F99] text-white text-sm px-4 py-1 rounded-md"
+                >
                   View Now
                 </button>
               </div>
@@ -61,7 +65,8 @@ const MobileLoan = () => {
               {/* Date + Loan ID */}
               <div className="flex items-center justify-between text-xs text-gray-600 mt-3">
                 <p>
-                  <span className="font-semibold">Date:</span> September 14, 2025
+                  <span className="font-semibold">Date:</span> September 14,
+                  2025
                 </p>
                 <p>
                   <span className="font-semibold">Loan ID:</span> 2022041

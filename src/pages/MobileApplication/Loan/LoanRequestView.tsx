@@ -1,6 +1,9 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const MobileLoanRequest = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="w-full min-h-screen bg-white flex flex-col">
       {/* Green Background Section */}
@@ -14,7 +17,7 @@ const MobileLoanRequest = () => {
 
         {/* Header */}
         <div className="absolute top-4 left-4 flex items-center text-white">
-          <button className="mr-2">
+          <button onClick={() => navigate('/mobile/loan')} className="mr-2">
             <ArrowLeft size={24} />
           </button>
           <h1 className="text-lg font-semibold">Loan Request</h1>
@@ -47,7 +50,9 @@ const MobileLoanRequest = () => {
         {/* Loan Type & Loan Amount */}
         <div className="flex items-center space-x-3 mb-4">
           <div className="w-1/2">
-            <label className="block text-sm text-gray-700 mb-1">Loan Type</label>
+            <label className="block text-sm text-gray-700 mb-1">
+              Loan Type
+            </label>
             <input
               type="text"
               value="Salary Loan"
@@ -56,7 +61,9 @@ const MobileLoanRequest = () => {
             />
           </div>
           <div className="w-1/2">
-            <label className="block text-sm text-gray-700 mb-1">Loan Amount</label>
+            <label className="block text-sm text-gray-700 mb-1">
+              Loan Amount
+            </label>
             <input
               type="text"
               value="₱ 25,000.00"
@@ -80,7 +87,9 @@ const MobileLoanRequest = () => {
             />
           </div>
           <div className="w-1/2">
-            <label className="block text-sm text-gray-700 mb-1">Interest Rate</label>
+            <label className="block text-sm text-gray-700 mb-1">
+              Interest Rate
+            </label>
             <input
               type="text"
               value="7%"
@@ -93,7 +102,9 @@ const MobileLoanRequest = () => {
         {/* Loan Term & Application Date */}
         <div className="flex items-center space-x-3 mb-6">
           <div className="w-1/2">
-            <label className="block text-sm text-gray-700 mb-1">Loan Term</label>
+            <label className="block text-sm text-gray-700 mb-1">
+              Loan Term
+            </label>
             <input
               type="text"
               value="12 Months"
@@ -121,7 +132,9 @@ const MobileLoanRequest = () => {
 
         {/* Validated By */}
         <div className="mb-4">
-          <label className="block text-sm text-gray-700 mb-1">Validated by</label>
+          <label className="block text-sm text-gray-700 mb-1">
+            Validated by
+          </label>
           <input
             type="text"
             value="Vincent Ahron M. Davac"
@@ -143,7 +156,9 @@ const MobileLoanRequest = () => {
 
         {/* Date Approved */}
         <div className="mb-6">
-          <label className="block text-sm text-gray-700 mb-1">Date Approved</label>
+          <label className="block text-sm text-gray-700 mb-1">
+            Date Approved
+          </label>
           <input
             type="text"
             value="September 14, 2025"
@@ -151,11 +166,6 @@ const MobileLoanRequest = () => {
             className="w-full border border-gray-300 rounded-md p-2 text-sm bg-gray-100"
           />
         </div>
-
-        {/* Close Button */}
-        <button className="w-full bg-[#2D3F99] text-white py-2 rounded-md font-medium text-sm">
-          Close
-        </button>
       </div>
 
       {/* Slightly smaller extra bottom space */}

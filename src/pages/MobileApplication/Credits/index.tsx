@@ -1,6 +1,9 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const MobileCredits = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="w-full min-h-screen bg-white flex flex-col">
       {/* Green Background Section */}
@@ -14,7 +17,7 @@ const MobileCredits = () => {
 
         {/* Header (Back Button + Title) */}
         <div className="absolute top-4 left-4 flex items-center text-white">
-          <button className="mr-2">
+          <button onClick={() => navigate('/mobile/home')} className="mr-2">
             <ArrowLeft size={24} />
           </button>
           <h1 className="text-lg font-semibold">Leave Credits</h1>
@@ -32,9 +35,13 @@ const MobileCredits = () => {
           </div>
 
           {/* Right Side Placeholder for image */}
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+          <div className="w-20 h-20   flex items-center justify-center">
             {/* You can place an image here later */}
-            {/* <img src="/your_image.png" alt="Icon" className="w-full h-full object-cover" /> */}
+            <img
+              src="/mobile-icons/credits.png"
+              alt="Icon"
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
       </div>
