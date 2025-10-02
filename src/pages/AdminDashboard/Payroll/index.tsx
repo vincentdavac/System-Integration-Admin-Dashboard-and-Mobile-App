@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
-import { Eye, ClipboardPen, Search } from 'lucide-react';
+import { Eye, Search } from 'lucide-react';
 import ViewPayroll from './ViewPayroll';
 
 const Payroll = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [showUpdate, setShowUpdate] = useState(false);
-  const [showView, setShowView] = useState(false); // <-- View Modal
+  const [showView, setShowView] = useState(false);
 
   type Loan = {
     id: number;
@@ -23,14 +22,9 @@ const Payroll = () => {
     approverId: string;
     approvalDate: string;
   };
+
   const [selectedRow, setSelectedRow] = useState<Loan | null>(null);
-  const [statusUpdate, setStatusUpdate] = useState('');
-  const [remarks, setRemarks] = useState('');
-
-  const itemsPerPage = 10;
-
-  // Sample loan data
-  const [loans, setLoans] = useState(
+  const [loans] = useState(
     Array.from({ length: 50 }, (_, i) => ({
       id: i + 1,
       accountNo: `202200${i + 41}`,
@@ -47,6 +41,8 @@ const Payroll = () => {
     })),
   );
 
+  const itemsPerPage = 10;
+
   // Filter table
   const filteredLoans = loans.filter(
     (l) =>
@@ -62,45 +58,19 @@ const Payroll = () => {
     startIndex + itemsPerPage,
   );
 
-  // Status color
-  const getStatusClasses = (status: string) => {
-    switch (status) {
-      case 'Approved':
-        return 'bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium';
-      case 'Rejected':
-        return 'bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium';
-      case 'Cancelled':
-        return 'bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs font-medium';
-      case 'Pending':
-      default:
-        return 'bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium';
-    }
-  };
-
   // Highlight search
   const highlightMatch = (text: string) => {
     if (!searchTerm) return text;
     const regex = new RegExp(`(${searchTerm})`, 'gi');
     return text.split(regex).map((part, i) =>
       regex.test(part) ? (
-        <span key={i} className="bg-yellow-200">
+        <span key={i} className="bg-yellow-200 dark:bg-yellow-600">
           {part}
         </span>
       ) : (
         part
       ),
     );
-  };
-
-  // Save status update
-  const handleSaveChanges = () => {
-    if (!selectedRow) return;
-    setLoans((prevLoans) =>
-      prevLoans.map((l) =>
-        l.id === selectedRow.id ? { ...l, status: statusUpdate } : l,
-      ),
-    );
-    setShowUpdate(false);
   };
 
   return (
@@ -117,16 +87,20 @@ const Payroll = () => {
             setSearchTerm(e.target.value);
             setCurrentPage(1);
           }}
-          className="w-full md:w-1/3 border rounded px-4 py-2 shadow-sm focus:ring focus:ring-blue-200"
+          className="w-full md:w-1/3 border rounded px-4 py-2 shadow-sm 
+                     focus:ring focus:ring-blue-200 
+                     bg-white text-gray-800 
+                     dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200 
+                     dark:placeholder-gray-400 dark:focus:ring-blue-500"
         />
-        <Search />
+        <Search className="text-gray-600 dark:text-gray-300" />
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto border rounded-lg shadow bg-white">
+      <div className="overflow-x-auto border rounded-lg shadow bg-white dark:bg-gray-900 dark:border-gray-700">
         <div className="h-[500px] overflow-y-auto">
-          <table className="w-full min-w-[900px] text-left text-sm text-gray-700">
-            <thead className="bg-gray-100 text-xs uppercase text-gray-600 sticky top-0 z-0">
+          <table className="w-full min-w-[900px] text-left text-sm text-gray-700 dark:text-gray-200">
+            <thead className="bg-gray-100 dark:bg-gray-800 text-xs uppercase text-gray-600 dark:text-gray-300 sticky top-0 z-0">
               <tr>
                 <th className="px-6 py-3 text-center">No.</th>
                 <th className="px-6 py-3 text-center">Employee No.</th>
@@ -142,7 +116,7 @@ const Payroll = () => {
                 paginatedLoans.map((row, index) => (
                   <tr
                     key={row.id}
-                    className="border-b hover:bg-gray-50 text-center"
+                    className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-center"
                   >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
                     <td className="px-6 py-3">
@@ -154,10 +128,9 @@ const Payroll = () => {
                     <td className="px-6 py-3">{row.applicationDate}</td>
                     <td className="px-6 py-3">{row.applicationDate}</td>
                     <td className="px-6 py-3">{row.applicationDate}</td>
-
-                    <td className="px-6 py-3 space-x-2">
+                    <td className="px-6 py-3">
                       <button
-                        className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded  text-white"
+                        className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-white"
                         onClick={() => {
                           setSelectedRow(row);
                           setShowView(true);
@@ -172,7 +145,7 @@ const Payroll = () => {
                 <tr>
                   <td
                     colSpan={7}
-                    className="px-6 py-3 text-center text-gray-500 italic"
+                    className="px-6 py-3 text-center text-gray-500 dark:text-gray-400 italic"
                   >
                     No matching records found.
                   </td>
@@ -191,7 +164,7 @@ const Payroll = () => {
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
-          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          className="px-4 py-2 bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded disabled:opacity-50"
         >
           Previous
         </button>
@@ -204,7 +177,7 @@ const Payroll = () => {
               className={
                 page === currentPage
                   ? 'bg-blue-500 text-white px-3 py-1 rounded'
-                  : 'px-3 py-1 border rounded'
+                  : 'px-3 py-1 border dark:border-gray-600 dark:text-gray-100 rounded'
               }
             >
               {page}
@@ -217,7 +190,7 @@ const Payroll = () => {
             setCurrentPage((prev) => Math.min(prev + 1, totalPages))
           }
           disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          className="px-4 py-2 bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded disabled:opacity-50"
         >
           Next
         </button>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Breadcrumb from '../../../../components/Breadcrumbs/Breadcrumb';
-import { Archive, CalendarPlus2, ClipboardPen } from 'lucide-react';
+import { Archive, CalendarPlus2, ClipboardPen, Search } from 'lucide-react';
 import AddLeaveTypesModal from './AddLeaveType';
 import UpdateLeaveTypesModal from './UpdateLeaveType';
 import ArchiveLeaveTypeModal from './ArchiveLeaveType';
@@ -11,9 +11,7 @@ const Type = () => {
   const [showAdd, setShowAdd] = useState(false);
   const [showUpdate, setShowUpdate] = useState(false);
   const [showArchive, setShowArchive] = useState(false);
-  const [leaveTypeName, setLeaveTypeName] = useState('');
-  const [leaveDescription, setLeaveDescription] = useState('');
-  const [leavePaid, setLeavePaid] = useState(false);
+
   const itemsPerPage = 10;
 
   // Sample Type Data
@@ -41,17 +39,13 @@ const Type = () => {
     startIndex + itemsPerPage,
   );
 
-  const getStatusClasses = (payable: any) =>
-    payable
-      ? 'bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium'
-      : 'bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium';
-
+  // Highlight matching text
   const highlightMatch = (text: string) => {
     if (!searchTerm) return text;
     const regex = new RegExp(`(${searchTerm})`, 'gi');
     return text.split(regex).map((part, i) =>
       regex.test(part) ? (
-        <span key={i} className="bg-yellow-200">
+        <span key={i} className="bg-yellow-200 dark:bg-yellow-700">
           {part}
         </span>
       ) : (
@@ -66,35 +60,41 @@ const Type = () => {
 
       {/* Search bar and Add Leave button */}
       <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center mt-4 mb-4 space-y-2 md:space-y-0">
-        <input
-          type="text"
-          placeholder="Search by account no. or name..."
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setCurrentPage(1);
-          }}
-          className="w-full md:w-1/3 border rounded px-4 py-2 shadow-sm focus:ring focus:ring-blue-200"
-        />
+        <div className="flex items-center gap-2 w-full md:w-1/3">
+          <input
+            type="text"
+            placeholder="Search by account no. or name..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="w-full border rounded px-4 py-2 shadow-sm 
+              focus:ring focus:ring-blue-200 
+              bg-white text-gray-800 
+              dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200 
+              dark:placeholder-gray-400 dark:focus:ring-blue-500"
+          />
+          <Search className="text-gray-600 dark:text-gray-300" />
+        </div>
         <button
           onClick={() => setShowAdd(true)}
-          className="ml-2 bg-yellow-600 hover:bg-yellow-500 text-white px-4 py-2 p-2 rounded "
+          className="ml-2 bg-yellow-600 hover:bg-yellow-500 text-white px-4 py-2 rounded"
         >
           <CalendarPlus2 size={18} />
         </button>
       </div>
 
       {/* Scrollable Table */}
-      <div className="overflow-x-auto border rounded-lg shadow bg-white">
+      <div className="overflow-x-auto border rounded-lg shadow bg-white dark:bg-gray-900 dark:border-gray-700">
         <div className="h-[500px] overflow-y-auto">
-          <table className="w-full min-w-[900px] text-sm text-gray-700 text-center">
-            <thead className="bg-gray-100 text-xs uppercase text-gray-600 sticky top-0">
+          <table className="w-full min-w-[900px] text-sm text-gray-700 dark:text-gray-100 text-center">
+            <thead className="bg-gray-100 dark:bg-gray-800 text-xs uppercase text-gray-600 dark:text-gray-300 sticky top-0 z-0">
               <tr>
                 <th className="px-6 py-3">No.</th>
                 <th className="px-6 py-3">Name</th>
                 <th className="px-6 py-3">Description</th>
                 <th className="px-6 py-3">Created At</th>
-
                 <th className="px-6 py-3">Actions</th>
               </tr>
             </thead>
@@ -103,16 +103,14 @@ const Type = () => {
                 paginatedTypes.map((t, index) => (
                   <tr
                     key={t.id}
-                    className="border-b hover:bg-gray-50 text-center"
+                    className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
                   >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
                     <td className="px-6 py-3">{highlightMatch(t.name)}</td>
                     <td className="px-6 py-3">
                       {highlightMatch(t.description)}
                     </td>
-
                     <td className="px-6 py-3">{t.createdAt}</td>
-
                     <td className="px-6 py-3 space-x-2">
                       <button
                         onClick={() => setShowUpdate(true)}
@@ -132,8 +130,8 @@ const Type = () => {
               ) : (
                 <tr>
                   <td
-                    colSpan={7}
-                    className="px-6 py-3 text-center text-gray-500 italic"
+                    colSpan={5}
+                    className="px-6 py-3 text-center text-gray-500 dark:text-gray-400 italic"
                   >
                     No matching records found.
                   </td>
@@ -149,7 +147,7 @@ const Type = () => {
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
-          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          className="px-4 py-2 bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded disabled:opacity-50"
         >
           Previous
         </button>
@@ -162,7 +160,7 @@ const Type = () => {
               className={
                 page === currentPage
                   ? 'bg-blue-500 text-white px-3 py-1 rounded'
-                  : 'px-3 py-1 border rounded'
+                  : 'px-3 py-1 border border-gray-300 dark:border-gray-700 rounded dark:text-gray-200'
               }
             >
               {page}
@@ -175,12 +173,13 @@ const Type = () => {
             setCurrentPage((prev) => Math.min(prev + 1, totalPages))
           }
           disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          className="px-4 py-2 bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded disabled:opacity-50"
         >
           Next
         </button>
       </div>
 
+      {/* Modals */}
       {showAdd && <AddLeaveTypesModal onClose={() => setShowAdd(false)} />}
 
       {showUpdate && (

@@ -16,16 +16,20 @@ const Relations = () => {
           type="text"
           placeholder=" Search Case ID"
           onChange={(e) => {}}
-          className="w-full md:w-1/4 mb-2 border rounded px-4 py-2 shadow-sm focus:ring focus:ring-blue-200"
+          className="w-full md:w-1/4 mb-2 border rounded px-4 py-2 shadow-sm 
+            focus:ring focus:ring-blue-200 
+            bg-white text-gray-800 
+            dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200 
+            dark:placeholder-gray-400 dark:focus:ring-blue-500"
         />
-        <Search />
+        <Search className="text-gray-600 dark:text-gray-300" />
       </div>
 
       {/* Scrollable Table with Static Values */}
-      <div className="overflow-x-auto border rounded-lg shadow bg-white ">
+      <div className="overflow-x-auto border rounded-lg shadow bg-white dark:bg-gray-900 dark:border-gray-700">
         <div className="h-[500px] overflow-y-auto">
-          <table className="w-full min-w-[900px] text-center text-sm text-gray-700">
-            <thead className="bg-gray-100 text-xs uppercase text-gray-600 sticky top-0">
+          <table className="w-full min-w-[900px] text-center text-sm text-gray-700 dark:text-gray-100">
+            <thead className="bg-gray-100 dark:bg-gray-800 text-xs uppercase text-gray-600 dark:text-gray-300 sticky top-0">
               <tr>
                 <th className="px-6 py-3">No.</th>
                 <th className="px-6 py-3">Relation No.</th>
@@ -38,7 +42,7 @@ const Relations = () => {
               </tr>
             </thead>
             <tbody>
-              <tr className="border-b hover:bg-gray-50 text-center">
+              <tr className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-center">
                 <td className="px-6 py-3">1</td>
                 <td className="px-6 py-3">2025-0001</td>
                 <td className="px-6 py-3">Sept. 24, 2025</td>
@@ -59,7 +63,6 @@ const Relations = () => {
                   </button>
                 </td>
               </tr>
-              {/* Add more static rows here if needed */}
             </tbody>
           </table>
         </div>
@@ -68,7 +71,7 @@ const Relations = () => {
       {/* Static Pagination */}
       <div className="flex justify-between items-center mt-4">
         <button
-          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          className="px-4 py-2 bg-gray-300 dark:bg-gray-800 dark:text-gray-100 rounded disabled:opacity-50"
           disabled
         >
           Previous
@@ -78,10 +81,14 @@ const Relations = () => {
           <button className="bg-blue-500 text-white px-3 py-1 rounded">
             1
           </button>
-          <button className="px-3 py-1 border rounded">2</button>
+          <button className="px-3 py-1 border dark:border-gray-700 rounded">
+            2
+          </button>
         </div>
 
-        <button className="px-4 py-2 bg-gray-300 rounded">Next</button>
+        <button className="px-4 py-2 bg-gray-300 dark:bg-gray-700 dark:text-gray-200 rounded">
+          Next
+        </button>
       </div>
 
       {/* Modal */}

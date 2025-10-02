@@ -13,7 +13,7 @@ interface MeetingData {
   location: string;
   caseId: string;
   dateReported: string;
-  status: 'Pending' | 'Approved' | 'Rejected'; // restrict to known statuses
+  status: 'Pending' | 'Approved' | 'Rejected';
   participants: string;
   notes: string;
 }
@@ -26,7 +26,6 @@ const Meeting = () => {
   const [showUpdate, setShowUpdate] = useState<boolean>(false);
   const [selectedRow, setSelectedRow] = useState<MeetingData | null>(null);
 
-  // ✅ Static JSON data
   const [meetingsData] = useState<MeetingData[]>([
     {
       id: 1,
@@ -110,9 +109,13 @@ const Meeting = () => {
               setSearchTerm(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full md:w-full border rounded px-4 py-2 shadow-sm focus:ring focus:ring-blue-200"
+            className="w-full md:w-full border rounded px-4 py-2 shadow-sm 
+              focus:ring focus:ring-blue-200 
+              bg-white text-gray-800 
+              dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200 
+              dark:placeholder-gray-400 dark:focus:ring-blue-500"
           />
-          <Search />
+          <Search className="text-gray-600 dark:text-gray-300" />
         </div>
 
         <button
@@ -124,10 +127,10 @@ const Meeting = () => {
       </div>
 
       {/* Scrollable Table */}
-      <div className="overflow-x-auto border rounded-lg shadow bg-white">
+      <div className="overflow-x-auto border rounded-lg shadow bg-white dark:bg-gray-900 dark:border-gray-700">
         <div className="h-[500px] overflow-y-auto">
-          <table className="w-full min-w-[900px] text-center text-sm text-gray-700">
-            <thead className="bg-gray-100 text-xs uppercase text-gray-600 sticky top-0">
+          <table className="w-full min-w-[900px] text-center text-sm text-gray-700 dark:text-gray-100">
+            <thead className="bg-gray-100 dark:bg-gray-800 text-xs uppercase text-gray-600 dark:text-gray-300 sticky top-0">
               <tr>
                 <th className="px-6 py-3">No.</th>
                 <th className="px-6 py-3">Meeting Id.</th>
@@ -143,7 +146,7 @@ const Meeting = () => {
                 paginatedMeetings.map((m, index) => (
                   <tr
                     key={m.id}
-                    className="border-b hover:bg-gray-50 text-center"
+                    className="border-b hover:bg-gray-50 dark:hover:bg-gray-700 text-center dark:border-gray-700"
                   >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
                     <td className="px-6 py-3">{highlightMatch(m.accountNo)}</td>
@@ -181,7 +184,7 @@ const Meeting = () => {
                 <tr>
                   <td
                     colSpan={9}
-                    className="px-6 py-3 text-center text-gray-500 italic"
+                    className="px-6 py-3 text-center text-gray-500 italic dark:text-gray-400"
                   >
                     No matching records found.
                   </td>
@@ -197,7 +200,7 @@ const Meeting = () => {
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
-          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50 dark:bg-gray-700 dark:text-gray-200"
         >
           Previous
         </button>
@@ -210,7 +213,7 @@ const Meeting = () => {
               className={
                 page === currentPage
                   ? 'bg-[#2D3F99] text-white px-3 py-1 rounded'
-                  : 'px-3 py-1 border rounded'
+                  : 'px-3 py-1 border rounded dark:border-gray-700 dark:text-gray-200'
               }
             >
               {page}
@@ -223,7 +226,7 @@ const Meeting = () => {
             setCurrentPage((prev) => Math.min(prev + 1, totalPages))
           }
           disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50 dark:bg-gray-700 dark:text-gray-200"
         >
           Next
         </button>

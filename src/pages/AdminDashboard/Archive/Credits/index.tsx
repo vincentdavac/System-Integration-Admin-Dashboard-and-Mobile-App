@@ -48,7 +48,7 @@ const ArchiveCredits = () => {
     const regex = new RegExp(`(${searchTerm})`, 'gi');
     return text.split(regex).map((part, i) =>
       regex.test(part) ? (
-        <span key={i} className="bg-yellow-200">
+        <span key={i} className="bg-yellow-200 dark:bg-yellow-600">
           {part}
         </span>
       ) : (
@@ -71,15 +71,15 @@ const ArchiveCredits = () => {
             setSearchTerm(e.target.value);
             setCurrentPage(1);
           }}
-          className="w-full md:w-1/3 border rounded px-4 py-2 shadow-sm focus:ring focus:ring-blue-200"
+          className="w-full md:w-1/3 border border-gray-300 dark:border-gray-600 rounded px-4 py-2 shadow-sm focus:ring focus:ring-blue-200 dark:bg-gray-900 dark:text-gray-100"
         />
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto border rounded-lg shadow bg-white">
+      <div className="overflow-x-auto border rounded-lg shadow bg-white dark:bg-gray-900 dark:border-gray-700">
         <div className="h-[500px] overflow-y-auto">
-          <table className="w-full min-w-[950px] text-left text-sm text-gray-700">
-            <thead className="bg-gray-100 text-xs uppercase text-gray-600 sticky top-0">
+          <table className="w-full min-w-[950px] text-left text-sm text-gray-700 dark:text-gray-100">
+            <thead className="bg-gray-100 dark:bg-gray-800 text-xs uppercase text-gray-600 dark:text-gray-300 sticky top-0">
               <tr>
                 <th className="px-6 py-3 text-center">No.</th>
                 <th className="px-6 py-3 text-center">Employee No.</th>
@@ -94,7 +94,7 @@ const ArchiveCredits = () => {
                 paginatedCredits.map((row, index) => (
                   <tr
                     key={row.id}
-                    className="border-b hover:bg-gray-50 text-center"
+                    className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-center"
                   >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
                     <td className="px-6 py-3">
@@ -120,7 +120,7 @@ const ArchiveCredits = () => {
                 <tr>
                   <td
                     colSpan={9}
-                    className="px-6 py-3 text-center text-gray-500 italic"
+                    className="px-6 py-3 text-center text-gray-500 dark:text-gray-400 italic"
                   >
                     No matching records found.
                   </td>
@@ -136,10 +136,11 @@ const ArchiveCredits = () => {
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
-          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          className="px-4 py-2 bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded disabled:opacity-50"
         >
           Previous
         </button>
+
         <div className="flex space-x-2">
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <button
@@ -148,19 +149,20 @@ const ArchiveCredits = () => {
               className={
                 page === currentPage
                   ? 'bg-blue-500 text-white px-3 py-1 rounded'
-                  : 'px-3 py-1 border rounded'
+                  : 'px-3 py-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-100 rounded'
               }
             >
               {page}
             </button>
           ))}
         </div>
+
         <button
           onClick={() =>
             setCurrentPage((prev) => Math.min(prev + 1, totalPages))
           }
           disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          className="px-4 py-2 bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded disabled:opacity-50"
         >
           Next
         </button>
