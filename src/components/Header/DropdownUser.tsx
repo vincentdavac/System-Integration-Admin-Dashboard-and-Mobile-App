@@ -12,7 +12,8 @@ interface DropdownUserProps {
 
 const DropdownUser = ({ alertsRef }: DropdownUserProps) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { user, token, setUser, setToken, setUserId, setStudentNo } = useContext(AppContext)!;
+  const { user, token, setUser, setToken, setUserId, setStudentNo } =
+    useContext(AppContext)!;
 
   const navigate = useNavigate();
 
@@ -31,11 +32,7 @@ const DropdownUser = ({ alertsRef }: DropdownUserProps) => {
     if (res.ok) {
       setUser(null);
       setToken(null);
-      setUserId(null);
-      setStudentNo(null);
       localStorage.removeItem('token');
-      localStorage.removeItem('userId');
-      localStorage.removeItem('studentNo');
       alertsRef.current?.addAlert(
         'success',
         data.message || 'Logout successfully',
@@ -53,7 +50,7 @@ const DropdownUser = ({ alertsRef }: DropdownUserProps) => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            {user?.first_name} {user?.last_name}
+            {user?.firstName} {user?.lastName}
           </span>
           <span className="block text-xs">Administrator</span>
         </span>

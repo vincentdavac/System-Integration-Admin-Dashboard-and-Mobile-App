@@ -7,7 +7,7 @@ interface AlertProps {
 }
 
 const Alert: React.FC<AlertProps> = ({ type, message, onClose }) => {
-  // Auto close after 3 seconds
+  // Auto close after 2 seconds
   useEffect(() => {
     const timer = setTimeout(onClose, 2000);
     return () => clearTimeout(timer);
@@ -27,21 +27,23 @@ const Alert: React.FC<AlertProps> = ({ type, message, onClose }) => {
 
   return (
     <div
-      className={`relative mb-4 w-80 rounded-md border-l-6 p-4 shadow-md bg-opacity-90 ${styles[type]}`}
+      className={`relative mb-3 w-64 sm:w-80 rounded-md border-l-4 p-3 sm:p-4 shadow-md bg-opacity-90 text-sm sm:text-base ${styles[type]}`}
     >
       {/* Close button in upper right */}
       <button
         onClick={onClose}
-        className="absolute top-2 right-2 text-xl font-bold text-gray-700 hover:text-black"
+        className="absolute top-2 right-2 text-lg sm:text-xl font-bold text-gray-700 hover:text-black"
       >
         ×
       </button>
 
       {/* Title */}
-      <h5 className="mb-2 text-lg font-semibold">{titles[type]}</h5>
+      <h5 className="mb-1 sm:mb-2 text-base sm:text-lg font-semibold">
+        {titles[type]}
+      </h5>
 
       {/* Message */}
-      <p className="leading-relaxed">{message}</p>
+      <p className="leading-snug sm:leading-relaxed">{message}</p>
     </div>
   );
 };

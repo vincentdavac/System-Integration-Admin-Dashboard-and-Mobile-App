@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import LogoDark from '../../images/logo/logo-dark.svg';
 import Logo from '../../images/logo/logo.svg';
@@ -10,7 +10,7 @@ interface LoginProps {
 }
 
 const SignIn = ({ alertsRef }: LoginProps) => {
-  const { setToken, setStudentNo, setUserId } = useContext(AppContext)!;
+  const { setToken } = useContext(AppContext)!;
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -28,37 +28,32 @@ const SignIn = ({ alertsRef }: LoginProps) => {
 
     const data = await res.json();
 
-    if (!res.ok) {
-      // backend returned 401 or other error
-      alertsRef.current?.addAlert('error', data.message || 'Login failed');
-      return;
-    }
-
     if (data.errors) {
-      // Loop through errors and display each one
+      // Clear old alerts first
+      alertsRef.current?.clearAlerts();
+
+      // Show detailed field errors
       Object.values(data.errors).forEach((messages) => {
         (messages as string[]).forEach((msg) => {
           alertsRef.current?.addAlert('error', msg);
         });
       });
-      console.log(data.errors);
+    } else if (data.message) {
+      // No field errors → show main message
+      alertsRef.current?.clearAlerts();
+      alertsRef.current?.addAlert('error', data.message);
     } else {
       console.log(data);
 
       // get token from data.data.token
       const newToken = data.data.token;
-      const userId = data.data.user.id;
-      const studentNo = data.data.user.student_no;
 
       localStorage.setItem('token', newToken);
-      localStorage.setItem('userId', userId);
-      localStorage.setItem('studentNo', studentNo);
 
       setToken(newToken);
-      setStudentNo(studentNo);
-      setUserId(userId);
+
       navigate('/admin/dashboard');
-      console.log({ newToken, studentNo, userId });
+      console.log({ newToken });
 
       // navigate('/admin/dashboard');
       alertsRef.current?.addAlert('success', 'Login successful!');
@@ -231,6 +226,7 @@ const SignIn = ({ alertsRef }: LoginProps) => {
                           })
                         }
                         type="email"
+                        autoComplete="username" // ✅ Added
                         placeholder="Enter your email"
                         className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                       />
@@ -269,6 +265,7 @@ const SignIn = ({ alertsRef }: LoginProps) => {
                           })
                         }
                         type="password"
+                        autoComplete="current-password" // ✅ Added
                         placeholder="6+ Characters, 1 Capital letter"
                         className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                       />

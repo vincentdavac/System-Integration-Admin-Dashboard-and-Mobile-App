@@ -5,6 +5,7 @@ import ChartOne from '../../../components/Charts/ChartOne';
 import ChartTwo from '../../../components/Charts/ChartTwo';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '../../../context/AppContext'; // Adjust path as needed
+import TableLoader from '../../../common/Loader/TableLoader';
 
 interface DashboardProps {
   alertsRef: React.RefObject<AlertsContainerRef>;
@@ -88,7 +89,7 @@ const Dashboard = ({ alertsRef }: DashboardProps) => {
   }
 
   if (loading) {
-    return <div>Loading dashboard...</div>;
+    return <TableLoader />;
   }
 
   if (!dashboardData) {

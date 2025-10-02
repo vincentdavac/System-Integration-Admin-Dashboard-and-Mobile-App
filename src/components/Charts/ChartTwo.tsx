@@ -2,6 +2,7 @@ import { ApexOptions } from 'apexcharts';
 import React, { useState, useEffect, useContext } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { AppContext } from '../../context/AppContext'; // Adjust path as needed
+import TableLoader from '../../common/Loader/TableLoader';
 
 interface ChartTwoState {
   series: {
@@ -216,7 +217,9 @@ const ChartTwo: React.FC = () => {
       <div>
         {loading ? (
           <div className="flex items-center justify-center h-[350px]">
-            <p>Loading chart data...</p>
+            <div>
+              <TableLoader />
+            </div>
           </div>
         ) : (
           <div id="chartTwo" className="-ml-5 -mb-9">

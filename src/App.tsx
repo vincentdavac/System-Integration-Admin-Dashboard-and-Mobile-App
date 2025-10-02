@@ -90,8 +90,6 @@ function App({ alertsRef }: AppProps) {
   }
 
   return (
-
-    
     <Routes>
       {/* ADMIN DASHBOARD LAYOUT */}
 
@@ -352,8 +350,11 @@ function App({ alertsRef }: AppProps) {
       </Route>
 
       {/* MOBILE ROUTES */}
-      <Route path="/mobile/login" element={<MobileLogin />} />
-      <Route element={<MobileLayout />}>
+      <Route
+        path="/mobile/login"
+        element={<MobileLogin alertsRef={alertsRef} />}
+      />
+      <Route element={<MobileLayout alertsRef={alertsRef} />}>
         {/* LEAVE */}
         <Route path="/mobile/leave" element={<MobileLeaveRequest />} />
         <Route path="/mobile/leave-apply" element={<MobileLeaveApply />} />
@@ -374,7 +375,10 @@ function App({ alertsRef }: AppProps) {
           element={<MobileRelationsView />}
         />
         {/* PROFILE */}
-        <Route path="/mobile/profile" element={<MobileProfile />} />
+        <Route
+          path="/mobile/profile"
+          element={<MobileProfile alertsRef={alertsRef} />}
+        />
         {/* CREDITS */}
         <Route path="/mobile/credits" element={<MobileCredits />} />
         {/* PAYROlL */}

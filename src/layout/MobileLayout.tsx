@@ -1,7 +1,12 @@
 import { Outlet } from 'react-router-dom';
 import MobileButton from '../pages/MobileApplication/Button/MobileButton';
+import { AlertsContainerRef } from '../components/Alert/AlertsContainer';
 
-const MobileLayout = () => {
+interface MobileLayoutProps {
+  alertsRef: React.RefObject<AlertsContainerRef>;
+}
+
+const MobileLayout = ({ alertsRef }: MobileLayoutProps) => {
   return (
     <div className="dark:bg-boxdark-2 dark:text-bodydark">
       <div className="flex h-screen overflow-hidden">

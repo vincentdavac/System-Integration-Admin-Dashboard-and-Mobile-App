@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { ApexOptions } from 'apexcharts';
 import { AppContext } from '../../context/AppContext'; // Adjust path as needed
+import TableLoader from '../../common/Loader/TableLoader';
 
 interface ChartData {
   labels: string[];
@@ -251,8 +252,8 @@ const ChartOne: React.FC = () => {
 
       <div>
         {loading ? (
-          <div className="flex items-center justify-center h-[350px]">
-            <p>Loading chart data...</p>
+          <div>
+            <TableLoader />
           </div>
         ) : (
           <div id="chartOne" className="-ml-5">

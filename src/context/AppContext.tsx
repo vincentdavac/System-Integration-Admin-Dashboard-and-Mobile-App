@@ -9,11 +9,19 @@ import {
 
 interface UserType {
   id?: number;
-  first_name?: string;
-  last_name?: string;
+  employeeNo?: string;
+  section?: string;
+  firstName?: string;
+  lastName?: string;
+  fullName?: string;
   email?: string;
-  contact_number?: string;
   image?: string | null;
+  isHired?: string;
+  contactNumber?: string;
+  createdDate?: string;
+  createdTime?: string;
+  updatedDate?: string;
+  updatedTime?: string;
   // add any other fields your user object has
 }
 
@@ -57,7 +65,8 @@ export default function AppProvider({ children }: MyComponentProps) {
         setUser(null);
       } else {
         const data = await res.json();
-        setUser(data);
+        setUser(data.data);
+        console.log(data.data);
       }
     } catch (err) {
       setUser(null);
@@ -76,10 +85,20 @@ export default function AppProvider({ children }: MyComponentProps) {
 
   return (
     <AppContext.Provider
-      value={{ token, setToken, user, setUser, loading, setLoading, userId, setUserId,studentNo, setStudentNo }}
+      value={{
+        token,
+        setToken,
+        user,
+        setUser,
+        loading,
+        setLoading,
+        userId,
+        setUserId,
+        studentNo,
+        setStudentNo,
+      }}
     >
-      {loading ? <div>Loading...</div> : children}{' '}
-      {/* 👈 don’t render routes yet */}
+      {loading ? <></> : children}
     </AppContext.Provider>
   );
 }

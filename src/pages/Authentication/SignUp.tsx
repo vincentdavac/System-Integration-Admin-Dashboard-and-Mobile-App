@@ -15,7 +15,7 @@ const SignUp = ({ alertsRef }: RegisterProps) => {
   // Navigate Users when Logged in
   const navigate = useNavigate();
 
-  const { setToken, setStudentNo, setUserId } = useContext(AppContext)!;
+  const { setToken } = useContext(AppContext)!;
 
   // Form Data
   const [formData, setFormData] = useState({
@@ -39,30 +39,29 @@ const SignUp = ({ alertsRef }: RegisterProps) => {
     const data = await res.json();
 
     if (data.errors) {
-      // Loop through errors and display each one
+      // Clear old alerts first
+      alertsRef.current?.clearAlerts();
+
+      // Show detailed field errors
       Object.values(data.errors).forEach((messages) => {
         (messages as string[]).forEach((msg) => {
           alertsRef.current?.addAlert('error', msg);
         });
       });
-      console.log(data.errors);
+    } else if (data.message) {
+      // No field errors → show main message
+      alertsRef.current?.clearAlerts();
+      alertsRef.current?.addAlert('error', data.message);
     } else {
       console.log(data);
 
       // get token from data.data.token
       const newToken = data.data.token;
-      const userId = data.data.user.id;
-      const studentNo = data.data.user.student_no;
 
       localStorage.setItem('token', newToken);
-      localStorage.setItem('userId', userId);
-      localStorage.setItem('studentNo', studentNo);
 
       setToken(newToken);
-      setStudentNo(studentNo);
-      setUserId(userId);
-
-      console.log({ newToken, studentNo, userId });
+      console.log({ newToken });
 
       alertsRef.current?.addAlert('success', 'Registration successful!');
       navigate('/admin/dashboard');
