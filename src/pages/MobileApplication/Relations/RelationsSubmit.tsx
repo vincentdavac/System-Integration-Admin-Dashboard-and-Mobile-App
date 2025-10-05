@@ -23,7 +23,7 @@ const MobileRelationsSubmit = () => {
           >
             <ArrowLeft size={24} />
           </button>
-          <h1 className="text-lg font-semibold">Employee Relations</h1>
+          <h1 className="text-lg font-semibold">SUBMIT RELATION</h1>
         </div>
 
         {/* Floating Search Bar */}

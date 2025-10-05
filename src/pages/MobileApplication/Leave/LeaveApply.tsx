@@ -20,7 +20,7 @@ const MobileLeaveApply = () => {
           <button onClick={() => navigate('/mobile/leave')} className="mr-2">
             <ArrowLeft size={24} />
           </button>
-          <h1 className="text-lg font-semibold">Apply Leave</h1>
+          <h1 className="text-lg font-semibold">APPLY LEAVE</h1>
         </div>
       </div>
 

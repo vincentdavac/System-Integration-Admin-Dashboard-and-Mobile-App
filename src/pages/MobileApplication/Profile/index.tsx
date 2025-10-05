@@ -111,7 +111,7 @@ const MobileProfile = ({ alertsRef }: LogoutProps) => {
           {/* <button className="mr-2">
             <ArrowLeft size={24} />
           </button> */}
-          <h1 className="text-lg font-semibold">Profile Information</h1>
+          <h1 className="text-lg font-semibold">PROFILE INFORMATION</h1>
         </div>
 
         {/* Profile Picture */}

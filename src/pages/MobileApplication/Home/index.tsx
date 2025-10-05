@@ -6,6 +6,66 @@ const MobileHome = () => {
   const { user, token } = useContext(AppContext)!;
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const navigate = useNavigate();
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [leaveCredits, setLeaveCredits] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const fetchNotifications = async () => {
+      try {
+        const res = await fetch(`/api/notifications/user/${user.id}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await res.json();
+
+        if (res.ok && data?.data?.unread_summary) {
+          const totalUnread = Object.values(data.data.unread_summary).reduce(
+            (sum: number, val: any) => sum + (Number(val) || 0),
+            0,
+          );
+          setUnreadCount(totalUnread);
+        }
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    };
+
+    fetchNotifications();
+  }, [user?.id]);
+
+  // 💳 Fetch User Leave Credits
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const fetchLeaveCredits = async () => {
+      try {
+        const res = await fetch(`/api/credits/${user.id}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+        console.log('Credits:', data);
+
+        if (!res.ok) {
+          console.error('Failed to fetch leave credits:', data.message);
+          return;
+        }
+
+        setLeaveCredits(data?.data?.totalCredits || 0);
+      } catch (error) {
+        console.error('Error fetching leave credits:', error);
+      }
+    };
+
+    fetchLeaveCredits();
+  }, [user?.id]);
 
   // Update every second
   useEffect(() => {
@@ -43,18 +103,45 @@ const MobileHome = () => {
 
         {/* Home Title */}
         <div className="absolute top-6 left-1/2 transform -translate-x-1/2 text-white text-base sm:text-lg font-bold">
-          Home
+          HOME
         </div>
 
         {/* Header Info (below Home) */}
-        <div className="absolute top-14 left-2 text-white text-[10px] sm:text-xs leading-tight">
-          <p>Good Morning,</p>
-          <p className="font-bold">{user?.fullName}</p>
-          <p>Employee No: {user?.employeeNo} </p>
+        <div className="absolute mb-2 top-14 left-2 text-white text-[12px] sm:text-sm leading-snug">
+          <p>Good ay,</p>
+          <p className="font-bold text-[13px] sm:text-base">{user?.fullName}</p>
+          <p>Employee No: {user?.employeeNo}</p>
         </div>
 
-        {/* Profile (aligned with Home) */}
-        <div className="absolute top-6 right-2">
+        {/* Profile and Notification Icon (aligned with Home) */}
+        <div className="absolute top-6 right-2 flex items-center gap-3">
+          {/* Notification Icon */}
+          <button
+            onClick={() => navigate('/mobile/notifications')}
+            className="relative"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-6 h-6 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+              />
+            </svg>
+
+            {/* Notification Badge */}
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
+              {unreadCount}
+            </span>
+          </button>
+
+          {/* User Profile Image */}
           <img
             src={`https://fjp.ucc.bsit4c.com/${user?.image}`}
             alt="User Profile"
@@ -62,24 +149,29 @@ const MobileHome = () => {
           />
         </div>
 
-        {/* 🔹 Date and Time Card */}
+        {/* 🔹 Smaller Date and Time Card */}
         <div className="absolute inset-x-0 top-28 flex flex-col items-center">
-          <button className="absolute bottom-16 right-20 px-7 py-0 bg-[#122979] text-white rounded-md text-[9px] font-normal z-10 mb-5">
+          <button
+            disabled
+            className="absolute bottom-13 right-16 px-4 py-[2px] bg-[#122979] text-white rounded-md text-[8px] font-medium z-10 mb-3"
+          >
             Today
           </button>
-          <div className="backdrop-blur-md bg-green-700/40 h-24 text-white w-11/12 max-w-md rounded-2xl shadow-lg p-6 text-center border border-white/20">
-            <p className="text-2xl font-semibold">{formattedDate}</p>
-            <p className="text-xl mt-2">{formattedTime}</p>
+          <div className="backdrop-blur-md bg-green-700/40 h-20 text-white w-10/12 max-w-sm rounded-xl shadow-md p-4 text-center border border-white/20">
+            <p className="text-lg font-semibold">{formattedDate}</p>
+            <p className="text-base mt-1">{formattedTime}</p>
           </div>
         </div>
       </div>
 
       {/* 🔹 Vacation Leave Credits (floating above background) */}
-      <div className="absolute mt-5 mb-5 top-50 left-1/2 transform -translate-x-1/2 bg-white w-11/12 max-w-sm rounded-lg shadow p-2 z-10 h-30">
+      <div className="absolute  mb-5 top-50 left-1/2 transform -translate-x-1/2 bg-white w-11/12 max-w-sm rounded-lg shadow p-2 z-10 h-30">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-[12px] font-medium">Leave Credits</p>
-            <p className="text-[20px] font-bold">Points: 10.00</p>
+            <p className="text-[20px] font-bold">
+              Points: {leaveCredits !== null ? leaveCredits.toFixed(2) : '—'}
+            </p>
           </div>
           <img
             src="/mobile-icons/credits.png"
@@ -101,7 +193,7 @@ const MobileHome = () => {
         <div className="bg-green-700 rounded-lg shadow flex items-center justify-between p-3 h-24 text-white relative pb-4">
           <div>
             <p className="font-bold text-sm">PAYROLL</p>
-            <p className="text-xs mt-1">Update: 2</p>
+            {/* <p className="text-xs mt-1">Update: 0</p> */}
           </div>
           <img
             src="/mobile-icons/payroll.png"
@@ -122,7 +214,7 @@ const MobileHome = () => {
         <div className="bg-green-700 rounded-lg shadow flex items-center justify-between p-3 h-24 text-white relative pb-4">
           <div>
             <p className="font-bold text-sm">ATTENDANCE</p>
-            <p className="text-xs mt-1">Update: 5</p>
+            {/* <p className="text-xs mt-1">Update: 5</p> */}
           </div>
           <img
             src="/mobile-icons/attendance.png"
@@ -142,7 +234,7 @@ const MobileHome = () => {
         <div className="bg-green-700 rounded-lg shadow flex items-center justify-between p-3 h-24 text-white relative pb-4">
           <div>
             <p className="font-bold text-sm">MEETING</p>
-            <p className="text-xs mt-1">Update: 1</p>
+            {/* <p className="text-xs mt-1">Update: 1</p> */}
           </div>
           <img
             src="/mobile-icons/meeting.png"
@@ -161,8 +253,8 @@ const MobileHome = () => {
         {/* Actions */}
         <div className="bg-green-700 rounded-lg shadow flex items-center justify-between p-3 h-24 text-white relative pb-4">
           <div>
-            <p className="font-bold text-sm">ACTIONS</p>
-            <p className="text-xs mt-1">Update: 3</p>
+            <p className="font-bold text-lm">ACTIONS</p>
+            {/* <p className="text-xs mt-1">Update: 3</p> */}
           </div>
           <img
             src="/mobile-icons/actions.png"

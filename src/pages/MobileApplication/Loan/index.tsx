@@ -20,7 +20,7 @@ const MobileLoan = () => {
           {/* <button className="mr-2">
             <ArrowLeft size={24} />
           </button> */}
-          <h1 className="text-lg font-semibold">Loan</h1>
+          <h1 className="text-lg font-semibold">LOAN</h1>
         </div>
 
         {/* Floating Search Bar */}

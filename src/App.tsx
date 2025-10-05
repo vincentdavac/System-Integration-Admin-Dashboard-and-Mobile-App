@@ -55,6 +55,7 @@ import MobileMeetingHistory from './pages/MobileApplication/Meeting';
 import MobileMeetingView from './pages/MobileApplication/Meeting/MeetingView';
 import MobileActionsHistory from './pages/MobileApplication/Actions';
 import MobileActionsView from './pages/MobileApplication/Actions/ActionsView';
+import Notifications from './pages/MobileApplication/Notifications';
 interface AppProps {
   alertsRef: React.RefObject<AlertsContainerRef>;
 }
@@ -355,6 +356,8 @@ function App({ alertsRef }: AppProps) {
         element={<MobileLogin alertsRef={alertsRef} />}
       />
       <Route element={<MobileLayout alertsRef={alertsRef} />}>
+        {/* NOTIFICATIONS */}
+        <Route path="/mobile/notifications" element={<Notifications />} />
         {/* LEAVE */}
         <Route path="/mobile/leave" element={<MobileLeaveRequest />} />
         <Route path="/mobile/leave-apply" element={<MobileLeaveApply />} />

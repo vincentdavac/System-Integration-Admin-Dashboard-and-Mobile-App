@@ -20,7 +20,7 @@ const MobileLeaveRequest = () => {
           {/* <button className="mr-2">
             <ArrowLeft size={24} />
           </button> */}
-          <h1 className="text-lg font-semibold">Leave</h1>
+          <h1 className="text-lg font-semibold">LEAVE</h1>
         </div>
 
         {/* Floating Search Bar */}

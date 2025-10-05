@@ -20,7 +20,7 @@ const MobileLeaveRequestView = () => {
           <button onClick={() => navigate('/mobile/leave')} className="mr-2">
             <ArrowLeft size={24} />
           </button>
-          <h1 className="text-lg font-semibold">Leave Request</h1>
+          <h1 className="text-lg font-semibold">LEAVE REQUEST</h1>
         </div>
 
         {/* Centered Status */}

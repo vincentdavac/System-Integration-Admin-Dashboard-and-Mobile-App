@@ -20,7 +20,7 @@ const MobileRelations = () => {
           {/* <button className="mr-2">
             <ArrowLeft size={24} />
           </button> */}
-          <h1 className="text-lg font-semibold">Employee Reltions</h1>
+          <h1 className="text-lg font-semibold">EMPLOYEE RELATIONS</h1>
         </div>
 
         {/* Floating Search Bar */}

@@ -1,8 +1,42 @@
 import { ArrowLeft } from 'lucide-react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AppContext } from '../../../context/AppContext';
 
 const MobileCredits = () => {
+  const { user, token } = useContext(AppContext)!;
   const navigate = useNavigate();
+  const [leaveCredits, setLeaveCredits] = useState<number | null>(null);
+
+  // 💳 Fetch User Leave Credits
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const fetchLeaveCredits = async () => {
+      try {
+        const res = await fetch(`/api/credits/${user.id}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+        console.log('Credits:', data);
+
+        if (!res.ok) {
+          console.error('Failed to fetch leave credits:', data.message);
+          return;
+        }
+
+        setLeaveCredits(data?.data?.totalCredits || 0);
+      } catch (error) {
+        console.error('Error fetching leave credits:', error);
+      }
+    };
+
+    fetchLeaveCredits();
+  }, [user?.id]);
 
   return (
     <div className="w-full min-h-screen bg-white flex flex-col">
@@ -20,15 +54,17 @@ const MobileCredits = () => {
           <button onClick={() => navigate('/mobile/home')} className="mr-2">
             <ArrowLeft size={24} />
           </button>
-          <h1 className="text-lg font-semibold">Leave Credits</h1>
+          <h1 className="text-lg font-semibold">LEAVE CREDITS</h1>
         </div>
 
         {/* Vacation Leave Credits Card */}
         <div className="absolute left-1/2 -bottom-16 transform -translate-x-1/2 bg-white rounded-xl shadow-lg w-[85%] p-4 flex items-center justify-between">
           {/* Left Content */}
           <div className="text-left">
-            <p className="text-sm text-gray-500">Vacation Leave Credits</p>
-            <p className="text-2xl font-bold text-green-700">Points: 10.00</p>
+            <p className="text-sm text-gray-500">Leave Credits</p>
+            <p className="text-2xl font-bold text-green-700">
+              Points: {leaveCredits !== null ? leaveCredits.toFixed(2) : '—'}
+            </p>
             <button className="mt-2 bg-green-700 text-white text-sm py-1 px-4 rounded-md">
               Current Credits
             </button>
@@ -50,7 +86,7 @@ const MobileCredits = () => {
       <div className="mt-20 px-4 pb-10">
         {/* Table Title */}
         <h2 className="text-base font-semibold text-gray-800 mb-3">
-          Leave Credit History
+          Credit History
         </h2>
 
         {/* Table */}

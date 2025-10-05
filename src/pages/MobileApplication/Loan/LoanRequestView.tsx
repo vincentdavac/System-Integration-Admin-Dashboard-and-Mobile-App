@@ -20,7 +20,7 @@ const MobileLoanRequest = () => {
           <button onClick={() => navigate('/mobile/loan')} className="mr-2">
             <ArrowLeft size={24} />
           </button>
-          <h1 className="text-lg font-semibold">Loan Request</h1>
+          <h1 className="text-lg font-semibold">LOAN REQUEST</h1>
         </div>
 
         {/* Centered Status */}
