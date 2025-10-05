@@ -99,24 +99,24 @@ const Meeting = () => {
       <Breadcrumb pageName="Management Meeting" />
 
       {/* Search + Add Button */}
-      <div className="flex justify-between items-center mt-4 mb-4">
-        <div className="flex items-center gap-2">
-          <input
-            type="text"
-            placeholder=" Search Meeting ID"
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="w-full md:w-full border rounded px-4 py-2 shadow-sm 
-              focus:ring focus:ring-blue-200 
-              bg-white text-gray-800 
-              dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200 
-              dark:placeholder-gray-400 dark:focus:ring-blue-500"
-          />
-          <Search className="text-gray-600 dark:text-gray-300" />
-        </div>
+<div className="flex justify-between items-center mt-4 mb-4">
+  <div className="flex items-center gap-2">
+    <input
+      type="text"
+      placeholder="Search Meeting ID"
+      value={searchTerm}
+      onChange={(e) => {
+        setSearchTerm(e.target.value);
+        setCurrentPage(1);
+      }}
+      className="w-full border rounded px-27 py-2 shadow-sm 
+        focus:ring focus:ring-blue-200 
+        bg-white text-gray-800 
+        dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200 
+        dark:placeholder-gray-400 dark:focus:ring-blue-500"  
+    />
+    <Search className="text-gray-600 dark:text-gray-300" />
+  </div>
 
         <button
           className="ml-2 bg-yellow-600 hover:bg-yellow-500 text-white px-4 py-2 p-2 rounded "

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Breadcrumb from '../../../../components/Breadcrumbs/Breadcrumb';
 import ViewLeaveRequestModal from './ViewLeaveRequest';
-import { ClipboardPen, Eye } from 'lucide-react';
+import { ClipboardPen, Eye, Search } from 'lucide-react';
 import UpdateLeaveRequestModal from './UpdateLeaveRequest';
 
 const Request = () => {
@@ -172,6 +172,8 @@ const Request = () => {
                dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200 
                dark:placeholder-gray-400 dark:focus:ring-blue-500"
         />
+
+        <Search className="text-gray-600 dark:text-gray-300" />
       </div>
 
       {/* Table Wrapper */}

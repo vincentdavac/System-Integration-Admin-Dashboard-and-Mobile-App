@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import Breadcrumb from '../../../../components/Breadcrumbs/Breadcrumb';
-import { ArchiveRestore } from 'lucide-react';
+import { ArchiveRestore, Search } from 'lucide-react';
 import CreditsRecoverModal from './CreditsRecover';
 
 const ArchiveCredits = () => {
@@ -73,6 +73,7 @@ const ArchiveCredits = () => {
           }}
           className="w-full md:w-1/3 border border-gray-300 dark:border-gray-600 rounded px-4 py-2 shadow-sm focus:ring focus:ring-blue-200 dark:bg-gray-900 dark:text-gray-100"
         />
+        <Search className="text-gray-600 dark:text-gray-300" />
       </div>
 
       {/* Table */}

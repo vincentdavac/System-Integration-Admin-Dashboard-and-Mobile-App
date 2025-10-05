@@ -10,13 +10,13 @@ const Relations = () => {
     <>
       <Breadcrumb pageName="Management Relation" />
 
-      {/* Search Bar (static only, no state) */}
+     {/* Search Bar (static only, no state) */}
       <div className="flex items-center gap-2">
         <input
           type="text"
           placeholder=" Search Case ID"
           onChange={(e) => {}}
-          className="w-full md:w-1/4 mb-2 border rounded px-4 py-2 shadow-sm 
+          className="w-full md:w-1/3 mb-2 border rounded px-4 py-2 shadow-sm 
             focus:ring focus:ring-blue-200 
             bg-white text-gray-800 
             dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200 

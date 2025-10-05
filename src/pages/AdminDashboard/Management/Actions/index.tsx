@@ -59,14 +59,14 @@ const Actions = () => {
               setSearchTerm(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full md:w-64 border rounded px-4 py-2 shadow-sm 
-             focus:ring focus:ring-blue-200 
-             bg-white text-gray-800 
-             dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200 
-             dark:placeholder-gray-400 dark:focus:ring-blue-500"
-          />
-          <Search className="text-gray-600 dark:text-gray-300" />
-        </div>
+             className="w-full border rounded px-27 py-2 shadow-sm 
+            focus:ring focus:ring-blue-200 
+            bg-white text-gray-800 
+            dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200 
+            dark:placeholder-gray-400 dark:focus:ring-blue-500" />
+
+            <Search className="text-gray-600 dark:text-gray-300" />
+            </div>
 
         <button
           onClick={() => {

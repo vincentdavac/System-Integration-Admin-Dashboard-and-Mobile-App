@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Breadcrumb from '../../../../components/Breadcrumbs/Breadcrumb';
-import { ArchiveRestore } from 'lucide-react';
+import { ArchiveRestore, Search } from 'lucide-react';
 import LeaveTypeRecoverModal from './LeaveTypeRecover';
 
 const ArchiveLeaveType = () => {
@@ -68,6 +68,8 @@ const ArchiveLeaveType = () => {
                      text-gray-700 dark:text-gray-100 
                      border-gray-300 dark:border-gray-600"
         />
+
+        <Search className="text-gray-600 dark:text-gray-300" />
       </div>
 
       {/* Scrollable Table */}
