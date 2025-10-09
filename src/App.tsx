@@ -169,7 +169,7 @@ function App({ alertsRef }: AppProps) {
           element={
             <>
               <PageTitle title="Loan | Human Resource Management" />
-              <LoanApproval />
+              <LoanApproval alertsRef={alertsRef} />
             </>
           }
         />

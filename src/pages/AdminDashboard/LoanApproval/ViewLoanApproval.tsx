@@ -2,9 +2,58 @@ import UCCLogo from '/icons/ucc_logo.png';
 
 interface ViewLoanApprovalProps {
   onClose: () => void;
+  Loan: {
+    id: string;
+    studentNo: string;
+    applicationId: string;
+    loanID: string;
+    accountId: string;
+    fullName: string;
+    email: string;
+    contactNumber: string;
+    address: string;
+    city: string;
+    province: string;
+    zipCode: string;
+    employmentStatus: string;
+    employerName: string;
+    annualIncome: string;
+    housingPayment: string;
+    loanAmount: string;
+    loanPurpose: string;
+    loanTerm: string;
+    interestRate: string;
+    interest: string;
+    monthlyPaymentNoInterest: string;
+    monthlyPayment: string;
+    applicationStatus: string;
+    assignedHR: string;
+    remarks: string;
+    hrApprovalDate: string;
+    createdDate: string;
+    createdTime: string;
+  };
 }
 
-export default function ViewLoanApproval({ onClose }: ViewLoanApprovalProps) {
+export default function ViewLoanApproval({
+  onClose,
+  Loan,
+}: ViewLoanApprovalProps) {
+  // Status color
+  const getStatusClasses = (status: string) => {
+    switch (status) {
+      case 'approved':
+        return 'bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium inline-block';
+      case 'rejected':
+        return 'bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium inline-block';
+      case 'cancelled':
+        return 'bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs font-medium inline-block ';
+      case 'pending':
+      default:
+        return 'bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium inline-block';
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] flex flex-col">
@@ -27,7 +76,7 @@ export default function ViewLoanApproval({ onClose }: ViewLoanApprovalProps) {
         {/* Body (scrollable) */}
         <div className="px-5 py-6 flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-800 font-serif leading-relaxed text-gray-800 dark:text-gray-200">
           <h3 className="text-2xl font-bold border-b pb-2 mb-6 text-center dark:border-gray-700">
-            EMPLOYEE LOAN APPROVAL
+            EMPLOYEE LOAN
           </h3>
 
           {/* Case Information Section */}
@@ -36,27 +85,25 @@ export default function ViewLoanApproval({ onClose }: ViewLoanApprovalProps) {
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Loan Id
               </p>
-              <p className="font-semibold text-sm">17582502088249</p>
+              <p className="font-semibold text-sm">{Loan.loanID}</p>
             </div>
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Email Address
               </p>
-              <p className="font-semibold text-sm">vincent123@gmail.com</p>
+              <p className="font-semibold text-sm">{Loan.email}</p>
             </div>
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Full Name
               </p>
-              <p className="font-semibold text-sm">
-                Lastname, Fistname Middle I.
-              </p>
+              <p className="font-semibold text-sm">{Loan.fullName}</p>
             </div>
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Contact No
               </p>
-              <p className="font-semibold text-sm">09123456789</p>
+              <p className="font-semibold text-sm">{Loan.contactNumber}</p>
             </div>
 
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm ">
@@ -64,7 +111,7 @@ export default function ViewLoanApproval({ onClose }: ViewLoanApprovalProps) {
                 Home Address
               </p>
               <p className="font-semibold text-sm">
-                Block 12 Lot Caloocan City
+                {Loan.address}, {Loan.city}, {Loan.province}, {Loan.zipCode}
               </p>
             </div>
 
@@ -72,22 +119,22 @@ export default function ViewLoanApproval({ onClose }: ViewLoanApprovalProps) {
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Interest Rate
               </p>
-              <p className="font-semibold text-sm text-yellow-700 dark:text-yellow-400">
-                1.3 %
+              <p className="font-semibold text-sm text-white-700 dark:text-white-400">
+                {Loan.interestRate} %
               </p>
             </div>
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Monthly Payment
               </p>
-              <p className="font-semibold text-sm">₱ 1926.67</p>
+              <p className="font-semibold text-sm">₱ {Loan.monthlyPayment}</p>
             </div>
 
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Application Date{' '}
               </p>
-              <p className="font-semibold text-sm">September 24, 2025 </p>
+              <p className="font-semibold text-sm">{Loan.createdDate} </p>
             </div>
           </div>
 
@@ -101,20 +148,20 @@ export default function ViewLoanApproval({ onClose }: ViewLoanApprovalProps) {
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Approver
               </p>
-              <p className="font-semibold text-sm">Davac, Vincent Ahron M.</p>
+              <p className="font-semibold text-sm">{Loan.assignedHR}</p>
             </div>
 
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">Status</p>
-              <p className="font-semibold text-sm text-yellow-700 dark:text-yellow-400">
-                Pending
+              <p className={getStatusClasses(Loan.applicationStatus)}>
+                {Loan.applicationStatus}
               </p>
             </div>
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Approval Date
               </p>
-              <p className="font-semibold text-sm">September 24, 2025</p>
+              <p className="font-semibold text-sm">{Loan.hrApprovalDate}</p>
             </div>
 
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm col-span-2">
@@ -122,7 +169,7 @@ export default function ViewLoanApproval({ onClose }: ViewLoanApprovalProps) {
                 Remarks
               </p>
               <p className="font-semibold text-sm">
-                Loan was successfully approved
+                {Loan.remarks || 'No remarks provided.'}
               </p>
             </div>
           </div>

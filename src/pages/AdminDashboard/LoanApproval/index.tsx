@@ -1,58 +1,97 @@
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
 import { Eye, ClipboardPen, Search } from 'lucide-react';
 import ViewLoanApproval from './ViewLoanApproval';
 import UpdateLoanApproval from './UpdateLoanApproval';
+import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
+import { AppContext } from '../../../context/AppContext';
 
-const LoanApproval = () => {
+interface Loan {
+  id: string;
+  studentNo: string;
+  applicationId: string;
+  loanID: string;
+  accountId: string;
+  fullName: string;
+  email: string;
+  contactNumber: string;
+  address: string;
+  city: string;
+  province: string;
+  zipCode: string;
+  employmentStatus: string;
+  employerName: string;
+  annualIncome: string;
+  housingPayment: string;
+  loanAmount: string;
+  loanPurpose: string;
+  loanTerm: string;
+  interestRate: string;
+  interest: string;
+  monthlyPaymentNoInterest: string;
+  monthlyPayment: string;
+  applicationStatus: string;
+  assignedHR: string;
+  remarks: string;
+  hrApprovalDate: string;
+  createdDate: string;
+  createdTime: string;
+}
+
+interface Props {
+  alertsRef: React.RefObject<AlertsContainerRef>;
+}
+
+const LoanApproval = ({ alertsRef }: Props) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [showUpdate, setShowUpdate] = useState(false);
   const [showView, setShowView] = useState(false); // <-- View Modal
 
-  type Loan = {
-    id: number;
-    accountNo: string;
-    fullName: string;
-    loanType: string;
-    loanAmount: number;
-    approvedAmount: number;
-    interestRate: string;
-    repaymentTerms: string;
-    applicationDate: string;
-    status: string;
-    approverId: string;
-    approvalDate: string;
-  };
-  const [selectedRow, setSelectedRow] = useState<Loan | null>(null);
-  const [statusUpdate, setStatusUpdate] = useState('');
-  const [remarks, setRemarks] = useState('');
+  const { user, token } = useContext(AppContext)!;
+
+  const [selectedRow, setSelectedRow] = useState<any>(null);
 
   const itemsPerPage = 10;
 
   // Sample loan data
-  const [loans, setLoans] = useState(
-    Array.from({ length: 50 }, (_, i) => ({
-      id: i + 1,
-      accountNo: `202200${i + 41}`,
-      fullName: `Employee ${i + 1}`,
-      loanType: 'Personal Loan',
-      loanAmount: 50000,
-      approvedAmount: 0,
-      interestRate: '5%',
-      repaymentTerms: '12 months',
-      applicationDate: '2025-09-15',
-      status: 'Pending',
-      approverId: '',
-      approvalDate: '',
-    })),
-  );
+  const [loans, setLoans] = useState<Loan[]>([]);
+
+  const fetchLoans = async () => {
+    try {
+      const response = await fetch(`/api/loan-records`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+        },
+      });
+      const res = await response.json();
+
+      if (response.ok && res.data) {
+        setLoans(res.data);
+      } else {
+        console.error('Failed to fetch employees:', res);
+      }
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.id) fetchLoans();
+  }, [user, token]);
 
   // Filter table
   const filteredLoans = loans.filter(
-    (l) =>
-      l.accountNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      l.fullName.toLowerCase().includes(searchTerm.toLowerCase()),
+    (loan) =>
+      loan.studentNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      loan.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      loan.contactNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      loan.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      loan.createdDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      loan.loanID.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      loan.applicationId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      loan.accountId.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Pagination
@@ -66,42 +105,16 @@ const LoanApproval = () => {
   // Status color
   const getStatusClasses = (status: string) => {
     switch (status) {
-      case 'Approved':
+      case 'approved':
         return 'bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium';
-      case 'Rejected':
+      case 'rejected':
         return 'bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium';
-      case 'Cancelled':
+      case 'cancelled':
         return 'bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs font-medium';
-      case 'Pending':
+      case 'pending':
       default:
         return 'bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium';
     }
-  };
-
-  // Highlight search
-  const highlightMatch = (text: string) => {
-    if (!searchTerm) return text;
-    const regex = new RegExp(`(${searchTerm})`, 'gi');
-    return text.split(regex).map((part, i) =>
-      regex.test(part) ? (
-        <span key={i} className="bg-yellow-200">
-          {part}
-        </span>
-      ) : (
-        part
-      ),
-    );
-  };
-
-  // Save status update
-  const handleSaveChanges = () => {
-    if (!selectedRow) return;
-    setLoans((prevLoans) =>
-      prevLoans.map((l) =>
-        l.id === selectedRow.id ? { ...l, status: statusUpdate } : l,
-      ),
-    );
-    setShowUpdate(false);
   };
 
   return (
@@ -133,11 +146,12 @@ const LoanApproval = () => {
             <thead className="bg-gray-100 dark:bg-gray-800 text-xs uppercase text-gray-600 dark:text-gray-300 sticky top-0 z-0">
               <tr>
                 <th className="px-6 py-3 text-center">No.</th>
+                <th className="px-6 py-3 text-center">Employee No.</th>
                 <th className="px-6 py-3 text-center">Application No.</th>
+                <th className="px-6 py-3 text-center">Loan Id</th>
                 <th className="px-6 py-3 text-center">Full Name</th>
-                <th className="px-6 py-3 text-center">Loan Type</th>
-                <th className="px-6 py-3 text-center">Date</th>
                 <th className="px-6 py-3 text-center">Status</th>
+                <th className="px-6 py-3 text-center">Date</th>
                 <th className="px-6 py-3 text-center">Actions</th>
               </tr>
             </thead>
@@ -149,19 +163,18 @@ const LoanApproval = () => {
                     className="border-b hover:bg-gray-50 dark:hover:bg-gray-700 text-center dark:border-gray-700"
                   >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
+                    <td className="px-6 py-3">{row.studentNo}</td>
+                    <td className="px-6 py-3">{row.applicationId}</td>
+                    <td className="px-6 py-3">{row.loanID}</td>
+                    <td className="px-6 py-3">{row.fullName}</td>
+
                     <td className="px-6 py-3">
-                      {highlightMatch(row.accountNo)}
-                    </td>
-                    <td className="px-6 py-3">
-                      {highlightMatch(row.fullName)}
-                    </td>
-                    <td className="px-6 py-3">{row.loanType}</td>
-                    <td className="px-6 py-3">{row.applicationDate}</td>
-                    <td className="px-6 py-3">
-                      <span className={getStatusClasses(row.status)}>
-                        {row.status}
+                      <span className={getStatusClasses(row.applicationStatus)}>
+                        {row.applicationStatus}
                       </span>
                     </td>
+                    <td className="px-6 py-3">{row.createdDate}</td>
+
                     <td className="px-6 py-3 space-x-2">
                       <button
                         className="bg-green-600 hover:bg-green-500 px-4 py-2 rounded text-white"
@@ -200,9 +213,19 @@ const LoanApproval = () => {
       </div>
 
       {/* Modal */}
-      {showView && <ViewLoanApproval onClose={() => setShowView(false)} />}
+      {showView && (
+        <ViewLoanApproval
+          onClose={() => setShowView(false)}
+          Loan={selectedRow}
+        />
+      )}
       {showUpdate && (
-        <UpdateLoanApproval onClose={() => setShowUpdate(false)} />
+        <UpdateLoanApproval
+          onClose={() => setShowUpdate(false)}
+          alertsRef={alertsRef}
+          refetchLoans={fetchLoans}
+          Loan={selectedRow}
+        />
       )}
 
       {/* Pagination Controls */}

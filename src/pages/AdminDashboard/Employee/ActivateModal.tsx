@@ -1,7 +1,8 @@
 import { CheckCircle } from 'lucide-react';
 import UCCLogo from '/icons/ucc_logo.png';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
+import { AppContext } from '../../../context/AppContext';
 
 interface ActivateModalProps {
   onClose: () => void;
@@ -26,6 +27,8 @@ const ActivateModal = ({
     hrm_password_confirmation: '',
   });
 
+  const { token } = useContext(AppContext)!;
+
   async function handleSubmit(e: { preventDefault: () => void }) {
     e.preventDefault();
 
@@ -34,6 +37,7 @@ const ActivateModal = ({
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(formData),
     });

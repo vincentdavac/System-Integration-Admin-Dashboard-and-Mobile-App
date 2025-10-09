@@ -1,13 +1,106 @@
 import { ClipboardPen } from 'lucide-react';
 import UCCLogo from '/icons/ucc_logo.png';
+import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
+import { useContext, useState } from 'react';
+import { AppContext } from '../../../context/AppContext';
 
 interface UpdateLoanApprovalProps {
   onClose: () => void;
+  alertsRef: React.RefObject<AlertsContainerRef>;
+  refetchLoans: () => Promise<void>;
+  Loan: {
+    id: string;
+    studentNo: string;
+    applicationId: string;
+    loanID: string;
+    accountId: string;
+    fullName: string;
+    email: string;
+    contactNumber: string;
+    address: string;
+    city: string;
+    province: string;
+    zipCode: string;
+    employmentStatus: string;
+    employerName: string;
+    annualIncome: string;
+    housingPayment: string;
+    loanAmount: string;
+    loanPurpose: string;
+    loanTerm: string;
+    interestRate: string;
+    interest: string;
+    monthlyPaymentNoInterest: string;
+    monthlyPayment: string;
+    applicationStatus: string;
+    assignedHR: string;
+    remarks: string;
+    hrApprovalDate: string;
+    createdDate: string;
+    createdTime: string;
+  };
 }
 
 export default function UpdateLoanApproval({
   onClose,
+  alertsRef,
+  refetchLoans,
+  Loan,
 }: UpdateLoanApprovalProps) {
+  const { user, token } = useContext(AppContext)!;
+
+  const [formData, setFormData] = useState({
+    application_status: '',
+    assigned_hr: user?.fullName || '',
+    remarks: '',
+  });
+
+  async function handleSubmit(e: { preventDefault: () => void }) {
+    e.preventDefault();
+
+    const res = await fetch(`/api/loan-approval/update-status/${Loan.id}`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+
+    if (data.errors) {
+      // Handle validation errors
+      Object.values(data.errors).forEach((messages) => {
+        (messages as string[]).forEach((msg) => {
+          alertsRef.current?.addAlert('error', msg);
+        });
+      });
+    } else if (data.status && data.status.toLowerCase().includes('success')) {
+      // ✅ Backend explicitly says success
+      alertsRef.current?.addAlert(
+        'success',
+        data.message || 'Account activated successfully',
+      );
+
+      // 🟢 Refetch parent employee list
+      await refetchLoans();
+
+      // Close modal after success
+      onClose();
+    } else if (data.message) {
+      // Any other message → treat as error
+      alertsRef.current?.addAlert('error', data.message);
+    } else {
+      alertsRef.current?.addAlert('success', 'Account Activated Successfully');
+      // 🟢 Refetch parent employee list
+      await refetchLoans();
+      // Close modal after success
+      onClose();
+    }
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] flex flex-col">
@@ -35,66 +128,60 @@ export default function UpdateLoanApproval({
 
           {/* Case Information Section */}
           <div className="grid grid-cols-2 gap-6">
-            <div className="bg-white dark:bg-gray-900 p-4 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm">
+            <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Loan Id
               </p>
-              <p className="font-semibold text-sm">17582502088249</p>
+              <p className="font-semibold text-sm">{Loan.loanID}</p>
             </div>
-
-            <div className="bg-white dark:bg-gray-900 p-4 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm">
+            <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Email Address
               </p>
-              <p className="font-semibold text-sm">vincent123@gmail.com</p>
+              <p className="font-semibold text-sm">{Loan.email}</p>
             </div>
-
-            <div className="bg-white dark:bg-gray-900 p-4 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm">
+            <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Full Name
               </p>
-              <p className="font-semibold text-sm">
-                Lastname, Fistname Middle I.
-              </p>
+              <p className="font-semibold text-sm">{Loan.fullName}</p>
             </div>
-
-            <div className="bg-white dark:bg-gray-900 p-4 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm">
+            <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Contact No
               </p>
-              <p className="font-semibold text-sm">09123456789</p>
+              <p className="font-semibold text-sm">{Loan.contactNumber}</p>
             </div>
 
-            <div className="bg-white dark:bg-gray-900 p-4 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm">
+            <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm ">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Home Address
               </p>
               <p className="font-semibold text-sm">
-                Block 12 Lot Caloocan City
+                {Loan.address}, {Loan.city}, {Loan.province}, {Loan.zipCode}
               </p>
             </div>
 
-            <div className="bg-white dark:bg-gray-900 p-4 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm">
+            <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Interest Rate
               </p>
-              <p className="font-semibold text-sm text-yellow-700 dark:text-yellow-400">
-                1.3 %
+              <p className="font-semibold text-sm text-white-700 dark:text-white-400">
+                {Loan.interestRate} %
               </p>
             </div>
-
-            <div className="bg-white dark:bg-gray-900 p-4 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm">
+            <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Monthly Payment
               </p>
-              <p className="font-semibold text-sm">₱ 1926.67</p>
+              <p className="font-semibold text-sm">₱ {Loan.monthlyPayment}</p>
             </div>
 
-            <div className="bg-white dark:bg-gray-900 p-4 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm">
+            <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Application Date
+                Application Date{' '}
               </p>
-              <p className="font-semibold text-sm">September 24, 2025</p>
+              <p className="font-semibold text-sm">{Loan.createdDate} </p>
             </div>
           </div>
 
@@ -102,46 +189,60 @@ export default function UpdateLoanApproval({
             Approval Information
           </h3>
 
-          {/* Additional Info Section */}
-          <div className="grid grid-cols-2 gap-6">
-            <div className="bg-white dark:bg-gray-900 p-4 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm">
-              <label className="text-sm text-gray-500 dark:text-gray-400">
-                Status
-              </label>
-              <select
-                className="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm font-semibold bg-white dark:bg-gray-900 dark:text-gray-100"
-                defaultValue="Update Status"
-              >
-                <option value="pending" className="text-yellow-700">
-                  Pending
-                </option>
-                <option value="approved" className="text-green-700">
-                  Approved
-                </option>
-                <option value="rejected" className="text-red-700">
-                  Rejected
-                </option>
-              </select>
+          <form onSubmit={handleSubmit}>
+            {/* Additional Info Section */}
+            <div className="grid grid-cols-2 gap-6">
+              <div className="bg-white dark:bg-gray-900 p-4 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm">
+                <label className="text-sm text-gray-500 dark:text-gray-400">
+                  Status
+                </label>
+                <select
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      application_status: e.target.value,
+                    })
+                  }
+                  className="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm font-semibold bg-white dark:bg-gray-900 dark:text-gray-100"
+                  defaultValue="Update Status"
+                >
+                  <option value="pending" className="text-yellow-600">
+                    Pending
+                  </option>
+                  <option value="approved" className="text-green-600">
+                    Approved
+                  </option>
+                  <option value="rejected" className="text-red-600">
+                    Rejected
+                  </option>
+                </select>
+              </div>
+
+              <div className="bg-white dark:bg-gray-900 p-4 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm col-span-2">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Remarks
+                </p>
+                <textarea
+                  className="mt-1 w-full rounded-md p-2 border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm font-semibold bg-white dark:bg-gray-900 dark:text-gray-100"
+                  rows={3}
+                  placeholder="Enter remarks..."
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      remarks: e.target.value,
+                    })
+                  }
+                />
+              </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-900 p-4 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm col-span-2">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Remarks
-              </p>
-              <textarea
-                className="mt-1 w-full rounded-md p-2 border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm font-semibold bg-white dark:bg-gray-900 dark:text-gray-100"
-                rows={3}
-                placeholder="Enter remarks..."
-              />
+            {/* Footer */}
+            <div className="border-t dark:border-gray-700 px-6 py-4 flex justify-end space-x-2">
+              <button className="text-white px-4 py-2 rounded bg-[#2D3F99] hover:bg-blue-500">
+                <ClipboardPen size={18} />
+              </button>
             </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="border-t dark:border-gray-700 px-6 py-4 flex justify-end space-x-2">
-          <button className="text-white px-4 py-2 rounded bg-[#2D3F99] hover:bg-blue-500">
-            <ClipboardPen size={18} />
-          </button>
+          </form>
         </div>
       </div>
     </div>
