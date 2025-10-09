@@ -1,78 +1,90 @@
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Breadcrumb from '../../../../components/Breadcrumbs/Breadcrumb';
 import AddMeetingModal from './AddMeeting';
 import { CalendarPlus2, Eye, Search, ClipboardPen } from 'lucide-react';
 import ViewMeetingModal from './ViewMeeting';
 import UpdateMeetingModal from './UpdateMeeting';
+import { AppContext } from '../../../../context/AppContext';
+import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
 
-interface MeetingData {
+interface Meeting {
   id: number;
-  accountNo: string;
-  date: string;
-  time: string;
+  meetingId: string;
+  relationId: string;
+  meetingDate: string;
+  meetingTime: string;
   location: string;
-  caseId: string;
-  dateReported: string;
-  status: 'Pending' | 'Approved' | 'Rejected';
   participants: string;
   notes: string;
+  status: string;
+  createdDate: string;
+  relationInformation: {
+    reportedPerson: string;
+    caseType: string;
+    caseTitle: string;
+    details: string;
+    reportedBy: string;
+    dateReported: string;
+    status: string;
+    resolution: string;
+    disciplinaryLevel: string;
+    handledBy: string;
+    dateResolved: string;
+    remarks: string;
+  };
 }
 
-const Meeting = () => {
+interface Props {
+  alertsRef: React.RefObject<AlertsContainerRef>;
+}
+
+const Meeting = ({ alertsRef }: Props) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [showAdd, setShowAdd] = useState<boolean>(false);
   const [showView, setShowView] = useState<boolean>(false);
   const [showUpdate, setShowUpdate] = useState<boolean>(false);
-  const [selectedRow, setSelectedRow] = useState<MeetingData | null>(null);
+  const [selectedRow, setSelectedRow] = useState<any>(null);
 
-  const [meetingsData] = useState<MeetingData[]>([
-    {
-      id: 1,
-      accountNo: '20220041',
-      date: '2025-09-15',
-      time: '10:00 AM',
-      location: 'Room 1',
-      caseId: 'CASE-101',
-      dateReported: '2025-09-14',
-      status: 'Pending',
-      participants: 'John Doe, Jane Smith',
-      notes: 'Kick-off meeting for project Alpha',
-    },
-    {
-      id: 2,
-      accountNo: '20220042',
-      date: '2025-09-16',
-      time: '2:00 PM',
-      location: 'Room 2',
-      caseId: 'CASE-102',
-      dateReported: '2025-09-15',
-      status: 'Approved',
-      participants: 'Alice, Bob',
-      notes: 'Budget approval discussion',
-    },
-    {
-      id: 3,
-      accountNo: '20220043',
-      date: '2025-09-17',
-      time: '9:30 AM',
-      location: 'Room 3',
-      caseId: 'CASE-103',
-      dateReported: '2025-09-16',
-      status: 'Rejected',
-      participants: 'Charlie, David',
-      notes: 'Review for project proposal',
-    },
-  ]);
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
+
+  const { user, token } = useContext(AppContext)!;
+
+  const fetchMeetings = async () => {
+    try {
+      const response = await fetch(`/api/relation-meetings/admin`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      const res = await response.json();
+
+      if (response.ok && res.data) {
+        setMeetings(res.data);
+      } else {
+        console.error('Failed to fetch employees:', res);
+      }
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.id) fetchMeetings();
+  }, [user, token]);
 
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(meetingsData.length / itemsPerPage);
+  const totalPages = Math.ceil(meetings.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
 
-  const filteredMeetings = meetingsData.filter(
+  const filteredMeetings = meetings.filter(
     (m) =>
-      m.accountNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      m.caseId.toLowerCase().includes(searchTerm.toLowerCase()),
+      m.meetingId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      m.relationId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      m.createdDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      m.status.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const paginatedMeetings = filteredMeetings.slice(
@@ -80,18 +92,18 @@ const Meeting = () => {
     startIndex + itemsPerPage,
   );
 
-  const highlightMatch = (text: string) => {
-    if (!searchTerm) return text;
-    const regex = new RegExp(`(${searchTerm})`, 'gi');
-    return text.split(regex).map((part, i) =>
-      regex.test(part) ? (
-        <span key={i} className="bg-yellow-200">
-          {part}
-        </span>
-      ) : (
-        part
-      ),
-    );
+  const getStatusClasses = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return 'bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium inline-block';
+      case 'cancelled':
+        return 'bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium inline-block';
+      case 'rescheduled':
+        return 'bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs font-medium inline-block';
+      case 'scheduled':
+      default:
+        return 'bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium inline-block';
+    }
   };
 
   return (
@@ -99,24 +111,24 @@ const Meeting = () => {
       <Breadcrumb pageName="Management Meeting" />
 
       {/* Search + Add Button */}
-<div className="flex justify-between items-center mt-4 mb-4">
-  <div className="flex items-center gap-2">
-    <input
-      type="text"
-      placeholder="Search Meeting ID"
-      value={searchTerm}
-      onChange={(e) => {
-        setSearchTerm(e.target.value);
-        setCurrentPage(1);
-      }}
-      className="w-full border rounded px-27 py-2 shadow-sm 
+      <div className="flex justify-between items-center mt-4 mb-4">
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            placeholder="Search Meeting ID"
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="w-full border rounded px-27 py-2 shadow-sm 
         focus:ring focus:ring-blue-200 
         bg-white text-gray-800 
         dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200 
-        dark:placeholder-gray-400 dark:focus:ring-blue-500"  
-    />
-    <Search className="text-gray-600 dark:text-gray-300" />
-  </div>
+        dark:placeholder-gray-400 dark:focus:ring-blue-500"
+          />
+          <Search className="text-gray-600 dark:text-gray-300" />
+        </div>
 
         <button
           className="ml-2 bg-yellow-600 hover:bg-yellow-500 text-white px-4 py-2 p-2 rounded "
@@ -134,10 +146,10 @@ const Meeting = () => {
               <tr>
                 <th className="px-6 py-3">No.</th>
                 <th className="px-6 py-3">Meeting Id.</th>
-                <th className="px-6 py-3">Location</th>
                 <th className="px-6 py-3">Case Id</th>
-                <th className="px-6 py-3">Date Reported</th>
+                <th className="px-6 py-3">Location</th>
                 <th className="px-6 py-3">Status</th>
+                <th className="px-6 py-3">Date Reported</th>
                 <th className="px-6 py-3">Action</th>
               </tr>
             </thead>
@@ -149,15 +161,16 @@ const Meeting = () => {
                     className="border-b hover:bg-gray-50 dark:hover:bg-gray-700 text-center dark:border-gray-700"
                   >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
-                    <td className="px-6 py-3">{highlightMatch(m.accountNo)}</td>
+                    <td className="px-6 py-3">{m.meetingId}</td>
+                    <td className="px-6 py-3">{m.relationId}</td>
                     <td className="px-6 py-3">{m.location}</td>
-                    <td className="px-6 py-3">{m.caseId}</td>
-                    <td className="px-6 py-3">{m.dateReported}</td>
                     <td className="px-6 py-3">
-                      <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium">
+                      <span className={getStatusClasses(m.status)}>
                         {m.status}
                       </span>
                     </td>
+                    <td className="px-6 py-3">{m.createdDate}</td>
+
                     <td className="px-6 py-3 flex justify-center gap-2">
                       <button
                         className="text-white px-4 py-2 rounded bg-green-600 hover:bg-green-500"
@@ -233,10 +246,26 @@ const Meeting = () => {
       </div>
 
       {/* Modals */}
-      {showAdd && <AddMeetingModal onClose={() => setShowAdd(false)} />}
-      {showView && <ViewMeetingModal onClose={() => setShowView(false)} />}
+      {showAdd && (
+        <AddMeetingModal
+          onClose={() => setShowAdd(false)}
+          alertsRef={alertsRef}
+          refetchMeetings={fetchMeetings}
+        />
+      )}
+      {showView && (
+        <ViewMeetingModal
+          onClose={() => setShowView(false)}
+          Meeting={selectedRow}
+        />
+      )}
       {showUpdate && (
-        <UpdateMeetingModal onClose={() => setShowUpdate(false)} />
+        <UpdateMeetingModal
+          onClose={() => setShowUpdate(false)}
+          Meeting={selectedRow}
+          alertsRef={alertsRef}
+          refetchMeetings={fetchMeetings}
+        />
       )}
     </>
   );
