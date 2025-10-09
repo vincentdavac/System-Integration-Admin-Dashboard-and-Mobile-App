@@ -1,11 +1,78 @@
 import { RefreshCw } from 'lucide-react';
 import UCCLogo from '/icons/ucc_logo.png';
+import { useState } from 'react';
+import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
 
 interface UpdateModalPropos {
   onClose: () => void;
+  employee: {
+    id: number;
+    fullName: string;
+    email: string;
+    employeeNo: string;
+  };
+
+  alertsRef: React.RefObject<AlertsContainerRef>;
+  refetchEmployees: () => Promise<void>; // 🟢 Add this
 }
 
-const UpdateModal = ({ onClose }: UpdateModalPropos) => {
+const UpdateModal = ({
+  onClose,
+  employee,
+  alertsRef,
+  refetchEmployees,
+}: UpdateModalPropos) => {
+  const [formData, setFormData] = useState({
+    hrm_password: '',
+    hrm_password_confirmation: '',
+  });
+
+  async function handleSubmit(e: { preventDefault: () => void }) {
+    e.preventDefault();
+
+    const res = await fetch(`/api/update-account/${employee.employeeNo}`, {
+      method: 'PATCH',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+
+    if (data.errors) {
+      // Handle validation errors
+      Object.values(data.errors).forEach((messages) => {
+        (messages as string[]).forEach((msg) => {
+          alertsRef.current?.addAlert('error', msg);
+        });
+      });
+    } else if (data.status && data.status.toLowerCase().includes('success')) {
+      // ✅ Backend explicitly says success
+      alertsRef.current?.addAlert(
+        'success',
+        data.message || 'Account Updated successfully',
+      );
+
+      // 🟢 Refetch parent employee list
+      await refetchEmployees();
+
+      // Close modal after success
+      onClose();
+    } else if (data.message) {
+      // Any other message → treat as error
+      alertsRef.current?.addAlert('error', data.message);
+    } else {
+      alertsRef.current?.addAlert('success', 'Account Updated Successfully');
+      // 🟢 Refetch parent employee list
+      await refetchEmployees();
+
+      // Close modal after success
+      onClose();
+    }
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] flex flex-col">
@@ -30,34 +97,65 @@ const UpdateModal = ({ onClose }: UpdateModalPropos) => {
           <h3 className="text-2xl font-bold border-b pb-2 mb-6 text-center border-gray-300 dark:border-gray-600">
             UPDATE EMPLOYEE PASSWORD
           </h3>
-          <div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-              Password
+
+          {/* Display the passed ID and details */}
+          <div className="mb-6">
+            <p className="text-gray-700 dark:text-gray-300">
+              <strong>Employee No:</strong> {employee.employeeNo}
             </p>
-            <input
-              type="password"
-              placeholder="Enter Password"
-              className="w-full border dark:border-gray-600 bg-white dark:bg-gray-900 dark:text-gray-100 p-2 mb-3 rounded"
-            />
+            <p className="text-gray-700 dark:text-gray-300">
+              <strong>Full Name:</strong> {employee.fullName}
+            </p>
+            <p className="text-gray-700 dark:text-gray-300">
+              <strong>Email:</strong> {employee.email}
+            </p>
           </div>
 
-          <div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-              Re-type Password
-            </p>
-            <input
-              type="password"
-              placeholder="Re Type Password"
-              className="w-full border dark:border-gray-600 bg-white dark:bg-gray-900 dark:text-gray-100 p-2 mb-3 rounded"
-            />
-          </div>
-        </div>
+          <form onSubmit={handleSubmit}>
+            <div>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                Password
+              </p>
+              <input
+                type="password"
+                placeholder="Enter Password"
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    hrm_password: e.target.value,
+                  })
+                }
+                className="w-full border dark:border-gray-600 bg-white dark:bg-gray-900 dark:text-gray-100 p-2 mb-3 rounded"
+              />
+            </div>
 
-        {/* Footer */}
-        <div className="border-t dark:border-gray-700 px-6 py-4 flex justify-end space-x-2">
-          <button className="text-white px-4 py-2 rounded bg-[#2D3F99] hover:bg-blue-500">
-            <RefreshCw size={18} />
-          </button>
+            <div>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                Re-type Password
+              </p>
+              <input
+                type="password"
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    hrm_password_confirmation: e.target.value,
+                  })
+                }
+                placeholder="Re Type Password"
+                className="w-full border dark:border-gray-600 bg-white dark:bg-gray-900 dark:text-gray-100 p-2 mb-3 rounded"
+              />
+            </div>
+
+            {/* Footer */}
+            <div className="border-t dark:border-gray-700 px-6 py-4 flex justify-end space-x-2">
+              <button
+                type="submit"
+                className="text-white px-4 py-2 rounded bg-[#2D3F99] hover:bg-blue-500"
+              >
+                <RefreshCw size={18} />
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

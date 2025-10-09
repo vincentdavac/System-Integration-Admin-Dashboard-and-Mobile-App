@@ -23,6 +23,7 @@ const MobileProfile = ({ alertsRef }: LogoutProps) => {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
       },
     });
 
@@ -57,6 +58,7 @@ const MobileProfile = ({ alertsRef }: LogoutProps) => {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
         },
         body: JSON.stringify({
           hrm_password: newPassword,
@@ -125,7 +127,7 @@ const MobileProfile = ({ alertsRef }: LogoutProps) => {
       </div>
 
       {/* Content */}
-      <div className="mt-16 px-4">
+      <div className="mt-5 pb-10 h-[640px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
         {/* Personal Information */}
         <div className="bg-white shadow-md rounded-xl p-4 mb-4">
           <h2 className="font-semibold text-gray-700 mb-3">

@@ -1,32 +1,61 @@
-import React, { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Breadcrumb from '../../../../components/Breadcrumbs/Breadcrumb';
-import { ArchiveRestore } from 'lucide-react';
-import EmployeeRecoverModal from './EmployeeRecover';
+import ActivateModal from './EmployeeRecover';
+import { ArchiveRestore, Search } from 'lucide-react';
+import { AppContext } from '../../../../context/AppContext';
+import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
 
-const ArchiveEmployee = () => {
+interface EmployeeProps {
+  alertsRef: React.RefObject<AlertsContainerRef>;
+}
+
+const FjpEmployee = ({ alertsRef }: EmployeeProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [showRecover, setShowRecover] = useState(false);
+  const [showActivate, setShowActivate] = useState(false);
+
   const itemsPerPage = 10;
+  const [employees, setEmployees] = useState<any[]>([]);
 
-  // Sample Employees Data (Archived)
-  const employees = Array.from({ length: 20 }, (_, i) => ({
-    id: i + 1,
-    accountNo: `20230${i + 41}`,
-    date: `0${(i % 9) + 1} May 2021`,
-    status: 'Archived',
-    name: `Archived Employee ${i + 1}`,
-    email: `archived${i + 1}@email.com`,
-  }));
+  const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
 
-  // Filtered results
+  const { user, token } = useContext(AppContext)!;
+
+  const fetchEmployees = async () => {
+    try {
+      const response = await fetch(`/api/archive-accounts`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+        },
+      });
+      const data = await response.json();
+
+      if (response.ok && data.data) {
+        setEmployees(data.data);
+      } else {
+        console.error('Failed to fetch employees:', data);
+      }
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.id) fetchEmployees();
+  }, [user, token]);
+
+  // 🔍 Search (match full name or email)
   const filteredEmployees = employees.filter(
     (emp) =>
-      emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.email.toLowerCase().includes(searchTerm.toLowerCase()),
+      emp.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      emp.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      emp.employeeNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      emp.section?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      emp.contactNumber?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  // Pagination
+  // Pagination logic
   const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedEmployees = filteredEmployees.slice(
@@ -34,27 +63,12 @@ const ArchiveEmployee = () => {
     startIndex + itemsPerPage,
   );
 
-  // Highlight search matches
-  const highlightMatch = (text: string) => {
-    if (!searchTerm) return text;
-    const regex = new RegExp(`(${searchTerm})`, 'gi');
-    return text.split(regex).map((part, i) =>
-      regex.test(part) ? (
-        <span key={i} className="bg-yellow-200 dark:bg-yellow-600">
-          {part}
-        </span>
-      ) : (
-        part
-      ),
-    );
-  };
-
   return (
     <>
-      <Breadcrumb pageName="Archived Employee" />
+      <Breadcrumb pageName="Employee" />
 
-      {/* Search Bar */}
-      <div className="mt-4 mb-4">
+      {/* 🔍 Search Bar */}
+      <div className="mt-4 mb-4 flex items-center gap-2">
         <input
           type="text"
           placeholder="Search by name or email..."
@@ -64,24 +78,27 @@ const ArchiveEmployee = () => {
             setCurrentPage(1);
           }}
           className="w-full md:w-1/3 border rounded px-4 py-2 shadow-sm 
-                     focus:ring focus:ring-blue-200 
-                     bg-white dark:bg-gray-900 
-                     text-gray-700 dark:text-gray-100 
-                     border-gray-300 dark:border-gray-600"
+            focus:ring focus:ring-blue-200 
+            bg-white text-gray-800 
+            dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200 
+            dark:placeholder-gray-400 dark:focus:ring-blue-500"
         />
+        <Search className="text-gray-600 dark:text-gray-300" />
       </div>
 
-      {/* Table */}
+      {/* 🧾 Table */}
       <div className="overflow-x-auto border rounded-lg shadow bg-white dark:bg-gray-900 dark:border-gray-700">
         <div className="h-[500px] overflow-y-auto">
-          <table className="w-full min-w-[900px] text-sm text-gray-700 dark:text-gray-100 text-center">
+          <table className="w-full min-w-[900px] text-sm text-gray-700 dark:text-gray-200 text-center">
             <thead className="bg-gray-100 dark:bg-gray-800 text-xs uppercase text-gray-600 dark:text-gray-300 sticky top-0">
               <tr>
                 <th className="px-6 py-3">No.</th>
-                <th className="px-6 py-3">Employee No.</th>
-                <th className="px-6 py-3">Name</th>
+                <th className="px-6 py-3">Employee No</th>
+                <th className="px-6 py-3">Image</th>
+                <th className="px-6 py-3">Section</th>
+                <th className="px-6 py-3">Full Name</th>
                 <th className="px-6 py-3">Email</th>
-                <th className="px-6 py-3">Date</th>
+                <th className="px-6 py-3">Created Date</th>
                 <th className="px-6 py-3">Actions</th>
               </tr>
             </thead>
@@ -90,19 +107,30 @@ const ArchiveEmployee = () => {
                 paginatedEmployees.map((emp, index) => (
                   <tr
                     key={emp.id}
-                    className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-center"
+                    className="border-b dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
+                    <td className="px-6 py-3">{emp.employeeNo}</td>
                     <td className="px-6 py-3">
-                      {highlightMatch(emp.accountNo)}
+                      <img
+                        src={`https://fjp.ucc.bsit4c.com/${emp?.image}`}
+                        alt="Profile"
+                        className="w-10 h-10 border-white shadow-lg"
+                      />
                     </td>
-                    <td className="px-6 py-3">{highlightMatch(emp.name)}</td>
-                    <td className="px-6 py-3">{highlightMatch(emp.email)}</td>
-                    <td className="px-6 py-3">{emp.date}</td>
-                    <td className="px-6 py-3">
+
+                    <td className="px-6 py-3">{emp.section}</td>
+
+                    <td className="px-6 py-3">{emp.fullName}</td>
+                    <td className="px-6 py-3">{emp.email}</td>
+                    <td className="px-6 py-3">{emp.createdDate}</td>
+                    <td className="px-6 py-3 space-x-2">
                       <button
-                        onClick={() => setShowRecover(true)}
-                        className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded"
+                        onClick={() => {
+                          setShowActivate(true);
+                          setSelectedEmployee(emp);
+                        }}
+                        className="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded"
                       >
                         <ArchiveRestore size={18} />
                       </button>
@@ -112,8 +140,8 @@ const ArchiveEmployee = () => {
               ) : (
                 <tr>
                   <td
-                    colSpan={7}
-                    className="px-6 py-3 text-center text-gray-500 dark:text-gray-400 italic"
+                    colSpan={8}
+                    className="px-6 py-3 text-center text-gray-500 italic"
                   >
                     No matching records found.
                   </td>
@@ -124,7 +152,17 @@ const ArchiveEmployee = () => {
         </div>
       </div>
 
-      {/* Pagination */}
+      {/* ⚙️ MODALS */}
+      {showActivate && (
+        <ActivateModal
+          alertsRef={alertsRef}
+          onClose={() => setShowActivate(false)}
+          employee={selectedEmployee}
+          refetchEmployees={fetchEmployees}
+        />
+      )}
+
+      {/* 📄 Pagination */}
       <div className="flex justify-between items-center mt-4">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -142,7 +180,7 @@ const ArchiveEmployee = () => {
               className={
                 page === currentPage
                   ? 'bg-blue-500 text-white px-3 py-1 rounded'
-                  : 'px-3 py-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-100 rounded'
+                  : 'px-3 py-1 border rounded'
               }
             >
               {page}
@@ -160,13 +198,8 @@ const ArchiveEmployee = () => {
           Next
         </button>
       </div>
-
-      {/* Recover Modal */}
-      {showRecover && (
-        <EmployeeRecoverModal onClose={() => setShowRecover(false)} />
-      )}
     </>
   );
 };
 
-export default ArchiveEmployee;
+export default FjpEmployee;

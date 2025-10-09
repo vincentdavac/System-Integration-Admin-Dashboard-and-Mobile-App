@@ -18,6 +18,7 @@ const MobileCredits = () => {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
           },
         });
 

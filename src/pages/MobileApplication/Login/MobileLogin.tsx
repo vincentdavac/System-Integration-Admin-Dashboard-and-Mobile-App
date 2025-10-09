@@ -1,15 +1,21 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from '../../../context/AppContext';
 import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface LoginProps {
   alertsRef: React.RefObject<AlertsContainerRef>;
 }
 
 const MobileLogin = ({ alertsRef }: LoginProps) => {
-  const { setToken } = useContext(AppContext)!;
+  const { user, setToken } = useContext(AppContext)!;
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/mobile/home');
+    }
+  }, [user, navigate]);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -19,8 +25,12 @@ const MobileLogin = ({ alertsRef }: LoginProps) => {
   async function handleLogin(e: { preventDefault: () => void }) {
     e.preventDefault();
 
-    const res = await fetch('/api/login', {
+    const res = await fetch('/api/user/login', {
       method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(formData),
     });
 
@@ -85,6 +95,7 @@ const MobileLogin = ({ alertsRef }: LoginProps) => {
           className="absolute bottom-0 left-0 w-full"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1440 320"
+          preserveAspectRatio="none"
         >
           <path
             fill="#ffffff" // body background color
@@ -118,7 +129,7 @@ const MobileLogin = ({ alertsRef }: LoginProps) => {
               })
             }
             type="email"
-            placeholder="yourname@email.com"
+            placeholder="emailaddress.bsit@gmail.com"
             autoComplete="username" // ✅ Added
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300 mb-4"
           />

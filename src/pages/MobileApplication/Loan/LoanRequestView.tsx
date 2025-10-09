@@ -1,8 +1,91 @@
+import { useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+
+interface LoanData {
+  id: number;
+  studentNo: string;
+  applicationId: string;
+  loanID: string;
+  accountId: string;
+  fullName: string;
+  email: string;
+  contactNumber: string;
+  address: string;
+  city: string;
+  province: string;
+  zipCode: string;
+  employmentStatus: string;
+  employerName: string;
+  employmentLength: string;
+  annualIncome: string;
+  housingPayment: string;
+  loanAmount: string;
+  loanPurpose: string;
+  loanTerm: string;
+  interestRate: string;
+  interest: string;
+  monthlyPaymentNoInterest: string;
+  monthlyPayment: string;
+  applicationStatus: string;
+  assignedHR: string;
+  assignedAdmin: string;
+  remarks: string;
+  hrApprovalDate: string;
+  createdDate: string;
+  createdTime: string;
+  updatedDate: string;
+  updatedTime: string;
+}
 
 const MobileLoanRequest = () => {
   const navigate = useNavigate();
+  const { id } = useParams(); // Get loan ID from URL
+  const [loan, setLoan] = useState<LoanData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchLoanData = async () => {
+      try {
+        const res = await fetch(`/api/loan-record/${id}`, {
+          headers: {
+            Accept: 'application/json',
+          },
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          setLoan(data.data);
+        } else {
+          console.error('Error fetching loan record:', data.message);
+        }
+      } catch (error) {
+        console.error('Fetch error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLoanData();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen text-gray-600">
+        Loading loan details...
+      </div>
+    );
+  }
+
+  if (!loan) {
+    return (
+      <div className="flex items-center justify-center min-h-screen text-gray-600">
+        Loan record not found.
+      </div>
+    );
+  }
 
   return (
     <div className="w-full min-h-screen bg-white flex flex-col">
@@ -25,17 +108,21 @@ const MobileLoanRequest = () => {
 
         {/* Centered Status */}
         <div className="absolute top-14 w-full text-center">
-          <p className="text-base font-semibold text-white">Approved</p>
+          <p className="text-base font-semibold text-white">
+            {loan.applicationStatus || 'N/A'}
+          </p>
           <p className="text-sm text-white opacity-90 -mt-1">Status</p>
         </div>
 
         {/* Date & Loan ID */}
         <div className="absolute bottom-3 left-4 text-white text-sm">
           <p>
-            <span className="font-semibold">Date:</span> September 14, 2025
+            <span className="font-semibold">Date:</span>{' '}
+            {loan.createdDate || 'N/A'}
           </p>
           <p>
-            <span className="font-semibold">Loan ID:</span> 2022041
+            <span className="font-semibold">Loan ID:</span>{' '}
+            {loan.loanID || 'N/A'}
           </p>
         </div>
       </div>
@@ -55,7 +142,7 @@ const MobileLoanRequest = () => {
             </label>
             <input
               type="text"
-              value="Salary Loan"
+              value={loan.loanPurpose || ''}
               readOnly
               className="w-full border border-gray-300 rounded-md p-2 text-sm bg-gray-100"
             />
@@ -66,7 +153,7 @@ const MobileLoanRequest = () => {
             </label>
             <input
               type="text"
-              value="₱ 25,000.00"
+              value={`₱ ${Number(loan.loanAmount).toLocaleString()}`}
               readOnly
               className="w-full border border-gray-300 rounded-md p-2 text-sm bg-gray-100"
             />
@@ -81,7 +168,7 @@ const MobileLoanRequest = () => {
             </label>
             <input
               type="text"
-              value="₱ 25,000.00"
+              value={`₱ ${Number(loan.loanAmount).toLocaleString()}`}
               readOnly
               className="w-full border border-gray-300 rounded-md p-2 text-sm bg-gray-100"
             />
@@ -92,7 +179,7 @@ const MobileLoanRequest = () => {
             </label>
             <input
               type="text"
-              value="7%"
+              value={`${loan.interestRate}%`}
               readOnly
               className="w-full border border-gray-300 rounded-md p-2 text-sm bg-gray-100"
             />
@@ -107,7 +194,7 @@ const MobileLoanRequest = () => {
             </label>
             <input
               type="text"
-              value="12 Months"
+              value={`${loan.loanTerm} Months`}
               readOnly
               className="w-full border border-gray-300 rounded-md p-2 text-sm bg-gray-100"
             />
@@ -118,7 +205,7 @@ const MobileLoanRequest = () => {
             </label>
             <input
               type="text"
-              value="September 14, 2025"
+              value={loan.createdDate || ''}
               readOnly
               className="w-full border border-gray-300 rounded-md p-2 text-sm bg-gray-100"
             />
@@ -137,7 +224,7 @@ const MobileLoanRequest = () => {
           </label>
           <input
             type="text"
-            value="Vincent Ahron M. Davac"
+            value={loan.assignedHR || 'N/A'}
             readOnly
             className="w-full border border-gray-300 rounded-md p-2 text-sm bg-gray-100"
           />
@@ -148,7 +235,7 @@ const MobileLoanRequest = () => {
           <label className="block text-sm text-gray-700 mb-1">Remarks</label>
           <textarea
             readOnly
-            value="Passed"
+            value={loan.remarks || ''}
             className="w-full border border-gray-300 rounded-md p-2 text-sm bg-gray-100 resize-none"
             rows={3}
           ></textarea>
@@ -161,7 +248,7 @@ const MobileLoanRequest = () => {
           </label>
           <input
             type="text"
-            value="September 14, 2025"
+            value={loan.hrApprovalDate || ''}
             readOnly
             className="w-full border border-gray-300 rounded-md p-2 text-sm bg-gray-100"
           />

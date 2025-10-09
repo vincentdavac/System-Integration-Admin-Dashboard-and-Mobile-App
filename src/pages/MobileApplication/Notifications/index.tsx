@@ -30,6 +30,7 @@ const Notifications = () => {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
           },
         });
 
@@ -68,6 +69,12 @@ const Notifications = () => {
       if (res.ok) {
         // Remove notification locally after success
         setNotifications((prev) => prev.filter((n) => n.id !== id));
+
+        setTotalNotifications((prevCount) => Math.max(prevCount - 1, 0));
+
+        useEffect(() => {
+          setTotalNotifications(notifications.length);
+        }, [notifications]);
       } else {
         console.error('Failed to mark as read:', data.message);
       }

@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import LogoDark from "../../../src/images/logo/logo-dark.svg";
+import LogoDark from '../../../src/images/logo/logo-dark.svg';
 import Logo from '../../images/logo/logo.svg';
 import { AppContext } from '../../context/AppContext';
 import { AlertsContainerRef } from '../../components/Alert/AlertsContainer';
-import School from "../../images/logo/school (1).svg"; 
+import School from '../../images/logo/school (1).svg';
 
 interface LoginProps {
   alertsRef: React.RefObject<AlertsContainerRef>;
@@ -22,8 +22,12 @@ const SignIn = ({ alertsRef }: LoginProps) => {
   async function handleLogin(e: { preventDefault: () => void }) {
     e.preventDefault();
 
-    const res = await fetch('/api/login', {
+    const res = await fetch('/api/admin/login', {
       method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(formData),
     });
 
@@ -48,18 +52,13 @@ const SignIn = ({ alertsRef }: LoginProps) => {
 
       // get token from data.data.token
       const newToken = data.data.token;
-      const userId = data.data.user.id;
-      const studentNo = data.data.user.student_no;
 
       localStorage.setItem('token', newToken);
-      localStorage.setItem('userId', userId);
-      localStorage.setItem('studentNo', studentNo);
 
       setToken(newToken);
-      setStudentNo(studentNo);
-      setUserId(userId);
+
       navigate('/admin/dashboard');
-      console.log({ newToken, studentNo, userId });
+      console.log({ newToken });
 
       // navigate('/admin/dashboard');
       alertsRef.current?.addAlert('success', 'Login successful!');
@@ -79,18 +78,19 @@ const SignIn = ({ alertsRef }: LoginProps) => {
                 </Link>
 
                 <p className="2xl:px-20">
-                  Education is the most powerful tool we can use to shape a better future
+                  Education is the most powerful tool we can use to shape a
+                  better future
                 </p>
 
                 <span className="mt-15 inline-block -mt-3">
-            <img 
-              src={School} 
-              alt="School Illustration" 
-              className="w-150 h-auto mx-auto"  
-            />
-          </span>
-          </div>
-          </div>
+                  <img
+                    src={School}
+                    alt="School Illustration"
+                    className="w-150 h-auto mx-auto"
+                  />
+                </span>
+              </div>
+            </div>
 
             <div className="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
               <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
@@ -153,6 +153,7 @@ const SignIn = ({ alertsRef }: LoginProps) => {
                             hrm_password: e.target.value,
                           })
                         }
+                        autoComplete="password"
                         type="password"
                         placeholder="6+ Characters, 1 Capital letter"
                         className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -184,10 +185,10 @@ const SignIn = ({ alertsRef }: LoginProps) => {
 
                   <div className="mb-5">
                     <input
-                    type="submit"
-                    value="Sign In"
-                     className="w-full rounded-lg bg-[#367947] py-4 text-white font-medium transition"
-                  />
+                      type="submit"
+                      value="Sign In"
+                      className="w-full rounded-lg bg-[#367947] py-4 text-white font-medium transition"
+                    />
                   </div>
 
                   {/* <button className="flex w-full items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50">
@@ -230,7 +231,10 @@ const SignIn = ({ alertsRef }: LoginProps) => {
                   <div className="mt-6 text-center">
                     <p>
                       Don’t have any account?{' '}
-                      <Link to="/admin/register"  className="w-full rounded-lg py-4 text-[#367947] font-medium cursor-pointer">
+                      <Link
+                        to="/admin/register"
+                        className="w-full rounded-lg py-4 text-[#367947] font-medium cursor-pointer"
+                      >
                         Register
                       </Link>
                     </p>

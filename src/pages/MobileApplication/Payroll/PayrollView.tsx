@@ -1,8 +1,62 @@
+import { useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+
+interface PayrollData {
+  id: number;
+  userInformation: {
+    userId: number;
+    employeeNo: string;
+    name: string;
+    email: string;
+  };
+  cutoffStart: string;
+  cutoffEnd: string;
+  grossSalary: string;
+  totalDeductions: string;
+  netSalary: string;
+  salaryDate: string;
+  releaseDate: string;
+  totalHours: string;
+  regularHours: string;
+  overtimeHours: string;
+  createdDate: string;
+  createdTime: string;
+  updatedDate: string;
+  updatedTime: string;
+}
 
 const MobilePayrollView = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const [payroll, setPayroll] = useState<PayrollData | null>(null);
+
+  useEffect(() => {
+    const fetchPayroll = async () => {
+      try {
+        const response = await fetch(`/api/payrolls/${id}`, {
+          headers: {
+            Accept: 'application/json',
+          },
+        });
+        const result = await response.json();
+        console.log('Fetched Payroll:', result);
+        setPayroll(result.data);
+      } catch (error) {
+        console.error('Error fetching payroll:', error);
+      }
+    };
+
+    fetchPayroll();
+  }, [id]);
+
+  if (!payroll) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-gray-600">Loading payroll details...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full min-h-screen bg-white flex flex-col">
@@ -29,14 +83,15 @@ const MobilePayrollView = () => {
         {/* Date & Employee Info */}
         <div className="absolute bottom-3 left-4 text-white text-sm space-y-1">
           <p>
-            <span className="font-semibold">Date:</span> September 27, 2025
+            <span className="font-semibold">Date:</span> {payroll.createdDate}
           </p>
           <p>
-            <span className="font-semibold">Full Name:</span> Vincent Ahron M.
-            Davac
+            <span className="font-semibold">Full Name:</span>{' '}
+            {payroll.userInformation.name}
           </p>
           <p>
-            <span className="font-semibold">Employee No.:</span> 20220041
+            <span className="font-semibold">Employee No.:</span>{' '}
+            {payroll.userInformation.employeeNo}
           </p>
         </div>
       </div>
@@ -47,80 +102,57 @@ const MobilePayrollView = () => {
           Payroll Information
         </h2>
 
-        {/* Cutoff Start */}
-        <div className="mb-4">
-          <label className="block text-sm text-gray-700 mb-1">
-            Cutoff Start
-          </label>
-          <input
-            type="text"
-            value="September 27, 2025"
-            readOnly
-            className="w-full border border-gray-300 rounded-md p-2 text-sm bg-gray-100"
-          />
-        </div>
+        {[
+          { label: 'Cutoff Start', value: payroll.cutoffStart || '—' },
+          { label: 'Cutoff End', value: payroll.cutoffEnd || '—' },
+          { label: 'Gross Salary', value: payroll.grossSalary },
+          { label: 'Total Deductions', value: payroll.totalDeductions },
+          { label: 'Net Salary', value: payroll.netSalary },
+          { label: 'Salary Date', value: payroll.salaryDate },
+          { label: 'Release Date', value: payroll.releaseDate },
+          { label: 'Total Hours', value: payroll.totalHours },
+          { label: 'Regular Hours', value: payroll.regularHours },
+          { label: 'Overtime Hours', value: payroll.overtimeHours },
+          { label: 'Created Date', value: payroll.createdDate },
+          { label: 'Created Time', value: payroll.createdTime },
+          { label: 'Updated Date', value: payroll.updatedDate },
+          { label: 'Updated Time', value: payroll.updatedTime },
+        ].map((item, index) => (
+          <div key={index} className="mb-3">
+            <label className="block text-sm text-gray-700 mb-1">
+              {item.label}
+            </label>
+            <input
+              type="text"
+              value={item.value}
+              readOnly
+              className="w-full border border-gray-300 rounded-md p-2 text-sm bg-gray-100"
+            />
+          </div>
+        ))}
 
-        {/* Cutoff End */}
-        <div className="mb-4">
-          <label className="block text-sm text-gray-700 mb-1">Cutoff End</label>
-          <input
-            type="text"
-            value="September 30, 2025"
-            readOnly
-            className="w-full border border-gray-300 rounded-md p-2 text-sm bg-gray-100"
-          />
-        </div>
-
-        {/* Gross Salary */}
-        <div className="mb-4">
-          <label className="block text-sm text-gray-700 mb-1">
-            Gross Salary
-          </label>
-          <input
-            type="text"
-            value="₱ 25,000.00"
-            readOnly
-            className="w-full border border-gray-300 rounded-md p-2 text-sm bg-gray-100"
-          />
-        </div>
-
-        {/* Total Deduction */}
-        <div className="mb-4">
-          <label className="block text-sm text-gray-700 mb-1">
-            Total Deduction
-          </label>
-          <input
-            type="text"
-            value="₱ 5,000.00"
-            readOnly
-            className="w-full border border-gray-300 rounded-md p-2 text-sm bg-gray-100"
-          />
-        </div>
-
-        {/* Net Salary */}
-        <div className="mb-4">
-          <label className="block text-sm text-gray-700 mb-1">Net Salary</label>
-          <input
-            type="text"
-            value="₱ 20,000.00"
-            readOnly
-            className="w-full border border-gray-300 rounded-md p-2 text-sm bg-gray-100"
-          />
-        </div>
-
-        {/* Date */}
-        <div className="mb-6">
-          <label className="block text-sm text-gray-700 mb-1">Date</label>
-          <input
-            type="text"
-            value="September 27, 2025"
-            readOnly
-            className="w-full border border-gray-300 rounded-md p-2 text-sm bg-gray-100"
-          />
+        {/* Employee Info (extra section) */}
+        <div className="mt-6 mb-5">
+          <h3 className="text-sm font-semibold text-gray-700 mb-2">
+            Employee Information
+          </h3>
+          <div className="border border-gray-200 rounded-md p-3 text-sm bg-gray-50">
+            <p>
+              <span className="font-semibold">Name:</span>{' '}
+              {payroll.userInformation.name}
+            </p>
+            <p>
+              <span className="font-semibold">Employee No.:</span>{' '}
+              {payroll.userInformation.employeeNo}
+            </p>
+            <p>
+              <span className="font-semibold">Email:</span>{' '}
+              {payroll.userInformation.email}
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Bottom Space */}
       <div className="h-8"></div>
     </div>
   );

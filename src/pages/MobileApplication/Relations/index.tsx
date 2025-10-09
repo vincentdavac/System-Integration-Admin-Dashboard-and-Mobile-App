@@ -1,8 +1,86 @@
-import { ArrowLeft, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import { AppContext } from '../../../context/AppContext';
+
+interface Relation {
+  id: number;
+  caseId: string;
+  caseType: string;
+  caseTitle: string;
+  status: string;
+  dateReported: string;
+  reportedUser: {
+    id: number;
+    name: string;
+    email: string;
+  };
+}
 
 const MobileRelations = () => {
   const navigate = useNavigate();
+  const { user, token } = useContext(AppContext)!;
+
+  const [relations, setRelations] = useState<Relation[]>([]);
+  const [filteredRelations, setFilteredRelations] = useState<Relation[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch relations
+  useEffect(() => {
+    const fetchRelations = async () => {
+      if (!user?.id) return;
+
+      try {
+        setLoading(true);
+        const res = await fetch(`/api/employee-relations/user/${user.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+          },
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          setRelations(data.data || []);
+          setFilteredRelations(data.data || []);
+          setError(null);
+        } else {
+          setError(data.message || 'Failed to fetch relations.');
+        }
+      } catch (err) {
+        console.error('Error fetching relations:', err);
+        setError('An error occurred while fetching relations.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRelations();
+  }, [user?.id, token]);
+
+  // Search filter
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setFilteredRelations(relations);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = relations.filter((relation) =>
+      [
+        relation.caseId,
+        relation.caseType,
+        relation.caseTitle,
+        relation.status,
+        relation.dateReported,
+        relation.reportedUser?.name,
+      ].some((field) => field?.toLowerCase().includes(query)),
+    );
+
+    setFilteredRelations(filtered);
+  }, [searchQuery, relations]);
 
   return (
     <div className="w-full min-h-screen bg-white flex flex-col">
@@ -15,11 +93,8 @@ const MobileRelations = () => {
         />
         <div className="absolute inset-0 bg-green-700/60"></div>
 
-        {/* Header (Back Button + Title) */}
+        {/* Header (Title) */}
         <div className="absolute top-4 left-4 flex items-center text-white">
-          {/* <button className="mr-2">
-            <ArrowLeft size={24} />
-          </button> */}
           <h1 className="text-lg font-semibold">EMPLOYEE RELATIONS</h1>
         </div>
 
@@ -29,13 +104,15 @@ const MobileRelations = () => {
             <Search size={18} className="text-gray-500 mr-2" />
             <input
               type="text"
-              placeholder="Search leave no..."
+              placeholder="Search case ID, type, or title..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full outline-none text-sm text-gray-700"
             />
           </div>
         </div>
 
-        {/* Apply Button */}
+        {/* Submit Button */}
         <div className="absolute top-4 right-4">
           <button
             onClick={() => navigate('/mobile/relations-submit')}
@@ -46,59 +123,67 @@ const MobileRelations = () => {
         </div>
       </div>
 
-      {/* Content starts overlapping background */}
-      <div className="mt-12 px-4 pb-10">
-        {/* Leave Request Title */}
+      {/* Content Section */}
+      <div className="mt-12 px-4 pb-10 h-[70vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
         <h2 className="text-base font-semibold text-gray-800 mb-3">
           Employee Relations Request History
         </h2>
+        {loading ? (
+          <p className="text-sm text-gray-500">Loading relations...</p>
+        ) : error ? (
+          <p className="text-sm ">{error}</p>
+        ) : filteredRelations.length === 0 ? (
+          <p className="text-sm text-gray-500">No relations found.</p>
+        ) : (
+          <div className="space-y-4">
+            {filteredRelations.map((relation) => (
+              <div
+                key={relation.id}
+                className="border border-gray-300 rounded-lg p-4 shadow-sm bg-white"
+              >
+                {/* Case Info */}
+                <div className="flex items-start justify-between mb-1">
+                  <div>
+                    <p className="text-lg font-semibold text-gray-800 capitalize">
+                      {relation.caseType}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      Status: {relation.status}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() =>
+                      navigate(`/mobile/relations-view/${relation.id}`)
+                    }
+                    className="bg-[#2D3F99] text-white text-sm px-4 py-1 rounded-md"
+                  >
+                    View Now
+                  </button>
+                </div>
 
-        {/* Leave Request Cards */}
-        <div className="space-y-4">
-          {[
-            { type: 'Complaint', status: 'open' },
-            { type: 'Grievance', status: 'open' },
-            { type: 'Disciplinary', status: 'open' },
-            { type: 'Dispute', status: 'open' },
-          ].map((leave, index) => (
-            <div
-              key={index}
-              className="border border-gray-300 rounded-lg p-4 shadow-sm bg-white"
-            >
-              {/* Type + Button */}
-              <div className="flex items-start justify-between mb-1">
-                <div>
-                  <p className="text-lg font-semibold text-gray-800">
-                    {leave.type}
+                {/* Date + Case ID */}
+                <div className="flex items-center justify-between text-xs text-gray-600 mt-3">
+                  <p>
+                    <span className="font-semibold">Date:</span>{' '}
+                    {relation.dateReported}
                   </p>
-                  <p className="text-sm text-gray-600">
-                    Status: {leave.status}
+                  <p>
+                    <span className="font-semibold">Case ID:</span>{' '}
+                    {relation.caseId}
                   </p>
                 </div>
-                <button
-                  onClick={() => navigate('/mobile/relations-view')}
-                  className="bg-[#2D3F99] text-white text-sm px-4 py-1 rounded-md"
-                >
-                  View Now
-                </button>
-              </div>
 
-              {/* Date + Leave ID */}
-              <div className="flex items-center justify-between text-xs text-gray-600 mt-3">
-                <p>
-                  <span className="font-semibold">Date:</span> September 14,
-                  2025
-                </p>
-                <p>
-                  <span className="font-semibold">Case ID:</span> 2022041
+                {/* Reported Employee */}
+                <p className="text-xs text-gray-600 mt-1">
+                  <span className="font-semibold">Reported Employee:</span>{' '}
+                  {relation.reportedUser?.name}
                 </p>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Extra bottom space */}
       <div className="h-10"></div>
     </div>
   );

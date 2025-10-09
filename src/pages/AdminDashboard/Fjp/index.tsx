@@ -1,9 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
 import ActivateModal from './ActivateModal';
-import UpdateModal from './UpdateModal';
-import ArchiveModal from './ArchiveModal';
-import { RefreshCw, Search, XCircle } from 'lucide-react';
+import { CheckCircle, RefreshCw, Search, XCircle } from 'lucide-react';
 import { AppContext } from '../../../context/AppContext';
 import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
 
@@ -11,12 +9,11 @@ interface EmployeeProps {
   alertsRef: React.RefObject<AlertsContainerRef>;
 }
 
-const Employee = ({ alertsRef }: EmployeeProps) => {
+const ArchiveEmployee = ({ alertsRef }: EmployeeProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [showActivate, setShowActivate] = useState(false);
-  const [showUpdate, setShowUpdate] = useState(false);
-  const [showArchive, setShowArchive] = useState(false);
+
   const itemsPerPage = 10;
   const [employees, setEmployees] = useState<any[]>([]);
 
@@ -26,7 +23,7 @@ const Employee = ({ alertsRef }: EmployeeProps) => {
 
   const fetchEmployees = async () => {
     try {
-      const response = await fetch(`/api/employees`, {
+      const response = await fetch(`/api/fjp-employees`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
@@ -52,10 +49,7 @@ const Employee = ({ alertsRef }: EmployeeProps) => {
   const filteredEmployees = employees.filter(
     (emp) =>
       emp.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.employeeNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.section?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.contactNumber?.toLowerCase().includes(searchTerm.toLowerCase()),
+      emp.email?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Pagination logic
@@ -65,6 +59,27 @@ const Employee = ({ alertsRef }: EmployeeProps) => {
     startIndex,
     startIndex + itemsPerPage,
   );
+
+  // Status badge
+  const getStatusClasses = (isHired: boolean) =>
+    isHired
+      ? 'bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium'
+      : 'bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium';
+
+  // Highlight search
+  const highlightMatch = (text: string) => {
+    if (!searchTerm) return text;
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
+    return text.split(regex).map((part, i) =>
+      regex.test(part) ? (
+        <span key={i} className="bg-yellow-200">
+          {part}
+        </span>
+      ) : (
+        part
+      ),
+    );
+  };
 
   return (
     <>
@@ -96,9 +111,10 @@ const Employee = ({ alertsRef }: EmployeeProps) => {
             <thead className="bg-gray-100 dark:bg-gray-800 text-xs uppercase text-gray-600 dark:text-gray-300 sticky top-0">
               <tr>
                 <th className="px-6 py-3">No.</th>
-                <th className="px-6 py-3">Employee No.</th>
+                <th className="px-6 py-3">Employee No</th>
                 <th className="px-6 py-3">Image</th>
                 <th className="px-6 py-3">Section</th>
+                <th className="px-6 py-3">Status</th>
                 <th className="px-6 py-3">Full Name</th>
                 <th className="px-6 py-3">Email</th>
                 <th className="px-6 py-3">Created Date</th>
@@ -113,7 +129,9 @@ const Employee = ({ alertsRef }: EmployeeProps) => {
                     className="border-b dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
-                    <td className="px-6 py-3">{emp.employeeNo}</td>
+                    <td className="px-6 py-3">
+                      {highlightMatch(emp.employeeNo)}
+                    </td>
                     <td className="px-6 py-3">
                       <img
                         src={`https://fjp.ucc.bsit4c.com/${emp?.image}`}
@@ -121,28 +139,27 @@ const Employee = ({ alertsRef }: EmployeeProps) => {
                         className="w-10 h-10 border-white shadow-lg"
                       />
                     </td>
+
                     <td className="px-6 py-3">{emp.section}</td>
-                    <td className="px-6 py-3">{emp.fullName}</td>
-                    <td className="px-6 py-3">{emp.email}</td>
+                    <td className="px-6 py-3">
+                      <span className={getStatusClasses(emp.hrmIsActive)}>
+                        {emp.hrmIsActive ? 'Active' : 'Inactive'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-3">
+                      {highlightMatch(emp.fullName)}
+                    </td>
+                    <td className="px-6 py-3">{highlightMatch(emp.email)}</td>
                     <td className="px-6 py-3">{emp.createdDate}</td>
                     <td className="px-6 py-3 space-x-2">
                       <button
                         onClick={() => {
-                          setShowUpdate(true);
+                          setShowActivate(true);
                           setSelectedEmployee(emp);
                         }}
-                        className="bg-[#2D3F99] hover:bg-[#24327A] text-white px-3 py-2 rounded"
+                        className="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded"
                       >
-                        <RefreshCw size={18} />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setShowArchive(true);
-                          setSelectedEmployee(emp);
-                        }}
-                        className="bg-[#EB1D25] hover:bg-[#c5161e] text-white px-3 py-2 rounded"
-                      >
-                        <XCircle size={18} />
+                        <CheckCircle size={18} />
                       </button>
                     </td>
                   </tr>
@@ -167,22 +184,6 @@ const Employee = ({ alertsRef }: EmployeeProps) => {
         <ActivateModal
           alertsRef={alertsRef}
           onClose={() => setShowActivate(false)}
-          employee={selectedEmployee}
-          refetchEmployees={fetchEmployees}
-        />
-      )}
-      {showUpdate && (
-        <UpdateModal
-          onClose={() => setShowUpdate(false)}
-          employee={selectedEmployee}
-          alertsRef={alertsRef}
-          refetchEmployees={fetchEmployees}
-        />
-      )}
-      {showArchive && (
-        <ArchiveModal
-          alertsRef={alertsRef}
-          onClose={() => setShowArchive(false)}
           employee={selectedEmployee}
           refetchEmployees={fetchEmployees}
         />
@@ -228,4 +229,4 @@ const Employee = ({ alertsRef }: EmployeeProps) => {
   );
 };
 
-export default Employee;
+export default ArchiveEmployee;

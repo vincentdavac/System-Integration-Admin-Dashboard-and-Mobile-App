@@ -12,7 +12,7 @@ interface ActivateModalProps {
     employeeNo: string;
   };
   alertsRef: React.RefObject<AlertsContainerRef>;
-  refetchEmployees: () => Promise<void>; 
+  refetchEmployees: () => Promise<void>;
 }
 
 const ActivateModal = ({

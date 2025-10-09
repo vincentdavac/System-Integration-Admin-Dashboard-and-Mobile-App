@@ -10,6 +10,12 @@ const MobileHome = () => {
   const [leaveCredits, setLeaveCredits] = useState<number | null>(null);
 
   useEffect(() => {
+    if (!user) {
+      navigate('/mobile/login');
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
     if (!user?.id) return;
 
     const fetchNotifications = async () => {
@@ -18,6 +24,7 @@ const MobileHome = () => {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
           },
         });
         const data = await res.json();
@@ -47,6 +54,7 @@ const MobileHome = () => {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
           },
         });
 
@@ -108,7 +116,7 @@ const MobileHome = () => {
 
         {/* Header Info (below Home) */}
         <div className="absolute mb-2 top-14 left-2 text-white text-[12px] sm:text-sm leading-snug">
-          <p>Good ay,</p>
+          <p>Good Day,</p>
           <p className="font-bold text-[13px] sm:text-base">{user?.fullName}</p>
           <p>Employee No: {user?.employeeNo}</p>
         </div>
@@ -159,7 +167,7 @@ const MobileHome = () => {
           </button>
           <div className="backdrop-blur-md bg-green-700/40 h-20 text-white w-10/12 max-w-sm rounded-xl shadow-md p-4 text-center border border-white/20">
             <p className="text-lg font-semibold">{formattedDate}</p>
-            <p className="text-base mt-1">{formattedTime}</p>
+            <p className="text-sm mt-1">{formattedTime}</p>
           </div>
         </div>
       </div>
@@ -188,7 +196,7 @@ const MobileHome = () => {
       </div>
 
       {/* 🔹 Sections */}
-      <div className="w-11/12 max-w-sm mt-13 space-y-6 flex-1">
+      <div className="w-11/12 max-w-sm mt-9 flex-1 h-[600px] overflow-y-auto space-y-6 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 rounded-lg p-2">
         {/* Payroll */}
         <div className="bg-green-700 rounded-lg shadow flex items-center justify-between p-3 h-24 text-white relative pb-4">
           <div>
