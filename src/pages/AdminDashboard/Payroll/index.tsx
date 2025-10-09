@@ -1,53 +1,61 @@
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
 import { Eye, Search } from 'lucide-react';
 import ViewPayroll from './ViewPayroll';
+import { AppContext } from '../../../context/AppContext';
+import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
 
-const Payroll = () => {
+interface Props {
+  alertsRef: React.RefObject<AlertsContainerRef>;
+}
+
+const Payroll = ({ alertsRef }: Props) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [showView, setShowView] = useState(false);
 
-  type Loan = {
-    id: number;
-    accountNo: string;
-    fullName: string;
-    loanType: string;
-    loanAmount: number;
-    approvedAmount: number;
-    interestRate: string;
-    repaymentTerms: string;
-    applicationDate: string;
-    status: string;
-    approverId: string;
-    approvalDate: string;
+  const { user, token } = useContext(AppContext)!;
+
+  const [selectedPayroll, setSelectedPayroll] = useState<any>(null);
+
+  const [loans, setLoan] = useState<any[]>([]);
+
+  const fetchPayroll = async () => {
+    try {
+      const response = await fetch(`/api/payrolls`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+        },
+      });
+      const data = await response.json();
+
+      if (response.ok && data.data) {
+        setLoan(data.data);
+      } else {
+        console.error('Failed to fetch payroll:', data);
+      }
+    } catch (error) {
+      console.error('Error fetching payroll:', error);
+    }
   };
 
-  const [selectedRow, setSelectedRow] = useState<Loan | null>(null);
-  const [loans] = useState(
-    Array.from({ length: 50 }, (_, i) => ({
-      id: i + 1,
-      accountNo: `202200${i + 41}`,
-      fullName: `Employee ${i + 1}`,
-      loanType: 'Personal Loan',
-      loanAmount: 50000,
-      approvedAmount: 0,
-      interestRate: '5%',
-      repaymentTerms: '12 months',
-      applicationDate: '2025-09-15',
-      status: 'Pending',
-      approverId: '',
-      approvalDate: '',
-    })),
-  );
+  useEffect(() => {
+    if (user?.id) fetchPayroll();
+  }, [user, token]);
 
   const itemsPerPage = 10;
 
   // Filter table
   const filteredLoans = loans.filter(
-    (l) =>
-      l.accountNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      l.fullName.toLowerCase().includes(searchTerm.toLowerCase()),
+    (payroll) =>
+      payroll.userInformation.employeeNo
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      payroll.userInformation.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()),
   );
 
   // Pagination
@@ -57,21 +65,6 @@ const Payroll = () => {
     startIndex,
     startIndex + itemsPerPage,
   );
-
-  // Highlight search
-  const highlightMatch = (text: string) => {
-    if (!searchTerm) return text;
-    const regex = new RegExp(`(${searchTerm})`, 'gi');
-    return text.split(regex).map((part, i) =>
-      regex.test(part) ? (
-        <span key={i} className="bg-yellow-200 dark:bg-yellow-600">
-          {part}
-        </span>
-      ) : (
-        part
-      ),
-    );
-  };
 
   return (
     <>
@@ -105,8 +98,8 @@ const Payroll = () => {
                 <th className="px-6 py-3 text-center">No.</th>
                 <th className="px-6 py-3 text-center">Employee No.</th>
                 <th className="px-6 py-3 text-center">Full Name</th>
-                <th className="px-6 py-3 text-center">Cutoff Start</th>
-                <th className="px-6 py-3 text-center">Cutoff End</th>
+                <th className="px-6 py-3 text-center">Salary Date</th>
+                <th className="px-6 py-3 text-center">Release Date</th>
                 <th className="px-6 py-3 text-center">Created At</th>
                 <th className="px-6 py-3 text-center">Actions</th>
               </tr>
@@ -120,20 +113,18 @@ const Payroll = () => {
                   >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
                     <td className="px-6 py-3">
-                      {highlightMatch(row.accountNo)}
+                      {row.userInformation.employeeNo}
                     </td>
-                    <td className="px-6 py-3">
-                      {highlightMatch(row.fullName)}
-                    </td>
-                    <td className="px-6 py-3">{row.applicationDate}</td>
-                    <td className="px-6 py-3">{row.applicationDate}</td>
-                    <td className="px-6 py-3">{row.applicationDate}</td>
+                    <td className="px-6 py-3">{row.userInformation.name}</td>
+                    <td className="px-6 py-3">{row.salaryDate}</td>
+                    <td className="px-6 py-3">{row.releaseDate}</td>
+                    <td className="px-6 py-3">{row.createdDate}</td>
                     <td className="px-6 py-3">
                       <button
-                        className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-white"
+                        className="bg-green-600 hover:bg-green-500 px-4 py-2 rounded text-white"
                         onClick={() => {
-                          setSelectedRow(row);
                           setShowView(true);
+                          setSelectedPayroll(row);
                         }}
                       >
                         <Eye size={18} />
@@ -157,7 +148,14 @@ const Payroll = () => {
       </div>
 
       {/* Modal */}
-      {showView && <ViewPayroll onClose={() => setShowView(false)} />}
+      {showView && (
+        <ViewPayroll
+          onClose={() => setShowView(false)}
+          payroll={selectedPayroll}
+          alertsRef={alertsRef}
+          refetchPayroll={fetchPayroll}
+        />
+      )}
 
       {/* Pagination Controls */}
       <div className="flex justify-between items-center mt-4">

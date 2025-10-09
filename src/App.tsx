@@ -151,7 +151,7 @@ function App({ alertsRef }: AppProps) {
           element={
             <>
               <PageTitle title="Payroll | Human Resource Management" />
-              <Payroll />
+              <Payroll alertsRef={alertsRef} />
             </>
           }
         />

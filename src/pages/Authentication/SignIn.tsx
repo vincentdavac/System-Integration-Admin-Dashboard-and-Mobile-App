@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import LogoDark from '../../../src/images/logo/logo-dark.svg';
 import Logo from '../../images/logo/logo.svg';
@@ -11,7 +11,7 @@ interface LoginProps {
 }
 
 const SignIn = ({ alertsRef }: LoginProps) => {
-  const { setToken, setStudentNo, setUserId } = useContext(AppContext)!;
+  const { setToken } = useContext(AppContext)!;
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -82,7 +82,7 @@ const SignIn = ({ alertsRef }: LoginProps) => {
                   better future
                 </p>
 
-                <span className="mt-15 inline-block -mt-3">
+                <span className=" inline-block -mt-3">
                   <img
                     src={School}
                     alt="School Illustration"

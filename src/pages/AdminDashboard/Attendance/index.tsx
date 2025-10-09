@@ -1,55 +1,61 @@
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
-import { Eye, ClipboardPen, Search } from 'lucide-react';
+import { Eye, Search } from 'lucide-react';
 import ViewAttendance from './ViewAttendance';
+
+interface Attendance {
+  id: string;
+  student_no: string;
+  student_name: string;
+  section: string;
+  time_in: string;
+  time_out: string;
+  rendered_hours: string;
+  createdDate: string;
+}
+import { AppContext } from '../../../context/AppContext';
 
 const Attendance = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [showUpdate, setShowUpdate] = useState(false);
   const [showView, setShowView] = useState(false);
+  const { user, token } = useContext(AppContext)!;
 
-  type Loan = {
-    id: number;
-    accountNo: string;
-    fullName: string;
-    loanType: string;
-    loanAmount: number;
-    approvedAmount: number;
-    interestRate: string;
-    repaymentTerms: string;
-    applicationDate: string;
-    status: string;
-    approverId: string;
-    approvalDate: string;
-  };
-  const [selectedRow, setSelectedRow] = useState<Loan | null>(null);
-  const [statusUpdate, setStatusUpdate] = useState('');
-  const [remarks, setRemarks] = useState('');
+  const [selectedRow, setSelectedRow] = useState<any>(null);
+
+  const [attendance, setAttendance] = useState<Attendance[]>([]);
 
   const itemsPerPage = 10;
 
-  const [loans, setLoans] = useState(
-    Array.from({ length: 50 }, (_, i) => ({
-      id: i + 1,
-      accountNo: `202200${i + 41}`,
-      fullName: `Employee ${i + 1}`,
-      loanType: 'Personal Loan',
-      loanAmount: 50000,
-      approvedAmount: 0,
-      interestRate: '5%',
-      repaymentTerms: '12 months',
-      applicationDate: '2025-09-15',
-      status: 'Pending',
-      approverId: '',
-      approvalDate: '',
-    })),
-  );
+  const fetchEmployees = async () => {
+    try {
+      const response = await fetch(`/api/attendance-records`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+        },
+      });
+      const data = await response.json();
 
-  const filteredLoans = loans.filter(
-    (l) =>
-      l.accountNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      l.fullName.toLowerCase().includes(searchTerm.toLowerCase()),
+      if (response.ok && data.data) {
+        setAttendance(data.data);
+      } else {
+        console.error('Failed to fetch employees:', data);
+      }
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.id) fetchEmployees();
+  }, [user, token]);
+
+  const filteredLoans = attendance.filter(
+    (attend) =>
+      attend.student_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      attend.student_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      attend.createdDate.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const totalPages = Math.ceil(filteredLoans.length / itemsPerPage);
@@ -58,44 +64,6 @@ const Attendance = () => {
     startIndex,
     startIndex + itemsPerPage,
   );
-
-  const getStatusClasses = (status: string) => {
-    switch (status) {
-      case 'Approved':
-        return 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-3 py-1 rounded-full text-xs font-medium';
-      case 'Rejected':
-        return 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 px-3 py-1 rounded-full text-xs font-medium';
-      case 'Cancelled':
-        return 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full text-xs font-medium';
-      case 'Pending':
-      default:
-        return 'bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 px-3 py-1 rounded-full text-xs font-medium';
-    }
-  };
-
-  const highlightMatch = (text: string) => {
-    if (!searchTerm) return text;
-    const regex = new RegExp(`(${searchTerm})`, 'gi');
-    return text.split(regex).map((part, i) =>
-      regex.test(part) ? (
-        <span key={i} className="bg-yellow-200 dark:bg-yellow-800">
-          {part}
-        </span>
-      ) : (
-        part
-      ),
-    );
-  };
-
-  const handleSaveChanges = () => {
-    if (!selectedRow) return;
-    setLoans((prevLoans) =>
-      prevLoans.map((l) =>
-        l.id === selectedRow.id ? { ...l, status: statusUpdate } : l,
-      ),
-    );
-    setShowUpdate(false);
-  };
 
   return (
     <>
@@ -129,7 +97,7 @@ const Attendance = () => {
                 <th className="px-6 py-3 text-center">No.</th>
                 <th className="px-6 py-3 text-center">Employee No.</th>
                 <th className="px-6 py-3 text-center">Full Name</th>
-                <th className="px-6 py-3 text-center">Branch</th>
+                <th className="px-6 py-3 text-center">Section</th>
                 <th className="px-6 py-3 text-center">Created At</th>
                 <th className="px-6 py-3 text-center">Actions</th>
               </tr>
@@ -142,18 +110,14 @@ const Attendance = () => {
                     className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-center"
                   >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
-                    <td className="px-6 py-3">
-                      {highlightMatch(row.accountNo)}
-                    </td>
-                    <td className="px-6 py-3">
-                      {highlightMatch(row.fullName)}
-                    </td>
-                    <td className="px-6 py-3">{row.applicationDate}</td>
-                    <td className="px-6 py-3">{row.applicationDate}</td>
+                    <td className="px-6 py-3">{row.student_no}</td>
+                    <td className="px-6 py-3">{row.student_name}</td>
+                    <td className="px-6 py-3">{row.section}</td>
+                    <td className="px-6 py-3">{row.createdDate}</td>
 
                     <td className="px-6 py-3 space-x-2">
                       <button
-                        className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-white"
+                        className="bg-green-600 hover:bg-green-500 px-4 py-2 rounded text-white"
                         onClick={() => {
                           setSelectedRow(row);
                           setShowView(true);
@@ -180,7 +144,12 @@ const Attendance = () => {
       </div>
 
       {/* Modal */}
-      {showView && <ViewAttendance onClose={() => setShowView(false)} />}
+      {showView && (
+        <ViewAttendance
+          onClose={() => setShowView(false)}
+          Attendance={selectedRow}
+        />
+      )}
 
       {/* Pagination Controls */}
       <div className="flex justify-between items-center mt-4">

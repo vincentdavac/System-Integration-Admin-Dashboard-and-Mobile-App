@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
 import ActivateModal from './ActivateModal';
-import { CheckCircle, RefreshCw, Search, XCircle } from 'lucide-react';
+import { CheckCircle, Search } from 'lucide-react';
 import { AppContext } from '../../../context/AppContext';
 import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
 

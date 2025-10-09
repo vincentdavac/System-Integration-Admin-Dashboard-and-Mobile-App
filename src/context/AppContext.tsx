@@ -64,9 +64,9 @@ export default function AppProvider({ children }: MyComponentProps) {
       if (!res.ok) {
         setUser(null);
       } else {
-        const data = await res.json();
-        setUser(data.data);
-        console.log(data.data);
+        const response = await res.json();
+        setUser(response.data);
+        console.log(response.data);
       }
     } catch (err) {
       setUser(null);

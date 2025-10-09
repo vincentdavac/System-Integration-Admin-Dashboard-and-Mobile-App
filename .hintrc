@@ -1,7 +1,5 @@
 {
-  "extends": [
-    "development"
-  ],
+  "extends": ["development"],
   "hints": {
     "axe/aria": [
       "default",
@@ -25,7 +23,8 @@
       "default",
       {
         "label": "off",
-        "select-name": "off"
+        "select-name": "off",
+        "autocomplete-valid": "off"
       }
     ]
   }

@@ -2,9 +2,22 @@ import UCCLogo from '/icons/ucc_logo.png';
 
 interface ViewAttendanceProps {
   onClose: () => void;
+  Attendance: {
+    id: string;
+    student_no: string;
+    student_name: string;
+    section: string;
+    time_in: string;
+    time_out: string;
+    rendered_hours: string;
+    createdDate: string;
+  };
 }
 
-export default function ViewPayroll({ onClose }: ViewAttendanceProps) {
+export default function ViewPayroll({
+  onClose,
+  Attendance,
+}: ViewAttendanceProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] flex flex-col">
@@ -36,45 +49,47 @@ export default function ViewPayroll({ onClose }: ViewAttendanceProps) {
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Employee No.
               </p>
-              <p className="font-semibold text-sm">20220041</p>
+              <p className="font-semibold text-sm">{Attendance.student_no}</p>
             </div>
 
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Full Name
               </p>
-              <p className="font-semibold text-sm">Davac, Vincent Ahron M.</p>
+              <p className="font-semibold text-sm">{Attendance.student_name}</p>
             </div>
 
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Time In
               </p>
-              <p className="font-semibold text-sm">8:00AM</p>
+              <p className="font-semibold text-sm">{Attendance.time_in}</p>
             </div>
 
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Time Out
               </p>
-              <p className="font-semibold text-sm">5:00PM</p>
-            </div>
-
-            <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
-              <p className="text-sm text-gray-500 dark:text-gray-400">Branch</p>
-              <p className="font-semibold text-sm">BSIT - 4C</p>
+              <p className="font-semibold text-sm">{Attendance.time_out}</p>
             </div>
 
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
+                Section
+              </p>
+              <p className="font-semibold text-sm">{Attendance.section}</p>
+            </div>
+
+            {/* <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 Total Hour/s
               </p>
               <p className="font-semibold text-sm">8 Hour/s</p>
-            </div>
+            </div> */}
 
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">Date</p>
-              <p className="font-semibold text-sm">September 27, 2025</p>
+              <p className="font-semibold text-sm">{Attendance.createdDate}</p>
             </div>
           </div>
         </div>
