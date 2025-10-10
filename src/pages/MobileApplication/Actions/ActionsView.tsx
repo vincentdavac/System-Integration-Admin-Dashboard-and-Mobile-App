@@ -2,6 +2,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState, useContext } from 'react';
 import { AppContext } from '../../../context/AppContext';
+import API_BASE_URL from '../../../config/api';
 
 interface RelationAction {
   id: number;
@@ -47,11 +48,12 @@ const MobileActionsView = () => {
     const fetchAction = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/relation-actions/${id}`, {
+        const res = await fetch(`${API_BASE_URL}/api/relation-actions/${id}`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: 'application/json',
+            'Access-Control-Allow-Origin': '*',
           },
         });
 

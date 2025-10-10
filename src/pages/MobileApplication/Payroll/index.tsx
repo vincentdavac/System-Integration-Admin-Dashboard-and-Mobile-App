@@ -2,6 +2,7 @@ import { ArrowLeft, Search } from 'lucide-react';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../../../context/AppContext';
+import API_BASE_URL from '../../../config/api';
 
 interface PayrollRecord {
   id: number;
@@ -41,13 +42,17 @@ const MobilePayrollHistory = () => {
     const fetchPayrolls = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/payrolls/user/${user.id}`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/json',
+        const res = await fetch(
+          `${API_BASE_URL}/api/payrolls/user/${user.id}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
           },
-        });
+        );
 
         const data = await res.json();
 
@@ -138,9 +143,7 @@ const MobilePayrollHistory = () => {
             Loading payroll records...
           </p>
         ) : filteredPayrolls.length === 0 ? (
-          <p className="text-center text-gray-500 mt-6">
-            No payroll records found.
-          </p>
+          <p className=" text-gray-500 text-lm">No payroll records found.</p>
         ) : (
           <div className="space-y-4">
             {filteredPayrolls.map((item, index) => (

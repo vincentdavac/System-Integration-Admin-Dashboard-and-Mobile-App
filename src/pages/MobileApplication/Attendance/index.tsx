@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { ArrowLeft, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../../../context/AppContext';
+import API_BASE_URL from '../../../config/api';
 
 // 🧩 Define the shape of an attendance record
 interface AttendanceRecord {
@@ -31,12 +32,13 @@ const MobileAttendanceHistory = () => {
     const fetchAttendanceRecords = async () => {
       try {
         const res = await fetch(
-          `/api/attendance-records/user/${user.employeeNo}`,
+          `${API_BASE_URL}/api/attendance-records/user/${user.employeeNo}`,
           {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${token}`,
               Accept: 'application/json',
+              'Access-Control-Allow-Origin': '*',
             },
           },
         );
@@ -118,7 +120,7 @@ const MobileAttendanceHistory = () => {
         {loading ? (
           <p className="text-gray-500 text-sm">Loading attendance records...</p>
         ) : filtered.length === 0 ? (
-          <p className="text-gray-500 text-sm">No attendance found.</p>
+          <p className="text-gray-500 text-lm">No attendance found.</p>
         ) : (
           <div className="space-y-4 max-h-[70vh] overflow-y-auto pb-4">
             {filtered.map((item) => (

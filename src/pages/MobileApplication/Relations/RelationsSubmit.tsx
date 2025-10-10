@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '../../../context/AppContext';
 import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
+import API_BASE_URL from '../../../config/api';
 
 interface User {
   id: number;
@@ -35,10 +36,12 @@ const MobileRelationsSubmit = ({ alertsRef }: RelationsSubmitProps) => {
 
       try {
         setLoading(true);
-        const res = await fetch(`/api/users/others/${user.id}`, {
+        const res = await fetch(`${API_BASE_URL}/api/users/others/${user.id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
           },
         });
 
@@ -64,11 +67,12 @@ const MobileRelationsSubmit = ({ alertsRef }: RelationsSubmitProps) => {
   const handleSubmit = async () => {
     try {
       setSubmitting(true);
-      const res = await fetch('/api/employee-relations', {
+      const res = await fetch(`${API_BASE_URL}/api/employee-relations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
+          'Access-Control-Allow-Origin': '*',
         },
         body: JSON.stringify({
           users_id: selectedEmployee,

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import API_BASE_URL from '../../../config/api';
 
 interface PayrollData {
   id: number;
@@ -34,9 +35,11 @@ const MobilePayrollView = () => {
   useEffect(() => {
     const fetchPayroll = async () => {
       try {
-        const response = await fetch(`/api/payrolls/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/payrolls/${id}`, {
           headers: {
             Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
           },
         });
         const result = await response.json();

@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from '../../../context/AppContext';
 import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import API_BASE_URL from '../../../config/api';
 
 interface LoginProps {
   alertsRef: React.RefObject<AlertsContainerRef>;
@@ -25,11 +26,12 @@ const MobileLogin = ({ alertsRef }: LoginProps) => {
   async function handleLogin(e: { preventDefault: () => void }) {
     e.preventDefault();
 
-    const res = await fetch('/api/user/login', {
+    const res = await fetch(`${API_BASE_URL}/api/user/login`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
       },
       body: JSON.stringify(formData),
     });

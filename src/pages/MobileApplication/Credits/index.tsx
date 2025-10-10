@@ -2,11 +2,25 @@ import { ArrowLeft } from 'lucide-react';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../../../context/AppContext';
+import API_BASE_URL from '../../../config/api';
+
+interface Attendance {
+  id: string;
+  student_no: string;
+  student_name: string;
+  section: string;
+  time_in: string;
+  time_out: string;
+  rendered_hours: string;
+  createdDate: string;
+  createdTime: string;
+}
 
 const MobileCredits = () => {
   const { user, token } = useContext(AppContext)!;
   const navigate = useNavigate();
   const [leaveCredits, setLeaveCredits] = useState<number | null>(null);
+  const [attendance, setAttendance] = useState<Attendance[]>([]);
 
   // 💳 Fetch User Leave Credits
   useEffect(() => {
@@ -14,11 +28,12 @@ const MobileCredits = () => {
 
     const fetchLeaveCredits = async () => {
       try {
-        const res = await fetch(`/api/credits/${user.id}`, {
+        const res = await fetch(`${API_BASE_URL}/api/credits/${user.id}`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: 'application/json',
+            'Access-Control-Allow-Origin': '*',
           },
         });
 
@@ -31,6 +46,40 @@ const MobileCredits = () => {
         }
 
         setLeaveCredits(data?.data?.totalCredits || 0);
+      } catch (error) {
+        console.error('Error fetching leave credits:', error);
+      }
+    };
+
+    fetchLeaveCredits();
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const fetchLeaveCredits = async () => {
+      try {
+        const res = await fetch(
+          `${API_BASE_URL}/api/attendance-records/user/${user.employeeNo}/${user.id}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
+          },
+        );
+
+        const data = await res.json();
+        console.log('Credits:', data);
+
+        if (!res.ok) {
+          console.error('Failed to fetch attendance in credits:', data.message);
+          return;
+        }
+
+        setAttendance(data?.data || 0);
       } catch (error) {
         console.error('Error fetching leave credits:', error);
       }
@@ -96,28 +145,34 @@ const MobileCredits = () => {
             <thead className="bg-green-700 text-white">
               <tr>
                 <th className="py-2 px-2 text-left">No.</th>
-                <th className="py-2 px-2 text-left">Earned</th>
-                <th className="py-2 px-2 text-left">Used</th>
-                <th className="py-2 px-2 text-left">Remaining</th>
+                <th className="py-2 px-2 text-left">Time In</th>
+                <th className="py-2 px-2 text-left">Time Out</th>
+                <th className="py-2 px-2 text-left">Remdered Hours</th>
                 <th className="py-2 px-2 text-left">Date</th>
               </tr>
             </thead>
-            <tbody>
+            {attendance.length > 0 ? (
+              attendance.map((emp, index) => (
+                <tbody>
+                  <tr key={emp.id || index} className="border-b">
+                    <td className="py-2 px-2">{index + 1}</td>
+                    <td className="py-2 px-2">{emp.time_in}</td>
+                    <td className="py-2 px-2">{emp.time_out}</td>
+                    <td className="py-2 px-2">{emp.rendered_hours}</td>
+                    <td className="py-2 px-2">{emp.createdDate}</td>
+                  </tr>
+                </tbody>
+              ))
+            ) : (
               <tr className="border-b">
-                <td className="py-2 px-2">1.</td>
-                <td className="py-2 px-2">10.00</td>
-                <td className="py-2 px-2">0</td>
-                <td className="py-2 px-2">10.00</td>
-                <td className="py-2 px-2">Sept. 14, 2025</td>
+                <td
+                  className="py-2 px-2 text-center"
+                  colSpan={5} // adjust to match number of columns in your table
+                >
+                  No Credit records Found
+                </td>
               </tr>
-              <tr>
-                <td className="py-2 px-2">2.</td>
-                <td className="py-2 px-2">10.00</td>
-                <td className="py-2 px-2">0</td>
-                <td className="py-2 px-2">10.00</td>
-                <td className="py-2 px-2">Sept. 14, 2025</td>
-              </tr>
-            </tbody>
+            )}
           </table>
         </div>
       </div>

@@ -2,6 +2,7 @@ import { ArrowLeft, Search } from 'lucide-react';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../../../context/AppContext';
+import API_BASE_URL from '../../../config/api';
 
 interface LoanRecord {
   id: number;
@@ -27,13 +28,17 @@ const MobileLoan = () => {
     const fetchLoans = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/loan-records/user/${user.employeeNo}`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/json',
+        const res = await fetch(
+          `${API_BASE_URL}/api/loan-records/user/${user.employeeNo}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
           },
-        });
+        );
 
         const data = await res.json();
 
@@ -101,7 +106,7 @@ const MobileLoan = () => {
         {loading ? (
           <p className="text-gray-500 text-sm">Loading loans...</p>
         ) : filteredLoans.length === 0 ? (
-          <p className="text-gray-500 text-sm">No loan records found.</p>
+          <p className="text-gray-500 text-lm">No loan records found.</p>
         ) : (
           <div className="space-y-4">
             {filteredLoans.map((loan) => (

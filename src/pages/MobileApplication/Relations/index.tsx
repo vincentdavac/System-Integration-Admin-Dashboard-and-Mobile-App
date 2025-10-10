@@ -2,7 +2,7 @@ import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '../../../context/AppContext';
-
+import API_BASE_URL from '../../../config/api';
 interface Relation {
   id: number;
   caseId: string;
@@ -34,12 +34,16 @@ const MobileRelations = () => {
 
       try {
         setLoading(true);
-        const res = await fetch(`/api/employee-relations/user/${user.id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/json',
+        const res = await fetch(
+          `${API_BASE_URL}/api/employee-relations/user/${user.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
           },
-        });
+        );
 
         const data = await res.json();
         if (res.ok) {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import API_BASE_URL from '../../../config/api';
 
 interface Employee {
   id: number;
@@ -40,11 +41,16 @@ const MobileRelationsView = () => {
   useEffect(() => {
     const fetchRelation = async () => {
       try {
-        const response = await fetch(`/api/employee-relations/${id}`, {
-          headers: {
-            Accept: 'application/json',
+        const response = await fetch(
+          `${API_BASE_URL}/api/employee-relations/${id}`,
+          {
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
           },
-        });
+        );
         const data = await response.json();
         if (data.status === 'Successful request') {
           setRelation(data.data);

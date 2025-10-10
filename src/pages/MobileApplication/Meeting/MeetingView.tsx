@@ -2,7 +2,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '../../../context/AppContext';
-
+import API_BASE_URL from '../../../config/api';
 interface MeetingDetail {
   id: number;
   meetingId: string;
@@ -53,11 +53,12 @@ const MobileMeetingView = () => {
     const fetchMeetingDetail = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/relation-meetings/${id}`, {
+        const res = await fetch(`${API_BASE_URL}/api/relation-meetings/${id}`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: 'application/json',
+            'Access-Control-Allow-Origin': '*',
           },
         });
 

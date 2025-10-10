@@ -6,6 +6,7 @@ import {
   useEffect,
   useState,
 } from 'react';
+import API_BASE_URL from '../config/api';
 
 interface UserType {
   id?: number;
@@ -55,10 +56,11 @@ export default function AppProvider({ children }: MyComponentProps) {
 
   async function getUser() {
     try {
-      const res = await fetch('https://hrmbackend.ucc.bsit4c.com/api/user', {
+      const res = await fetch(`${API_BASE_URL}/api/user`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
         },
       });
 

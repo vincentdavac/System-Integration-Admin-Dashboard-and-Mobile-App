@@ -2,6 +2,7 @@ import { ArrowLeft, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '../../../context/AppContext';
+import API_BASE_URL from '../../../config/api';
 
 interface RelationAction {
   id: number;
@@ -55,13 +56,17 @@ const MobileActionsHistory = () => {
     const fetchActions = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/relation-actions/my-actions/${user.id}`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/json',
+        const res = await fetch(
+          `${API_BASE_URL}/api/relation-actions/my-actions/${user.id}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
           },
-        });
+        );
 
         const data = await res.json();
         if (res.ok) {
@@ -154,9 +159,7 @@ const MobileActionsHistory = () => {
         {/* Cards */}
         <div className="space-y-4 h-[70vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 p-2 rounded-md">
           {filteredActions.length === 0 && !loading && (
-            <p className="text-gray-500 text-sm text-center">
-              No actions found.
-            </p>
+            <p className="text-gray-500 text-lm ">No actions found.</p>
           )}
 
           {filteredActions.map((action) => (

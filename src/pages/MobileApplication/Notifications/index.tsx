@@ -2,7 +2,7 @@ import { ArrowLeft, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useContext } from 'react';
 import { AppContext } from '../../../context/AppContext'; // ✅ make sure this path is correct
-
+import API_BASE_URL from '../../../config/api';
 // ✅ Define the notification type
 interface Notification {
   id: number;
@@ -26,13 +26,17 @@ const Notifications = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await fetch(`/api/notifications/user/${user?.id}`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/json',
+        const response = await fetch(
+          `${API_BASE_URL}/api/notifications/user/${user?.id}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
           },
-        });
+        );
 
         const data = await response.json();
         console.log('📩 Notifications fetched:', data);

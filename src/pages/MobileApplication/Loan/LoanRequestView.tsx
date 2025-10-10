@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-
+import API_BASE_URL from '../../../config/api';
 interface LoanData {
   id: number;
   studentNo: string;
@@ -49,9 +49,11 @@ const MobileLoanRequest = () => {
 
     const fetchLoanData = async () => {
       try {
-        const res = await fetch(`/api/loan-record/${id}`, {
+        const res = await fetch(`${API_BASE_URL}/api/loan-record/${id}`, {
           headers: {
             Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
           },
         });
         const data = await res.json();

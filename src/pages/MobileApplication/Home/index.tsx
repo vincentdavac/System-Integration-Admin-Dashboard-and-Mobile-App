@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '../../../context/AppContext';
 import { useNavigate } from 'react-router-dom';
+import API_BASE_URL from '../../../config/api';
 
 const MobileHome = () => {
   const { user, token } = useContext(AppContext)!;
@@ -11,7 +12,7 @@ const MobileHome = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate('/mobile/login');
+      navigate(`/mobile/login`);
     }
   }, [user, navigate]);
 
@@ -20,13 +21,17 @@ const MobileHome = () => {
 
     const fetchNotifications = async () => {
       try {
-        const res = await fetch(`/api/notifications/user/${user.id}`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/json',
+        const res = await fetch(
+          `${API_BASE_URL}/api/notifications/user/${user.id}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
           },
-        });
+        );
         const data = await res.json();
 
         if (res.ok && data?.data?.unread_summary) {
@@ -50,11 +55,12 @@ const MobileHome = () => {
 
     const fetchLeaveCredits = async () => {
       try {
-        const res = await fetch(`/api/credits/${user.id}`, {
+        const res = await fetch(`${API_BASE_URL}/api/credits/${user.id}`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: 'application/json',
+            'Access-Control-Allow-Origin': '*',
           },
         });
 

@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
 import { AppContext } from '../../../context/AppContext';
+import API_BASE_URL from '../../../config/api';
 interface LeaveRequestProps {
   alertsRef: React.RefObject<AlertsContainerRef>;
 }
@@ -26,11 +27,12 @@ const MobileLeaveApply = ({ alertsRef }: LeaveRequestProps) => {
     const fetchLeaveTypes = async () => {
       if (!token) return;
       try {
-        const res = await fetch('/api/leave-types', {
+        const res = await fetch(`${API_BASE_URL}/api/leave-types`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: 'application/json',
+            'Access-Control-Allow-Origin': '*',
           },
         });
 
@@ -80,7 +82,7 @@ const MobileLeaveApply = ({ alertsRef }: LeaveRequestProps) => {
       formData.append('image_file', image_file);
     }
 
-    const response = await fetch('/api/leave-requests', {
+    const response = await fetch(`${API_BASE_URL}/api/leave-requests`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,

@@ -2,6 +2,7 @@ import { ArrowLeft, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '../../../context/AppContext';
+import API_BASE_URL from '../../../config/api';
 
 interface Meeting {
   id: number;
@@ -54,12 +55,13 @@ const MobileMeetingHistory = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          `/api/relation-meetings/my-meetings/${user.id}`,
+          `${API_BASE_URL}/api/relation-meetings/my-meetings/${user.id}`,
           {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${token}`,
               Accept: 'application/json',
+              'Access-Control-Allow-Origin': '*',
             },
           },
         );
@@ -213,21 +215,11 @@ const MobileMeetingHistory = () => {
             </div>
           ) : error ? (
             // Error State
-            <div className="flex justify-center items-center h-full">
-              <div className="text-center">
-                <p className="text-red-600 mb-2">⚠️ {error}</p>
-                <button
-                  onClick={() => window.location.reload()}
-                  className="text-sm text-blue-600 underline"
-                >
-                  Try again
-                </button>
-              </div>
-            </div>
+            <div className="flex justify-center items-center h-full"></div>
           ) : filteredMeetings.length === 0 ? (
             // Empty State
-            <div className="flex justify-center items-center h-full">
-              <div className="text-center">
+            <div className="flex   h-full">
+              <div className="">
                 <p className="text-gray-600 mb-2">
                   {searchQuery
                     ? `No meetings found for "${searchQuery}"`

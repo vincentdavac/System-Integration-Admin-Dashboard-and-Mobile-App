@@ -1,8 +1,8 @@
-import { ArrowLeft, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '../../../context/AppContext';
-
+import API_BASE_URL from '../../../config/api';
 interface LeaveRequest {
   id: number;
   leaveId: string;
@@ -35,11 +35,12 @@ const MobileLeaveRequest = () => {
     const fetchLeaves = async () => {
       try {
         setLoading(true);
-        const res = await fetch('/api/my-leave-requests', {
+        const res = await fetch(`${API_BASE_URL}/api/my-leave-requests`, {
           method: 'GET',
           headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${token}`,
+            'Access-Control-Allow-Origin': '*',
           },
         });
 
@@ -138,7 +139,7 @@ const MobileLeaveRequest = () => {
         {/* Leave Cards */}
         <div className="space-y-4 h-[70vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 p-2 rounded-md">
           {filteredLeaves.length === 0 && !loading && (
-            <p className="text-gray-500 text-sm ">No leave requests found.</p>
+            <p className="text-gray-500 text-lm ">No leave requests found.</p>
           )}
 
           {filteredLeaves.map((leave) => (

@@ -2,6 +2,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState, useContext } from 'react';
 import { AppContext } from '../../../context/AppContext';
+import API_BASE_URL from '../../../config/api';
 
 interface LeaveRequest {
   id: number;
@@ -44,11 +45,12 @@ const MobileLeaveRequestView = () => {
     const fetchLeaveRequest = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/leave-requests/${id}`, {
+        const res = await fetch(`${API_BASE_URL}/api/leave-requests/${id}`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: 'application/json',
+            'Access-Control-Allow-Origin': '*',
           },
         });
 

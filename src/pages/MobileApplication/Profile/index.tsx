@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
 import { AppContext } from '../../../context/AppContext';
-
+import API_BASE_URL from '../../../config/api';
 interface LogoutProps {
   alertsRef: React.RefObject<AlertsContainerRef>;
 }
@@ -19,11 +19,13 @@ const MobileProfile = ({ alertsRef }: LogoutProps) => {
 
   async function handleLogout(e: { preventDefault: () => void }) {
     e.preventDefault();
-    const res = await fetch('/api/logout', {
+    const res = await fetch(`${API_BASE_URL}/api/logout`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
       },
     });
 
@@ -53,18 +55,22 @@ const MobileProfile = ({ alertsRef }: LogoutProps) => {
     }
 
     try {
-      const res = await fetch(`/api/update-account/${user?.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-          Accept: 'application/json',
+      const res = await fetch(
+        `${API_BASE_URL}/api/update-account/${user?.employeeNo}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+          body: JSON.stringify({
+            hrm_password: newPassword,
+            hrm_password_confirmation: confirmPassword,
+          }),
         },
-        body: JSON.stringify({
-          hrm_password: newPassword,
-          hrm_password_confirmation: confirmPassword,
-        }),
-      });
+      );
 
       const data = await res.json();
       console.log(data);
@@ -136,14 +142,14 @@ const MobileProfile = ({ alertsRef }: LogoutProps) => {
           <div className="grid grid-cols-2 gap-3">
             <input
               type="text"
-              value={user?.firstName || 'First Name'}
+              value={user?.fullName || 'First Name'}
               onChange={(e) => setUser({ ...user, firstName: e.target.value })}
               className="p-2 border rounded-md text-sm"
               disabled
             />
             <input
               type="text"
-              value={user?.lastName || 'Last Name'}
+              value={user?.section || 'Last Name'}
               onChange={(e) => setUser({ ...user, lastName: e.target.value })}
               className="p-2 border rounded-md text-sm"
               disabled
@@ -201,14 +207,14 @@ const MobileProfile = ({ alertsRef }: LogoutProps) => {
                 disabled
                 type="text"
                 placeholder="Home Address"
-                defaultValue="Quezon City, Metro Manila"
+                defaultValue="Caloocan City, Metro Manila 1400"
                 className="p-2 border rounded-md text-sm col-span-2"
               />
               <input
                 disabled
                 type="text"
                 placeholder="Emergency Contact"
-                defaultValue="Jane Doe"
+                defaultValue="Jose Protacio"
                 className="p-2 border rounded-md text-sm col-span-2"
               />
             </div>

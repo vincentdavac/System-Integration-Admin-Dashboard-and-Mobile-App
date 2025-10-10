@@ -1,4 +1,4 @@
-import { Archive, CalendarPlus2 } from 'lucide-react';
+import { CalendarPlus2 } from 'lucide-react';
 import UCCLogo from '/icons/ucc_logo.png';
 interface AddCreditsProps {
   onClose: () => void;

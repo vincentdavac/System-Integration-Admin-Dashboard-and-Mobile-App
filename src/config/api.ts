@@ -1,4 +1,8 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export default API_BASE_URL;
 
-// 'Access-Control-Allow-Origin': '*',
+//  headers: {
+//         Accept: 'application/json',
+//         'Content-Type': 'application/json',
+//         'Access-Control-Allow-Origin': '*',
+//       },
