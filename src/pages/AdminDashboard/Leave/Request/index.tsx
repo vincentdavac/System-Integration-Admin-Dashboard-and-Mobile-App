@@ -163,9 +163,9 @@ const Request = ({ alertsRef }: Props) => {
                 <th className="px-6 py-3 text-center">Leave ID</th>
                 <th className="px-6 py-3 text-center">Employee ID</th>
                 <th className="px-6 py-3 text-center">Full Name</th>
-                <th className="px-6 py-3 text-center">Email Address</th>
+                {/* <th className="px-6 py-3 text-center">Email Address</th>
                 <th className="px-6 py-3 text-center">Start Date</th>
-                <th className="px-6 py-3 text-center">End Date</th>
+                <th className="px-6 py-3 text-center">End Date</th> */}
                 <th className="px-6 py-3 text-center">Status</th>
                 <th className="px-6 py-3 text-center">Application Date</th>
 
@@ -185,9 +185,9 @@ const Request = ({ alertsRef }: Props) => {
                     <td className="px-6 py-3">
                       {req.userInformation.fullName}
                     </td>
-                    <td className="px-6 py-3">{req.userInformation.email}</td>
+                    {/* <td className="px-6 py-3">{req.userInformation.email}</td>
                     <td className="px-6 py-3">{req.startDate}</td>
-                    <td className="px-6 py-3">{req.endDate}</td>
+                    <td className="px-6 py-3">{req.endDate}</td> */}
                     <td className="px-6 py-3">
                       <span className={getStatusClasses(req.status)}>
                         {req.status}
