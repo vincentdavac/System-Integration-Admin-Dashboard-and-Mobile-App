@@ -223,7 +223,7 @@ function App({ alertsRef }: AppProps) {
           element={
             <>
               <PageTitle title="Type | Human Resource Management" />
-              <Type />
+              <Type alertsRef={alertsRef} />
             </>
           }
         />
@@ -241,7 +241,7 @@ function App({ alertsRef }: AppProps) {
           element={
             <>
               <PageTitle title="Leave Type | Human Resource Management" />
-              <ArchiveLeaveType />
+              <ArchiveLeaveType alertsRef={alertsRef} />
             </>
           }
         />

@@ -1,13 +1,90 @@
 import { ClipboardPen } from 'lucide-react';
 import UCCLogo from '/icons/ucc_logo.png';
-
+import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
+import { AppContext } from '../../../../context/AppContext';
+import { useContext, useState } from 'react';
 interface UpdateLeaveTypesProps {
   onClose: () => void;
+  alertsRef: React.RefObject<AlertsContainerRef>;
+  refetchLeaveType: () => Promise<void>;
+  LeaveType: {
+    id: string;
+    name: string;
+    description: string;
+    isArchive: string;
+    createdDate: string;
+    createdTime: string;
+    updatedDate: string;
+    updatedTime: string;
+  };
 }
 
 export default function UpdateLeaveTypesModal({
   onClose,
+  alertsRef,
+  refetchLeaveType,
+  LeaveType,
 }: UpdateLeaveTypesProps) {
+  const { token } = useContext(AppContext)!;
+
+  const [name, setName] = useState(LeaveType.name || ' ');
+  const [description, setDescription] = useState(LeaveType.description || ' ');
+
+  async function handleSubmit(e: any) {
+    e.preventDefault();
+
+    await new Promise((r) => setTimeout(r, 50)); // Wait 50ms
+
+    const form = e.target;
+    const Setname = form.name.value; // Get latest select value directly
+    const Setdescription = form.description.value;
+
+    console.log(name, description);
+
+    const payload = {
+      name: Setname,
+      description: Setdescription,
+    };
+
+    const res = await fetch(`/api/leave-types/${LeaveType.id}`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json', // ✅ Correct for JSON
+      },
+      body: JSON.stringify(payload), // ✅ Send as JSON
+    });
+
+    const data = await res.json();
+    console.log(data);
+
+    if (data.errors) {
+      // Handle validation errors
+      Object.values(data.errors).forEach((messages) => {
+        (messages as string[]).forEach((msg) => {
+          alertsRef.current?.addAlert('error', msg);
+        });
+      });
+    } else if (data.status && data.status.toLowerCase().includes('success')) {
+      // ✅ Backend explicitly says success
+      alertsRef.current?.addAlert(
+        'success',
+        data.message || 'Meeting Created Successfully',
+      );
+      await refetchLeaveType();
+      onClose();
+    } else if (data.message) {
+      alertsRef.current?.addAlert('error', data.message);
+    } else {
+      alertsRef.current?.addAlert('success', 'Meeting Created Successfully');
+      // 🟢 Refetch parent employee list
+      await refetchLeaveType();
+      // Close modal after success
+      onClose();
+    }
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] flex flex-col">
@@ -27,47 +104,54 @@ export default function UpdateLeaveTypesModal({
           </button>
         </div>
 
-        {/* Body (scrollable) */}
-        <div className="px-5 py-6 flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-800 font-serif leading-relaxed text-gray-800 dark:text-gray-100">
-          <h3 className="text-2xl font-bold border-b pb-2 mb-6 text-center dark:border-gray-700">
-            UPDATE LEAVE TYPE
-          </h3>
+        <form onSubmit={handleSubmit}>
+          {/* Body (scrollable) */}
+          <div className="px-5 py-6 flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-800 font-serif leading-relaxed text-gray-800 dark:text-gray-100">
+            <h3 className="text-2xl font-bold border-b pb-2 mb-6 text-center dark:border-gray-700">
+              UPDATE LEAVE TYPE
+            </h3>
 
-          {/* Case Information Section */}
-          <div className="grid grid-cols-2 gap-6">
-            <div className="bg-white dark:bg-gray-900 p-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Employee No.
-              </p>
-              <p className="font-semibold text-sm">2025-0001</p>
-            </div>
-
-            <div className="bg-white dark:bg-gray-900 p-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Employee Name
-              </p>
-              <p className="font-semibold text-sm">Vincent Ahron M. Davac</p>
-            </div>
-
-            <div className="bg-white dark:bg-gray-900 p-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
-              <label className="text-sm text-gray-500 dark:text-gray-400">
-                Leave Type
-              </label>
-              <input
-                type="text"
-                placeholder="Enter leave type"
-                className="mt-1 block w-full p-2 rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm font-semibold bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100"
-              />
+            {/* Case Information Section */}
+            <div className="grid grid-cols-2 gap-6">
+              <div className="bg-white dark:bg-gray-900 p-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+                <label className="text-sm text-gray-500 dark:text-gray-400">
+                  Leave Type
+                </label>
+                <input
+                  name="name"
+                  type="text"
+                  onChange={(e) => setName(e.target.value)}
+                  defaultValue={LeaveType.name}
+                  placeholder="Enter leave type"
+                  className="mt-1 block w-full p-2 rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm font-semibold bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100"
+                />
+              </div>
+              <div className="bg-white dark:bg-gray-900 p-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+                <label className="text-sm text-gray-500 dark:text-gray-400">
+                  Description
+                </label>
+                <input
+                  name="description"
+                  type="text"
+                  defaultValue={LeaveType.description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Enter description"
+                  className="mt-1 block w-full p-2 rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm font-semibold bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100"
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Footer */}
-        <div className="border-t border-gray-200 dark:border-gray-700 px-6 py-4 flex justify-end space-x-2">
-          <button className="text-white px-4 py-2 rounded bg-[#2D3F99] hover:bg-blue-500">
-            <ClipboardPen size={18} />
-          </button>
-        </div>
+          {/* Footer */}
+          <div className="border-t border-gray-200 dark:border-gray-700 px-6 py-4 flex justify-end space-x-2">
+            <button
+              type="submit"
+              className="text-white px-4 py-2 rounded bg-[#2D3F99] hover:bg-blue-500"
+            >
+              <ClipboardPen size={18} />
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

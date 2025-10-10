@@ -1,34 +1,74 @@
-import React, { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Breadcrumb from '../../../../components/Breadcrumbs/Breadcrumb';
 import { Archive, CalendarPlus2, ClipboardPen, Search } from 'lucide-react';
 import AddLeaveTypesModal from './AddLeaveType';
 import UpdateLeaveTypesModal from './UpdateLeaveType';
 import ArchiveLeaveTypeModal from './ArchiveLeaveType';
+import { AppContext } from '../../../../context/AppContext';
+import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
 
-const Type = () => {
+interface LeaveType {
+  id: string;
+  name: string;
+  description: string;
+  isArchive: string;
+  createdDate: string;
+  createdTime: string;
+  updatedDate: string;
+  updatedTime: string;
+}
+
+interface Props {
+  alertsRef: React.RefObject<AlertsContainerRef>;
+}
+
+const Type = ({ alertsRef }: Props) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [showAdd, setShowAdd] = useState(false);
   const [showUpdate, setShowUpdate] = useState(false);
   const [showArchive, setShowArchive] = useState(false);
 
+  const [selectedRow, setSelectedRow] = useState<any>(null);
+
+  const [leavetype, setLeaveType] = useState<LeaveType[]>([]);
+
+  const { user, token } = useContext(AppContext)!;
+
   const itemsPerPage = 10;
 
-  // Sample Type Data
-  const types = Array.from({ length: 50 }, (_, i) => ({
-    id: i + 1,
-    accountNo: `202200${i + 44}`,
-    createdAt: `2025-09-${(i % 30) + 1}`,
-    name: `Type ${i + 1}`,
-    description: `Description ${i + 1}`,
-    payable: i % 2 === 0,
-  }));
+  const fetchLeaveRequest = async () => {
+    try {
+      const response = await fetch(`/api/leave-types`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      const res = await response.json();
+
+      if (response.ok && res.data) {
+        setLeaveType(res.data);
+      } else {
+        console.error('Failed to fetch employees:', res);
+      }
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.id) fetchLeaveRequest();
+  }, [user, token]);
 
   // Filtered results
-  const filteredTypes = types.filter(
+  const filteredTypes = leavetype.filter(
     (t) =>
-      t.accountNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      t.name.toLowerCase().includes(searchTerm.toLowerCase()),
+      t.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      t.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      t.createdTime.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      t.updatedTime.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Pagination
@@ -38,21 +78,6 @@ const Type = () => {
     startIndex,
     startIndex + itemsPerPage,
   );
-
-  // Highlight matching text
-  const highlightMatch = (text: string) => {
-    if (!searchTerm) return text;
-    const regex = new RegExp(`(${searchTerm})`, 'gi');
-    return text.split(regex).map((part, i) =>
-      regex.test(part) ? (
-        <span key={i} className="bg-yellow-200 dark:bg-yellow-700">
-          {part}
-        </span>
-      ) : (
-        part
-      ),
-    );
-  };
 
   return (
     <>
@@ -94,7 +119,8 @@ const Type = () => {
                 <th className="px-6 py-3">No.</th>
                 <th className="px-6 py-3">Name</th>
                 <th className="px-6 py-3">Description</th>
-                <th className="px-6 py-3">Created At</th>
+                <th className="px-6 py-3">Date</th>
+                <th className="px-6 py-3">Time</th>
                 <th className="px-6 py-3">Actions</th>
               </tr>
             </thead>
@@ -106,20 +132,25 @@ const Type = () => {
                     className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
                   >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
-                    <td className="px-6 py-3">{highlightMatch(t.name)}</td>
-                    <td className="px-6 py-3">
-                      {highlightMatch(t.description)}
-                    </td>
-                    <td className="px-6 py-3">{t.createdAt}</td>
+                    <td className="px-6 py-3">{t.name}</td>
+                    <td className="px-6 py-3">{t.description}</td>
+                    <td className="px-6 py-3">{t.createdDate}</td>
+                    <td className="px-6 py-3">{t.createdTime}</td>
                     <td className="px-6 py-3 space-x-2">
                       <button
-                        onClick={() => setShowUpdate(true)}
+                        onClick={() => {
+                          setShowUpdate(true);
+                          setSelectedRow(t);
+                        }}
                         className="text-white px-4 py-2 rounded bg-[#2D3F99] hover:bg-blue-600"
                       >
                         <ClipboardPen size={18} />
                       </button>
                       <button
-                        onClick={() => setShowArchive(true)}
+                        onClick={() => {
+                          setShowArchive(true);
+                          setSelectedRow(t);
+                        }}
                         className="text-white px-4 py-2 rounded bg-red-600 hover:bg-red-500"
                       >
                         <Archive size={18} />
@@ -180,14 +211,30 @@ const Type = () => {
       </div>
 
       {/* Modals */}
-      {showAdd && <AddLeaveTypesModal onClose={() => setShowAdd(false)} />}
+      {showAdd && (
+        <AddLeaveTypesModal
+          onClose={() => setShowAdd(false)}
+          alertsRef={alertsRef}
+          refetchLeaveType={fetchLeaveRequest}
+        />
+      )}
 
       {showUpdate && (
-        <UpdateLeaveTypesModal onClose={() => setShowUpdate(false)} />
+        <UpdateLeaveTypesModal
+          onClose={() => setShowUpdate(false)}
+          alertsRef={alertsRef}
+          refetchLeaveType={fetchLeaveRequest}
+          LeaveType={selectedRow}
+        />
       )}
 
       {showArchive && (
-        <ArchiveLeaveTypeModal onClose={() => setShowArchive(false)} />
+        <ArchiveLeaveTypeModal
+          onClose={() => setShowArchive(false)}
+          alertsRef={alertsRef}
+          refetchLeaveType={fetchLeaveRequest}
+          LeaveType={selectedRow}
+        />
       )}
     </>
   );

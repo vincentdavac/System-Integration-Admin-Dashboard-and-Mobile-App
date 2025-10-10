@@ -1,29 +1,76 @@
-import React, { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Breadcrumb from '../../../../components/Breadcrumbs/Breadcrumb';
-import { ArchiveRestore, Search } from 'lucide-react';
-import LeaveTypeRecoverModal from './LeaveTypeRecover';
+import {
+  Archive,
+  ArchiveRestore,
+  CalendarPlus2,
+  ClipboardPen,
+  Search,
+} from 'lucide-react';
+import UnarchiveModal from './LeaveTypeRecover';
+import { AppContext } from '../../../../context/AppContext';
+import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
 
-const ArchiveLeaveType = () => {
+interface LeaveType {
+  id: string;
+  name: string;
+  description: string;
+  isArchive: string;
+  createdDate: string;
+  createdTime: string;
+  updatedDate: string;
+  updatedTime: string;
+}
+
+interface Props {
+  alertsRef: React.RefObject<AlertsContainerRef>;
+}
+
+const ArchiveLeaveType = ({ alertsRef }: Props) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [showRecover, setShowRecover] = useState(false);
+  const [showArchive, setShowArchive] = useState(false);
+
+  const [selectedRow, setSelectedRow] = useState<any>(null);
+
+  const [leavetype, setLeaveType] = useState<LeaveType[]>([]);
+
+  const { user, token } = useContext(AppContext)!;
+
   const itemsPerPage = 10;
 
-  // Sample Archived Leave Type Data
-  const archivedTypes = Array.from({ length: 20 }, (_, i) => ({
-    id: i + 1,
-    accountNo: `ARCH-2022-${i + 100}`,
-    createdAt: `2025-09-${(i % 30) + 1}`,
-    name: `Archived Type ${i + 1}`,
-    description: `Archived description ${i + 1}`,
-    status: 'Archived',
-  }));
+  const fetchLeaveRequest = async () => {
+    try {
+      const response = await fetch(`/api/leave-types/archives`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      const res = await response.json();
+
+      if (response.ok && res.data) {
+        setLeaveType(res.data);
+      } else {
+        console.error('Failed to fetch employees:', res);
+      }
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.id) fetchLeaveRequest();
+  }, [user, token]);
 
   // Filtered results
-  const filteredTypes = archivedTypes.filter(
+  const filteredTypes = leavetype.filter(
     (t) =>
-      t.accountNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      t.name.toLowerCase().includes(searchTerm.toLowerCase()),
+      t.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      t.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      t.createdTime.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      t.updatedTime.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Pagination
@@ -34,54 +81,42 @@ const ArchiveLeaveType = () => {
     startIndex + itemsPerPage,
   );
 
-  const highlightMatch = (text: string) => {
-    if (!searchTerm) return text;
-    const regex = new RegExp(`(${searchTerm})`, 'gi');
-    return text.split(regex).map((part, i) =>
-      regex.test(part) ? (
-        <span key={i} className="bg-yellow-600 text-white">
-          {part}
-        </span>
-      ) : (
-        part
-      ),
-    );
-  };
-
   return (
     <>
-      <Breadcrumb pageName="Archive Leave Type" />
+      <Breadcrumb pageName="Leave Types" />
 
-      {/* Search bar */}
+      {/* Search bar and Add Leave button */}
       <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center mt-4 mb-4 space-y-2 md:space-y-0">
-        <input
-          type="text"
-          placeholder="Search by account no. or name..."
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setCurrentPage(1);
-          }}
-          className="w-full md:w-1/3 border rounded px-4 py-2 shadow-sm 
-                     focus:ring focus:ring-blue-200 
-                     bg-white dark:bg-gray-900 
-                     text-gray-700 dark:text-gray-100 
-                     border-gray-300 dark:border-gray-600"
-        />
-
-        <Search className="text-gray-600 dark:text-gray-300" />
+        <div className="flex items-center gap-2 w-full md:w-1/3">
+          <input
+            type="text"
+            placeholder="Search by account no. or name..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="w-full border rounded px-4 py-2 shadow-sm 
+              focus:ring focus:ring-blue-200 
+              bg-white text-gray-800 
+              dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200 
+              dark:placeholder-gray-400 dark:focus:ring-blue-500"
+          />
+          <Search className="text-gray-600 dark:text-gray-300" />
+        </div>
       </div>
 
       {/* Scrollable Table */}
       <div className="overflow-x-auto border rounded-lg shadow bg-white dark:bg-gray-900 dark:border-gray-700">
         <div className="h-[500px] overflow-y-auto">
-          <table className="w-full min-w-[900px] text-sm text-gray-700 dark:text-gray-200 text-center">
-            <thead className="bg-gray-100 dark:bg-gray-800 text-xs uppercase text-gray-600 dark:text-gray-300 sticky top-0">
+          <table className="w-full min-w-[900px] text-sm text-gray-700 dark:text-gray-100 text-center">
+            <thead className="bg-gray-100 dark:bg-gray-800 text-xs uppercase text-gray-600 dark:text-gray-300 sticky top-0 z-0">
               <tr>
                 <th className="px-6 py-3">No.</th>
                 <th className="px-6 py-3">Name</th>
                 <th className="px-6 py-3">Description</th>
-                <th className="px-6 py-3">Created At</th>
+                <th className="px-6 py-3">Date</th>
+                <th className="px-6 py-3">Time</th>
                 <th className="px-6 py-3">Actions</th>
               </tr>
             </thead>
@@ -90,18 +125,20 @@ const ArchiveLeaveType = () => {
                 paginatedTypes.map((t, index) => (
                   <tr
                     key={t.id}
-                    className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-center"
+                    className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
                   >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
-                    <td className="px-6 py-3">{highlightMatch(t.name)}</td>
-                    <td className="px-6 py-3">
-                      {highlightMatch(t.description)}
-                    </td>
-                    <td className="px-6 py-3">{t.createdAt}</td>
-                    <td className="px-6 py-3">
+                    <td className="px-6 py-3">{t.name}</td>
+                    <td className="px-6 py-3">{t.description}</td>
+                    <td className="px-6 py-3">{t.createdDate}</td>
+                    <td className="px-6 py-3">{t.createdTime}</td>
+                    <td className="px-6 py-3 space-x-2">
                       <button
-                        onClick={() => setShowRecover(true)}
-                        className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded"
+                        onClick={() => {
+                          setShowArchive(true);
+                          setSelectedRow(t);
+                        }}
+                        className="text-white px-4 py-2 rounded bg-green-600 hover:bg-green-500"
                       >
                         <ArchiveRestore size={18} />
                       </button>
@@ -111,8 +148,8 @@ const ArchiveLeaveType = () => {
               ) : (
                 <tr>
                   <td
-                    colSpan={7}
-                    className="px-6 py-3 text-center text-gray-500 italic dark:text-gray-400"
+                    colSpan={5}
+                    className="px-6 py-3 text-center text-gray-500 dark:text-gray-400 italic"
                   >
                     No matching records found.
                   </td>
@@ -141,7 +178,7 @@ const ArchiveLeaveType = () => {
               className={
                 page === currentPage
                   ? 'bg-blue-500 text-white px-3 py-1 rounded'
-                  : 'px-3 py-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-100 rounded'
+                  : 'px-3 py-1 border border-gray-300 dark:border-gray-700 rounded dark:text-gray-200'
               }
             >
               {page}
@@ -160,9 +197,13 @@ const ArchiveLeaveType = () => {
         </button>
       </div>
 
-      {/* Recover Modal */}
-      {showRecover && (
-        <LeaveTypeRecoverModal onClose={() => setShowRecover(false)} />
+      {showArchive && (
+        <UnarchiveModal
+          onClose={() => setShowArchive(false)}
+          alertsRef={alertsRef}
+          refetchLeaveType={fetchLeaveRequest}
+          LeaveType={selectedRow}
+        />
       )}
     </>
   );
