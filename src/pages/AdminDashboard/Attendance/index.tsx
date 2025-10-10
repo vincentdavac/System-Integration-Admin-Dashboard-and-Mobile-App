@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
 import { Eye, Search } from 'lucide-react';
 import ViewAttendance from './ViewAttendance';
-
+import API_BASE_URL from '../../../config/api';
 interface Attendance {
   id: string;
   student_no: string;
@@ -29,10 +29,11 @@ const Attendance = () => {
 
   const fetchEmployees = async () => {
     try {
-      const response = await fetch(`/api/attendance-records`, {
+      const response = await fetch(`${API_BASE_URL}/api/attendance-records`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
+          'Access-Control-Allow-Origin': '*',
         },
       });
       const data = await response.json();

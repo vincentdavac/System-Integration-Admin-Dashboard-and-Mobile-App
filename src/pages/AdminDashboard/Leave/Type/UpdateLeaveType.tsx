@@ -3,6 +3,7 @@ import UCCLogo from '/icons/ucc_logo.png';
 import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
 import { AppContext } from '../../../../context/AppContext';
 import { useContext, useState } from 'react';
+import API_BASE_URL from '../../../../config/api';
 interface UpdateLeaveTypesProps {
   onClose: () => void;
   alertsRef: React.RefObject<AlertsContainerRef>;
@@ -46,12 +47,13 @@ export default function UpdateLeaveTypesModal({
       description: Setdescription,
     };
 
-    const res = await fetch(`/api/leave-types/${LeaveType.id}`, {
+    const res = await fetch(`${API_BASE_URL}/api/leave-types/${LeaveType.id}`, {
       method: 'PATCH',
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: 'application/json',
         'Content-Type': 'application/json', // ✅ Correct for JSON
+        'Access-Control-Allow-Origin': '*',
       },
       body: JSON.stringify(payload), // ✅ Send as JSON
     });

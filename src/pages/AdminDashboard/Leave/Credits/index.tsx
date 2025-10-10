@@ -6,6 +6,7 @@ import UpdateCreditsModal from './UpdateCredits';
 import ArchiveCreditsModal from './ArchiveCredits';
 import { AppContext } from '../../../../context/AppContext';
 import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
+import API_BASE_URL from '../../../../config/api';
 
 interface CreditsData {
   id: string;
@@ -45,11 +46,12 @@ const Credits = ({ alertsRef }: Props) => {
 
   const fetchCredits = async () => {
     try {
-      const response = await fetch(`/api/credits`, {
+      const response = await fetch(`${API_BASE_URL}/api/credits`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
           'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
         },
       });
       const res = await response.json();

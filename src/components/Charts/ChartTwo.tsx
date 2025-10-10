@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { AppContext } from '../../context/AppContext'; // Adjust path as needed
 import TableLoader from '../../common/Loader/TableLoader';
-
+import API_BASE_URL from '../../config/api';
 interface ChartTwoState {
   series: {
     name: string;
@@ -51,13 +51,17 @@ const ChartTwo: React.FC = () => {
     try {
       setLoading(true);
 
-      const res = await fetch(`/api/dashboard/chart-two?period=${period}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+      const res = await fetch(
+        `${API_BASE_URL}/api/dashboard/chart-two?period=${period}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
         },
-      });
+      );
 
       const response = await res.json();
 

@@ -6,6 +6,7 @@ import ChartTwo from '../../../components/Charts/ChartTwo';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '../../../context/AppContext'; // Adjust path as needed
 import TableLoader from '../../../common/Loader/TableLoader';
+import API_BASE_URL from '../../../config/api';
 
 interface DashboardProps {
   alertsRef: React.RefObject<AlertsContainerRef>;
@@ -49,10 +50,11 @@ const Dashboard = ({ alertsRef }: DashboardProps) => {
     try {
       setLoading(true);
 
-      const res = await fetch('/api/dashboards/summary', {
+      const res = await fetch(`${API_BASE_URL}/api/dashboards/summary`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
+          'Access-Control-Allow-Origin': '*',
         },
       });
 

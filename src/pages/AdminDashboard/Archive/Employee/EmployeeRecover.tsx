@@ -1,7 +1,7 @@
-import {  ArchiveRestore } from 'lucide-react';
+import { ArchiveRestore } from 'lucide-react';
 import UCCLogo from '/icons/ucc_logo.png';
 import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
-
+import API_BASE_URL from '../../../../config/api';
 interface ArchiveModalProps {
   onClose: () => void;
   employee: {
@@ -23,13 +23,17 @@ const EmployeeRecover = ({
   async function handleSubmit(e: { preventDefault: () => void }) {
     e.preventDefault();
 
-    const res = await fetch(`/api/restore-account/${employee.id}`, {
-      method: 'PATCH',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+    const res = await fetch(
+      `${API_BASE_URL}/api/restore-account/${employee.id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
       },
-    });
+    );
 
     const data = await res.json();
 

@@ -4,7 +4,7 @@ import { Eye, Search } from 'lucide-react';
 import ViewPayroll from './ViewPayroll';
 import { AppContext } from '../../../context/AppContext';
 import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
-
+import API_BASE_URL from '../../../config/api';
 interface Props {
   alertsRef: React.RefObject<AlertsContainerRef>;
 }
@@ -22,11 +22,12 @@ const Payroll = ({ alertsRef }: Props) => {
 
   const fetchPayroll = async () => {
     try {
-      const response = await fetch(`/api/payrolls`, {
+      const response = await fetch(`${API_BASE_URL}/api/payrolls`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
+          'Access-Control-Allow-Origin': '*',
         },
       });
       const data = await response.json();

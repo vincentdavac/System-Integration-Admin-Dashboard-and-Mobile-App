@@ -3,7 +3,7 @@ import UCCLogo from '/icons/ucc_logo.png';
 import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
 import { useContext, useState } from 'react';
 import { AppContext } from '../../../context/AppContext';
-
+import API_BASE_URL from '../../../config/api';
 interface UpdateLoanApprovalProps {
   onClose: () => void;
   alertsRef: React.RefObject<AlertsContainerRef>;
@@ -58,15 +58,19 @@ export default function UpdateLoanApproval({
   async function handleSubmit(e: { preventDefault: () => void }) {
     e.preventDefault();
 
-    const res = await fetch(`/api/loan-approval/update-status/${Loan.id}`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
+    const res = await fetch(
+      `${API_BASE_URL}/api/loan-approval/update-status/${Loan.id}`,
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify(formData),
       },
-      body: JSON.stringify(formData),
-    });
+    );
 
     const data = await res.json();
 

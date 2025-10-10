@@ -10,6 +10,7 @@ import {
 import UnarchiveModal from './LeaveTypeRecover';
 import { AppContext } from '../../../../context/AppContext';
 import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
+import API_BASE_URL from '../../../../config/api';
 
 interface LeaveType {
   id: string;
@@ -41,11 +42,12 @@ const ArchiveLeaveType = ({ alertsRef }: Props) => {
 
   const fetchLeaveRequest = async () => {
     try {
-      const response = await fetch(`/api/leave-types/archives`, {
+      const response = await fetch(`${API_BASE_URL}/api/leave-types/archives`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
           'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
         },
       });
       const res = await response.json();

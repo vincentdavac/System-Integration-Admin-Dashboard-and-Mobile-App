@@ -6,6 +6,7 @@ import ViewMeetingModal from './ViewMeeting';
 import UpdateMeetingModal from './UpdateMeeting';
 import { AppContext } from '../../../../context/AppContext';
 import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
+import API_BASE_URL from '../../../../config/api';
 
 interface Meeting {
   id: number;
@@ -52,13 +53,17 @@ const Meeting = ({ alertsRef }: Props) => {
 
   const fetchMeetings = async () => {
     try {
-      const response = await fetch(`/api/relation-meetings/admin`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${API_BASE_URL}/api/relation-meetings/admin`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
         },
-      });
+      );
       const res = await response.json();
 
       if (response.ok && res.data) {

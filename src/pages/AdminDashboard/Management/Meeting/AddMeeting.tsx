@@ -3,6 +3,7 @@ import UCCLogo from '/icons/ucc_logo.png';
 import { useContext, useEffect, useState } from 'react';
 import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
 import { AppContext } from '../../../../context/AppContext';
+import API_BASE_URL from '../../../../config/api';
 
 interface AddMeetingProps {
   onClose: () => void;
@@ -29,12 +30,13 @@ export default function AddMeetingModal({
     const fetchCaseIds = async () => {
       if (!token) return;
       try {
-        const res = await fetch('/api/employee-relations/open', {
+        const res = await fetch(`${API_BASE_URL}/api/employee-relations/open`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: 'application/json',
             'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
           },
         });
 
@@ -73,11 +75,12 @@ export default function AddMeetingModal({
     formData.append('participants', participants);
     formData.append('notes', notes);
 
-    const res = await fetch(`/api/relation-meetings`, {
+    const res = await fetch(`${API_BASE_URL}/api/relation-meetings`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: 'application/json',
+        'Access-Control-Allow-Origin': '*',
       },
       body: formData,
     });

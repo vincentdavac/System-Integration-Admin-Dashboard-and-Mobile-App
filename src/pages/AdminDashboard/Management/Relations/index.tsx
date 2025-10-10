@@ -3,7 +3,7 @@ import Breadcrumb from '../../../../components/Breadcrumbs/Breadcrumb';
 import ViewCaseModal from './ViewCaseModal';
 import { Eye, Search } from 'lucide-react';
 import { AppContext } from '../../../../context/AppContext';
-
+import API_BASE_URL from '../../../../config/api';
 interface Relations {
   id: string;
   caseId: string;
@@ -50,11 +50,12 @@ const Relations = () => {
 
   const fetchRelations = async () => {
     try {
-      const response = await fetch(`/api/employee-relations`, {
+      const response = await fetch(`${API_BASE_URL}/api/employee-relations`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
           'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
         },
       });
       const res = await response.json();

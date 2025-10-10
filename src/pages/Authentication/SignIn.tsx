@@ -1,11 +1,9 @@
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import LogoDark from '../../../src/images/logo/logo-dark.svg';
 import Logo from '../../../public/icons/ucc_logo.png';
 import { AppContext } from '../../context/AppContext';
 import { AlertsContainerRef } from '../../components/Alert/AlertsContainer';
-import School from '../../images/logo/school (1).svg';
-
+import API_BASE_URL from '../../config/api';
 interface LoginProps {
   alertsRef: React.RefObject<AlertsContainerRef>;
 }
@@ -22,11 +20,12 @@ const SignIn = ({ alertsRef }: LoginProps) => {
   async function handleLogin(e: { preventDefault: () => void }) {
     e.preventDefault();
 
-    const res = await fetch('/api/admin/login', {
+    const res = await fetch(`${API_BASE_URL}/api/admin/login`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
       },
       body: JSON.stringify(formData),
     });

@@ -3,6 +3,7 @@ import ReactApexChart from 'react-apexcharts';
 import { ApexOptions } from 'apexcharts';
 import { AppContext } from '../../context/AppContext'; // Adjust path as needed
 import TableLoader from '../../common/Loader/TableLoader';
+import API_BASE_URL from '../../config/api';
 
 interface ChartData {
   labels: string[];
@@ -45,13 +46,17 @@ const ChartOne: React.FC = () => {
     try {
       setLoading(true);
 
-      const res = await fetch(`/api/dashboards/chart-one?type=${type}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+      const res = await fetch(
+        `${API_BASE_URL}/api/dashboards/chart-one?type=${type}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
         },
-      });
+      );
 
       const response = await res.json();
 

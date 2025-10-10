@@ -3,7 +3,7 @@ import UCCLogo from '/icons/ucc_logo.png';
 import { AppContext } from '../../../../context/AppContext';
 import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
 import { useContext } from 'react';
-
+import API_BASE_URL from '../../../../config/api';
 interface ArchiveCreditsProps {
   onClose: () => void;
   refetchCredits: () => Promise<void>;
@@ -42,15 +42,19 @@ export default function ArchiveCreditsModal({
     //   is_archive: true,
     // };
 
-    const res = await fetch(`/api/credits/${CreditsData.id}/archive`, {
-      method: 'PATCH',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: 'application/json',
-        'Content-Type': 'application/json', // ✅ Correct for JSON
+    const res = await fetch(
+      `${API_BASE_URL}/api/credits/${CreditsData.id}/archive`,
+      {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json', // ✅ Correct for JSON
+          'Access-Control-Allow-Origin': '*',
+        },
+        // body: JSON.stringify(payload), // ✅ Send as JSON
       },
-      // body: JSON.stringify(payload), // ✅ Send as JSON
-    });
+    );
 
     const data = await res.json();
     console.log(data);

@@ -3,6 +3,7 @@ import UCCLogo from '/icons/ucc_logo.png';
 import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
 import { AppContext } from '../../../../context/AppContext';
 import { useContext } from 'react';
+import API_BASE_URL from '../../../../config/api';
 
 interface LeaveTypeRecoverProps {
   onClose: () => void;
@@ -33,14 +34,18 @@ export default function LeaveTypeRecoverModal({
 
     await new Promise((r) => setTimeout(r, 50)); // Wait 50ms
 
-    const res = await fetch(`/api/leave-types/${LeaveType.id}/unarchive`, {
-      method: 'PATCH',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: 'application/json',
-        'Content-Type': 'application/json', // ✅ Correct for JSON
+    const res = await fetch(
+      `${API_BASE_URL}/api/leave-types/${LeaveType.id}/unarchive`,
+      {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json', // ✅ Correct for JSON
+          'Access-Control-Allow-Origin': '*',
+        },
       },
-    });
+    );
 
     const data = await res.json();
     console.log(data);

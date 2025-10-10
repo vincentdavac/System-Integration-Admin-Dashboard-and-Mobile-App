@@ -3,6 +3,7 @@ import UCCLogo from '/icons/ucc_logo.png';
 import { useContext, useState } from 'react';
 import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
 import { AppContext } from '../../../context/AppContext';
+import API_BASE_URL from '../../../config/api';
 
 interface ActivateModalProps {
   onClose: () => void;
@@ -32,15 +33,19 @@ const ActivateModal = ({
   async function handleSubmit(e: { preventDefault: () => void }) {
     e.preventDefault();
 
-    const res = await fetch(`/api/activate-account/${employee.id}`, {
-      method: 'PATCH',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+    const res = await fetch(
+      `${API_BASE_URL}/api/activate-account/${employee.id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify(formData),
       },
-      body: JSON.stringify(formData),
-    });
+    );
 
     const data = await res.json();
 

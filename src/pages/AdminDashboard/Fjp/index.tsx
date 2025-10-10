@@ -4,6 +4,7 @@ import ActivateModal from './ActivateModal';
 import { CheckCircle, Search } from 'lucide-react';
 import { AppContext } from '../../../context/AppContext';
 import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
+import API_BASE_URL from '../../../config/api';
 
 interface EmployeeProps {
   alertsRef: React.RefObject<AlertsContainerRef>;
@@ -23,10 +24,11 @@ const ArchiveEmployee = ({ alertsRef }: EmployeeProps) => {
 
   const fetchEmployees = async () => {
     try {
-      const response = await fetch(`/api/fjp-employees`, {
+      const response = await fetch(`${API_BASE_URL}/api/fjp-employees`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
+          'Access-Control-Allow-Origin': '*',
         },
       });
       const data = await response.json();

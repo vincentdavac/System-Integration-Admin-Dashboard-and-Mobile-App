@@ -3,6 +3,7 @@ import UCCLogo from '/icons/ucc_logo.png';
 import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
 import { AppContext } from '../../../../context/AppContext';
 import { useContext, useEffect, useState } from 'react';
+import API_BASE_URL from '../../../../config/api';
 
 interface AddActionsProps {
   onClose: () => void;
@@ -40,14 +41,18 @@ export default function AddActionsModal({
     const fetchCaseIds = async () => {
       if (!token) return;
       try {
-        const res = await fetch('/api/relation-meetings/scheduled', {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
+        const res = await fetch(
+          `${API_BASE_URL}/api/relation-meetings/scheduled`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
           },
-        });
+        );
 
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -107,12 +112,13 @@ export default function AddActionsModal({
     formData.append('relation_status', String(relationStatus));
     formData.append('meeting_status', String(meetingStatus));
 
-    const res = await fetch(`/api/relation-actions`, {
+    const res = await fetch(`${API_BASE_URL}/api/relation-actions`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: 'application/json',
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
       },
       body: JSON.stringify({
         meeting_id: selectedMeeting?.meetingId,

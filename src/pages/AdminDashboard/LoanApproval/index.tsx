@@ -5,7 +5,7 @@ import ViewLoanApproval from './ViewLoanApproval';
 import UpdateLoanApproval from './UpdateLoanApproval';
 import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
 import { AppContext } from '../../../context/AppContext';
-
+import API_BASE_URL from '../../../config/api';
 interface Loan {
   id: string;
   studentNo: string;
@@ -59,11 +59,12 @@ const LoanApproval = ({ alertsRef }: Props) => {
 
   const fetchLoans = async () => {
     try {
-      const response = await fetch(`/api/loan-records`, {
+      const response = await fetch(`${API_BASE_URL}/api/loan-records`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
           'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
         },
       });
       const res = await response.json();

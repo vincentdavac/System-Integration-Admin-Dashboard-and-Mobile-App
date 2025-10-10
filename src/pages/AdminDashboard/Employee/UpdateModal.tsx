@@ -2,7 +2,7 @@ import { RefreshCw } from 'lucide-react';
 import UCCLogo from '/icons/ucc_logo.png';
 import { useState } from 'react';
 import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
-
+import API_BASE_URL from '../../../config/api';
 interface UpdateModalPropos {
   onClose: () => void;
   employee: {
@@ -30,14 +30,18 @@ const UpdateModal = ({
   async function handleSubmit(e: { preventDefault: () => void }) {
     e.preventDefault();
 
-    const res = await fetch(`/api/update-account/${employee.employeeNo}`, {
-      method: 'PATCH',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+    const res = await fetch(
+      `${API_BASE_URL}/api/update-account/${employee.employeeNo}`,
+      {
+        method: 'PATCH',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify(formData),
       },
-      body: JSON.stringify(formData),
-    });
+    );
 
     const data = await res.json();
 

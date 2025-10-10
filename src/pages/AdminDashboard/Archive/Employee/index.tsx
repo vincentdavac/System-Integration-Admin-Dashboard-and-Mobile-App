@@ -4,6 +4,7 @@ import ActivateModal from './EmployeeRecover';
 import { ArchiveRestore, Search } from 'lucide-react';
 import { AppContext } from '../../../../context/AppContext';
 import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
+import API_BASE_URL from '../../../../config/api';
 
 interface EmployeeProps {
   alertsRef: React.RefObject<AlertsContainerRef>;
@@ -23,10 +24,11 @@ const FjpEmployee = ({ alertsRef }: EmployeeProps) => {
 
   const fetchEmployees = async () => {
     try {
-      const response = await fetch(`/api/archive-accounts`, {
+      const response = await fetch(`${API_BASE_URL}/api/archive-accounts`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
+          'Access-Control-Allow-Origin': '*',
         },
       });
       const data = await response.json();

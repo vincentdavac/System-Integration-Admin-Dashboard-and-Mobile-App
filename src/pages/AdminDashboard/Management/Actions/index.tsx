@@ -6,6 +6,7 @@ import ViewActionsModal from './ViewActions';
 import UpdateActionsModal from './UpdateActions';
 import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
 import { AppContext } from '../../../../context/AppContext';
+import API_BASE_URL from '../../../../config/api';
 
 interface Actions {
   id: string;
@@ -67,11 +68,12 @@ const Actions = ({ alertsRef }: Props) => {
 
   const fetchActions = async () => {
     try {
-      const response = await fetch(`/api/relation-actions`, {
+      const response = await fetch(`${API_BASE_URL}/api/relation-actions`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
           'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
         },
       });
       const res = await response.json();

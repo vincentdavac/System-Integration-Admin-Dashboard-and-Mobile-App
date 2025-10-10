@@ -4,7 +4,7 @@ import ClickOutside from '../ClickOutside';
 import { AppContext } from '../../context/AppContext';
 import { LogOut } from 'lucide-react';
 import { AlertsContainerRef } from '../Alert/AlertsContainer';
-
+import API_BASE_URL from '../../config/api';
 interface DropdownUserProps {
   alertsRef: React.RefObject<AlertsContainerRef>;
 }
@@ -17,11 +17,12 @@ const DropdownUser = ({ alertsRef }: DropdownUserProps) => {
 
   async function handleLogout(e: { preventDefault: () => void }) {
     e.preventDefault();
-    const res = await fetch('/api/logout', {
+    const res = await fetch(`${API_BASE_URL}/api/logout`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
       },
     });
 

@@ -1,6 +1,5 @@
 import UCCLogo from '/icons/ucc_logo.png';
 import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
-
 interface ViewPayrollProps {
   onClose: () => void;
   payroll: {

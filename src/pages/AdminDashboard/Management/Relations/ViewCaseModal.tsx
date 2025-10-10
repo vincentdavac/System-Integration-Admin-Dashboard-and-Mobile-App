@@ -1,5 +1,4 @@
 import UCCLogo from '/icons/ucc_logo.png';
-
 interface ViewCaseModalProps {
   onClose: () => void;
   Relations: {

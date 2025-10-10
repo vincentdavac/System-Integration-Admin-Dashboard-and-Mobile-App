@@ -5,6 +5,8 @@ import { ClipboardPen, Eye, Search } from 'lucide-react';
 import UpdateLeaveRequestModal from './UpdateLeaveRequest';
 import { AppContext } from '../../../../context/AppContext';
 import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
+import API_BASE_URL from '../../../../config/api';
+
 interface LeaveRequest {
   id: string;
   leaveId: string;
@@ -60,11 +62,12 @@ const Request = ({ alertsRef }: Props) => {
 
   const fetchLeaveRequest = async () => {
     try {
-      const response = await fetch(`/api/leave-requests`, {
+      const response = await fetch(`${API_BASE_URL}/api/leave-requests`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
           'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
         },
       });
       const res = await response.json();

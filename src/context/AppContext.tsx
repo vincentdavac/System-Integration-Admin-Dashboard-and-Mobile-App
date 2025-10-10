@@ -55,9 +55,10 @@ export default function AppProvider({ children }: MyComponentProps) {
 
   async function getUser() {
     try {
-      const res = await fetch('/api/user', {
+      const res = await fetch('https://hrmbackend.ucc.bsit4c.com/api/user', {
         headers: {
           Authorization: `Bearer ${token}`,
+          'Access-Control-Allow-Origin': '*',
         },
       });
 

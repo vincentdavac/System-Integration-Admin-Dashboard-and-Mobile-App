@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import ClickOutside from '../ClickOutside';
 import { AppContext } from '../../context/AppContext';
-
+import API_BASE_URL from '../../config/api';
 interface Notification {
   id: number;
   title: string;
@@ -23,12 +23,16 @@ const DropdownNotification = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await fetch(`/api/notifications/admin`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/json',
+        const response = await fetch(
+          `${API_BASE_URL}/api/notifications/admin`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
           },
-        });
+        );
         const data = await response.json();
 
         if (response.ok && data.data) {
@@ -50,14 +54,18 @@ const DropdownNotification = () => {
   // Remove a notification
   const handleRemoveNotification = async (id: number) => {
     try {
-      const response = await fetch(`/api/notifications/read/${id}`, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${API_BASE_URL}/api/notifications/read/${id}`,
+        {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
         },
-      });
+      );
 
       if (response.ok) {
         setNotifications((prev) => prev.filter((notif) => notif.id !== id));
