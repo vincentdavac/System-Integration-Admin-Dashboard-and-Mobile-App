@@ -1,11 +1,59 @@
-import React, { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Breadcrumb from '../../../../components/Breadcrumbs/Breadcrumb';
 import { CalendarPlus2, ClipboardPen, Eye, Search } from 'lucide-react';
 import AddActionsModal from './AddActions';
 import ViewActionsModal from './ViewActions';
 import UpdateActionsModal from './UpdateActions';
+import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
+import { AppContext } from '../../../../context/AppContext';
 
-const Actions = () => {
+interface Actions {
+  id: string;
+  actionId: string;
+  meetingId: string;
+  actionType: string;
+  description: string;
+  meetingInformation: {
+    meetingId: string;
+    meetingDate: string;
+    meetingTime: string;
+    location: string;
+    participants: string;
+    notes: string;
+    status: string;
+    relation: {
+      relationId: string;
+      caseType: string;
+      caseTitle: string;
+      details: string;
+      status: string;
+      dateReported: string;
+      reportedUser: {
+        userId: string;
+        fullName: string;
+        email: string;
+      };
+      reportedBy: {
+        userId: string;
+        fullName: string;
+        email: string;
+      };
+    };
+  };
+  handledByInformation: {
+    userId: string;
+    fullName: string;
+    email: string;
+  };
+  createdDate: string;
+  createdTime: string;
+}
+
+interface Props {
+  alertsRef: React.RefObject<AlertsContainerRef>;
+}
+
+const Actions = ({ alertsRef }: Props) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [showAdd, setShowAdd] = useState(false);
@@ -13,27 +61,52 @@ const Actions = () => {
   const [showUpdate, setShowUpdate] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any>(null);
 
-  // Form States
-  const [meetingId, setMeetingId] = useState('');
-  const [actionType, setActionType] = useState('');
-  const [description, setDescription] = useState('');
+  const { user, token } = useContext(AppContext)!;
+
+  const [actions, setActions] = useState<Actions[]>([]);
+
+  const fetchActions = async () => {
+    try {
+      const response = await fetch(`/api/relation-actions`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      const res = await response.json();
+
+      if (response.ok && res.data) {
+        setActions(res.data);
+      } else {
+        console.error('Failed to fetch employees:', res);
+      }
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.id) fetchActions();
+  }, [user, token]);
 
   const itemsPerPage = 10;
 
-  // Sample Meeting Data
-  const meetings = Array.from({ length: 20 }, (_, i) => ({
-    id: i + 1,
-    accountNo: `ACCT-${2000 + i}`,
-    date: `2025-09-${(i % 30) + 1}`,
-    caseId: `CASE-${1000 + i}`,
-    actionType: 'Verbal Warning',
-    description: `Sample description for case ${1000 + i}`,
-    handledBy: `Admin ${i + 1}`,
-  }));
-
   // Filtered results
-  const filteredMeetings = meetings.filter((m) =>
-    m.caseId.toLowerCase().includes(searchTerm.toLowerCase()),
+  const filteredMeetings = actions.filter(
+    (action) =>
+      action.actionId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      action.meetingId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      action.meetingInformation.relation.relationId
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      action.meetingInformation.relation.relationId
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      action.createdDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      action.handledByInformation.fullName
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()),
   );
 
   // Pagination
@@ -59,27 +132,30 @@ const Actions = () => {
               setSearchTerm(e.target.value);
               setCurrentPage(1);
             }}
-             className="w-full border rounded px-27 py-2 shadow-sm 
+            className="w-full border rounded px-27 py-2 shadow-sm 
             focus:ring focus:ring-blue-200 
             bg-white text-gray-800 
             dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200 
-            dark:placeholder-gray-400 dark:focus:ring-blue-500" />
+            dark:placeholder-gray-400 dark:focus:ring-blue-500"
+          />
 
-            <Search className="text-gray-600 dark:text-gray-300" />
-            </div>
+          <Search className="text-gray-600 dark:text-gray-300" />
+        </div>
 
         <button
           onClick={() => {
-            setMeetingId('');
-            setActionType('');
-            setDescription('');
             setShowAdd(true);
           }}
           className="bg-yellow-600 hover:bg-yellow-500 text-white px-4 py-2 rounded"
         >
           <CalendarPlus2 size={20} />
         </button>
-        <AddActionsModal isOpen={showAdd} onClose={() => setShowAdd(false)} />
+        <AddActionsModal
+          isOpen={showAdd}
+          onClose={() => setShowAdd(false)}
+          refetchActions={fetchActions}
+          alertsRef={alertsRef}
+        />
       </div>
 
       {/* Table */}
@@ -89,12 +165,12 @@ const Actions = () => {
             <thead className="bg-gray-100 dark:bg-gray-800 text-xs uppercase text-gray-600 dark:text-gray-300 sticky top-0">
               <tr>
                 <th className="px-6 py-3">No.</th>
-                <th className="px-6 py-3">Account No.</th>
-                <th className="px-6 py-3">Date</th>
-                <th className="px-6 py-3">Case ID</th>
-                <th className="px-6 py-3">Action</th>
-                <th className="px-6 py-3">Description</th>
+                <th className="px-6 py-3">Action ID</th>
+                <th className="px-6 py-3">Meeting ID</th>
+                <th className="px-6 py-3">Relation ID</th>
+                <th className="px-6 py-3">Action Type</th>
                 <th className="px-6 py-3">Handled By</th>
+                <th className="px-6 py-3">Date</th>
                 <th className="px-6 py-3">Actions</th>
               </tr>
             </thead>
@@ -106,12 +182,16 @@ const Actions = () => {
                     className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
                   >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
-                    <td className="px-6 py-3">{m.accountNo}</td>
-                    <td className="px-6 py-3">{m.date}</td>
-                    <td className="px-6 py-3">{m.caseId}</td>
+                    <td className="px-6 py-3">{m.actionId}</td>
+                    <td className="px-6 py-3">{m.meetingId}</td>
+                    <td className="px-6 py-3">
+                      {m.meetingInformation.relation.relationId}
+                    </td>
                     <td className="px-6 py-3">{m.actionType}</td>
-                    <td className="px-6 py-3">{m.description}</td>
-                    <td className="px-6 py-3">{m.handledBy}</td>
+                    <td className="px-6 py-3">
+                      {m.handledByInformation.fullName}
+                    </td>
+                    <td className="px-6 py-3">{m.createdDate}</td>
                     <td className="px-6 py-3 space-x-2">
                       <button
                         onClick={() => {
@@ -126,9 +206,6 @@ const Actions = () => {
                       <button
                         onClick={() => {
                           setSelectedRow(m);
-                          setMeetingId(m.caseId);
-                          setActionType(m.actionType);
-                          setDescription(m.description);
                           setShowUpdate(true);
                         }}
                         className="bg-[#2D3F99] hover:bg-blue-500 text-white px-4 py-2 rounded"
@@ -153,10 +230,17 @@ const Actions = () => {
         </div>
       </div>
 
-      <ViewActionsModal isOpen={showView} onClose={() => setShowView(false)} />
+      <ViewActionsModal
+        isOpen={showView}
+        onClose={() => setShowView(false)}
+        Actions={selectedRow}
+      />
       <UpdateActionsModal
         isOpen={showUpdate}
         onClose={() => setShowUpdate(false)}
+        Actions={selectedRow}
+        refetchActions={fetchActions}
+        alertsRef={alertsRef}
       />
 
       {/* Pagination */}

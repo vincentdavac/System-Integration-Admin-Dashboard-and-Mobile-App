@@ -54,10 +54,6 @@ export default function AddMeetingModal({
         }
       } catch (error) {
         console.error('Error fetching case IDs:', error);
-        alertsRef.current?.addAlert(
-          'error',
-          'Network error. Please check your connection and try again.',
-        );
       }
     };
 

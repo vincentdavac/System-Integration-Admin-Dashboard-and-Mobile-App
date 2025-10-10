@@ -3,13 +3,70 @@ import UCCLogo from '/icons/ucc_logo.png';
 interface ViewActionsModalProps {
   onClose: () => void;
   isOpen: boolean;
+  Actions: {
+    id: string;
+    actionId: string;
+    meetingId: string;
+    actionType: string;
+    description: string;
+    meetingInformation: {
+      meetingId: string;
+      meetingDate: string;
+      meetingTime: string;
+      location: string;
+      participants: string;
+      notes: string;
+      status: string;
+      relation: {
+        relationId: string;
+        caseType: string;
+        caseTitle: string;
+        details: string;
+        status: string;
+        dateReported: string;
+        reportedUser: {
+          userId: string;
+          fullName: string;
+          email: string;
+        };
+        reportedBy: {
+          userId: string;
+          fullName: string;
+          email: string;
+        };
+      };
+    };
+    handledByInformation: {
+      userId: string;
+      fullName: string;
+      email: string;
+    };
+    createdDate: string;
+    createdTime: string;
+  };
 }
 
 export default function ViewActionsModal({
   onClose,
   isOpen,
+  Actions,
 }: ViewActionsModalProps) {
   if (!isOpen) return null;
+
+  // Status color
+  const getRelationsStatus = (status: string) => {
+    switch (status) {
+      case 'resolved':
+        return 'bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium inline-block';
+      case 'dismissed':
+        return 'bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium inline-block';
+      case 'under investigation':
+        return 'bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs font-medium inline-block';
+      case 'open':
+      default:
+        return 'bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium inline-block';
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
@@ -33,7 +90,7 @@ export default function ViewActionsModal({
         {/* Body (scrollable) */}
         <div className="px-5 py-6 flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-800 font-serif leading-relaxed text-gray-800 dark:text-gray-200">
           <h3 className="text-2xl font-bold border-b dark:border-gray-700 pb-2 mb-6 text-center">
-            EMPLOYEE RELATION ACTION
+            EMPLOYEE RELATION INFORMATION
           </h3>
 
           {/* Case Information Section */}
@@ -42,11 +99,13 @@ export default function ViewActionsModal({
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Case No.
               </p>
-              <p className="font-semibold text-sm">2025-0001</p>
+              <p className="font-semibold text-sm">
+                {Actions.meetingInformation.relation.relationId}
+              </p>
             </div>
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Case Type
+                {Actions.meetingInformation.relation.caseType}
               </p>
               <p className="font-semibold text-sm">Dispute</p>
             </div>
@@ -54,40 +113,56 @@ export default function ViewActionsModal({
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Person Involved
               </p>
-              <p className="font-semibold text-sm">Full Name Person Invoved</p>
+              <p className="font-semibold text-sm">
+                {Actions.meetingInformation?.relation?.reportedUser?.fullName ??
+                  'N/A'}
+              </p>
             </div>
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Reported By
               </p>
-              <p className="font-semibold text-sm">Reported By</p>
+              <p className="font-semibold text-sm">
+                {Actions.meetingInformation.relation.reportedBy.fullName ??
+                  'N/A'}
+              </p>
             </div>
 
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm ">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Case Title
               </p>
-              <p className="font-semibold text-sm">Title</p>
+              <p className="font-semibold text-sm">
+                {Actions.meetingInformation.relation.caseTitle}
+              </p>
             </div>
 
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">Status</p>
-              <p className="font-semibold text-sm text-yellow-700 dark:text-yellow-400">
-                Open
+              <p
+                className={getRelationsStatus(
+                  Actions.meetingInformation.relation.status,
+                )}
+              >
+                {Actions.meetingInformation.relation.status}
               </p>
             </div>
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm col-span-2">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Details
               </p>
-              <p className="font-semibold text-sm">Details</p>
+              <p className="font-semibold text-sm">
+                {Actions.meetingInformation.relation.details}
+              </p>
             </div>
 
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Date Reported
               </p>
-              <p className="font-semibold text-sm">Sept. 24, 2025</p>
+              <p className="font-semibold text-sm">
+                {Actions.meetingInformation.relation.dateReported}
+              </p>
             </div>
           </div>
 
@@ -101,43 +176,48 @@ export default function ViewActionsModal({
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Meeting ID
               </p>
-              <p className="font-semibold text-sm">MET-2025-0001</p>
+              <p className="font-semibold text-sm">
+                {Actions.meetingInformation.meetingId}
+              </p>
             </div>
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Schedule Date
               </p>
-              <p className="font-semibold text-sm">Sept 26, 2025</p>
+              <p className="font-semibold text-sm">
+                {Actions.meetingInformation.meetingDate}
+              </p>
             </div>
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Schedule Time
               </p>
-              <p className="font-semibold text-sm">8:00 AM</p>
+              <p className="font-semibold text-sm">
+                {Actions.meetingInformation.meetingTime}
+              </p>
             </div>
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Meeting Location
               </p>
-              <p className="font-semibold text-sm">Caloocan City</p>
+              <p className="font-semibold text-sm">
+                {Actions.meetingInformation.location}
+              </p>
             </div>
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm col-span-2">
               <p className="text-sm text-gray-500 dark:text-gray-400">Notes</p>
-              <p className="font-semibold text-sm">Be on time</p>
+              <p className="font-semibold text-sm">
+                {Actions.meetingInformation.notes}
+              </p>
             </div>
 
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm ">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Scheduled By
               </p>
-              <p className="font-semibold text-sm">Davac, Vincent Ahron</p>
-            </div>
-
-            <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm ">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Scheduled At
+              <p className="font-semibold text-sm">
+                {Actions.handledByInformation.fullName}
               </p>
-              <p className="font-semibold text-sm">September 26, 2025</p>
             </div>
           </div>
 
@@ -150,20 +230,21 @@ export default function ViewActionsModal({
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Action ID
               </p>
-              <p className="font-semibold text-sm">AC-2025-0001</p>
+              <p className="font-semibold text-sm">{Actions.actionId}</p>
             </div>
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Action Type
               </p>
-              <p className="font-semibold text-sm">Verbal Warning</p>
+              <p className="font-semibold text-sm">{Actions.actionType}</p>
             </div>
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm col-span-2">
               <label className="text-sm text-gray-500 dark:text-gray-400 block mb-1">
                 Description
               </label>
               <textarea
-                placeholder="Enter description"
+                disabled
+                value={Actions.description}
                 className="w-full p-2 rounded-md shadow-sm bg-gray-50 dark:bg-gray-700 border dark:border-gray-600 focus:border-green-500 focus:ring-green-500 text-sm font-semibold"
                 rows={3}
               />
@@ -173,13 +254,15 @@ export default function ViewActionsModal({
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Facilitator
               </p>
-              <p className="font-semibold text-sm">Vincent Ahron M. Davac</p>
+              <p className="font-semibold text-sm">
+                {Actions.handledByInformation.fullName}
+              </p>
             </div>
             <div className="bg-white dark:bg-gray-900 p-4 border dark:border-gray-700 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Action Date
               </p>
-              <p className="font-semibold text-sm">September 26, 2025</p>
+              <p className="font-semibold text-sm">{Actions.createdDate}</p>
             </div>
           </div>
         </div>
