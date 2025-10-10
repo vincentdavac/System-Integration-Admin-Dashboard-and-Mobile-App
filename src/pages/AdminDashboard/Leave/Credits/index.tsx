@@ -1,11 +1,33 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Breadcrumb from '../../../../components/Breadcrumbs/Breadcrumb';
-import { Archive, CalendarPlus2, ClipboardPen, Search } from 'lucide-react';
+import { Archive, ClipboardPen, Search } from 'lucide-react';
 import AddCreditsModal from './AddCredits';
 import UpdateCreditsModal from './UpdateCredits';
 import ArchiveCreditsModal from './ArchiveCredits';
+import { AppContext } from '../../../../context/AppContext';
+import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
 
-const Credits: React.FC = () => {
+interface CreditsData {
+  id: string;
+  user: {
+    id: string;
+    employeeNo: string;
+    name: string;
+    email: string;
+  };
+  totalCredits: string;
+  isArchive: string;
+  createdDate: string;
+  createdTime: string;
+  updatedDate: string;
+  updatedTime: string;
+}
+
+interface Props {
+  alertsRef: React.RefObject<AlertsContainerRef>;
+}
+
+const Credits = ({ alertsRef }: Props) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -14,33 +36,45 @@ const Credits: React.FC = () => {
   const [showArchive, setShowArchive] = useState(false);
 
   const [selectedRow, setSelectedRow] = useState<any>(null);
-  const [pointsToAdd, setPointsToAdd] = useState('');
-  const [updateAdjustment, setUpdateAdjustment] = useState('');
-  const [updateRemarks, setUpdateRemarks] = useState('');
-  const [addRemarks, setAddRemarks] = useState('');
+
+  const [credits, setCredits] = useState<CreditsData[]>([]);
 
   const itemsPerPage = 10;
 
-  // Sample Credits Data
-  const credits = useMemo(
-    () =>
-      Array.from({ length: 50 }, (_, i) => ({
-        id: i + 1,
-        accountNo: `202200${i + 41}`,
-        fullName: `Employee ${i + 1}`,
-        year: 2025,
-        earned: Math.floor(Math.random() * 20),
-        used: Math.floor(Math.random() * 10),
-        remaining: Math.floor(Math.random() * 20),
-      })),
-    [],
-  );
+  const { user, token } = useContext(AppContext)!;
+
+  const fetchCredits = async () => {
+    try {
+      const response = await fetch(`/api/credits`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      const res = await response.json();
+
+      if (response.ok && res.data) {
+        setCredits(res.data);
+      } else {
+        console.error('Failed to fetch:', res);
+      }
+    } catch (error) {
+      console.error('Error fetching :', error);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.id) fetchCredits();
+  }, [user, token]);
 
   // Filter table
   const filteredCredits = credits.filter(
     (c) =>
-      c.accountNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.fullName.toLowerCase().includes(searchTerm.toLowerCase()),
+      c.user.employeeNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.createdDate.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Pagination
@@ -50,21 +84,6 @@ const Credits: React.FC = () => {
     startIndex,
     startIndex + itemsPerPage,
   );
-
-  // Highlight search
-  const highlightMatch = (text: string) => {
-    if (!searchTerm) return text;
-    const regex = new RegExp(`(${searchTerm})`, 'gi');
-    return text.split(regex).map((part, i) =>
-      regex.test(part) ? (
-        <span key={i} className="bg-yellow-200 dark:bg-yellow-700">
-          {part}
-        </span>
-      ) : (
-        part
-      ),
-    );
-  };
 
   return (
     <>
@@ -100,8 +119,9 @@ const Credits: React.FC = () => {
                 <th className="px-6 py-3">No.</th>
                 <th className="px-6 py-3">Employee No.</th>
                 <th className="px-6 py-3">Full Name</th>
-                <th className="px-6 py-3">Year</th>
-                <th className="px-6 py-3">Remaining</th>
+                <th className="px-6 py-3">Email</th>
+                <th className="px-6 py-3">Credit/s</th>
+                <th className="px-6 py-3">Date</th>
                 <th className="px-6 py-3">Actions</th>
               </tr>
             </thead>
@@ -113,31 +133,15 @@ const Credits: React.FC = () => {
                     className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
                   >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
-                    <td className="px-6 py-3">
-                      {highlightMatch(row.accountNo)}
-                    </td>
-                    <td className="px-6 py-3">
-                      {highlightMatch(row.fullName)}
-                    </td>
-                    <td className="px-6 py-3">{row.year}</td>
-                    <td className="px-6 py-3">{row.remaining}</td>
+                    <td className="px-6 py-3">{row.user.employeeNo}</td>
+                    <td className="px-6 py-3">{row.user.name}</td>
+                    <td className="px-6 py-3">{row.user.email}</td>
+                    <td className="px-6 py-3">{row.totalCredits}</td>
+                    <td className="px-6 py-3">{row.updatedDate}</td>
                     <td className="px-6 py-3 space-x-2">
                       <button
                         onClick={() => {
                           setSelectedRow(row);
-                          setPointsToAdd('');
-                          setAddRemarks('');
-                          setShowAdd(true);
-                        }}
-                        className="ml-2 bg-yellow-600 hover:bg-yellow-500 text-white px-4 py-2 rounded"
-                      >
-                        <CalendarPlus2 size={18} />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedRow(row);
-                          setUpdateAdjustment('');
-                          setUpdateRemarks('');
                           setShowUpdate(true);
                         }}
                         className="bg-[#2D3F99] hover:bg-blue-600 text-white px-4 py-2 rounded"
@@ -145,7 +149,10 @@ const Credits: React.FC = () => {
                         <ClipboardPen size={18} />
                       </button>
                       <button
-                        onClick={() => setShowArchive(true)}
+                        onClick={() => {
+                          setShowArchive(true);
+                          setSelectedRow(row);
+                        }}
                         className="text-white px-4 py-2 rounded bg-red-600 hover:bg-red-500"
                       >
                         <Archive size={18} />
@@ -206,10 +213,20 @@ const Credits: React.FC = () => {
       {/* Modals */}
       {showAdd && <AddCreditsModal onClose={() => setShowAdd(false)} />}
       {showUpdate && (
-        <UpdateCreditsModal onClose={() => setShowUpdate(false)} />
+        <UpdateCreditsModal
+          onClose={() => setShowUpdate(false)}
+          CreditsData={selectedRow}
+          refetchCredits={fetchCredits}
+          alertsRef={alertsRef}
+        />
       )}
       {showArchive && (
-        <ArchiveCreditsModal onClose={() => setShowArchive(false)} />
+        <ArchiveCreditsModal
+          onClose={() => setShowArchive(false)}
+          alertsRef={alertsRef}
+          refetchCredits={fetchCredits}
+          CreditsData={selectedRow}
+        />
       )}
     </>
   );

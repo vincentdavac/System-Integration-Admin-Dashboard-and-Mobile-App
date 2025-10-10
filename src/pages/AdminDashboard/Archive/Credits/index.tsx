@@ -1,37 +1,76 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Breadcrumb from '../../../../components/Breadcrumbs/Breadcrumb';
 import { ArchiveRestore, Search } from 'lucide-react';
-import CreditsRecoverModal from './CreditsRecover';
+import RestoreArchive from './CreditsRecover';
+import { AppContext } from '../../../../context/AppContext';
+import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
 
-const ArchiveCredits = () => {
+interface CreditsData {
+  id: string;
+  user: {
+    id: string;
+    employeeNo: string;
+    name: string;
+    email: string;
+  };
+  totalCredits: string;
+  isArchive: string;
+  createdDate: string;
+  createdTime: string;
+  updatedDate: string;
+  updatedTime: string;
+}
+
+interface Props {
+  alertsRef: React.RefObject<AlertsContainerRef>;
+}
+
+const ArhiveCredits = ({ alertsRef }: Props) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [showRecover, setShowRecover] = useState(false);
-  const [selectedRow, setSelectedRow] = useState(null);
+
+  const [showAdd, setShowAdd] = useState(false);
+
+  const [selectedRow, setSelectedRow] = useState<any>(null);
+
+  const [credits, setCredits] = useState<CreditsData[]>([]);
 
   const itemsPerPage = 10;
 
-  // Sample Archived Credits Data
-  const credits = useMemo(
-    () =>
-      Array.from({ length: 30 }, (_, i) => ({
-        id: i + 1,
-        accountNo: `ARCH-20220${i + 41}`,
-        fullName: `Employee ${i + 1}`,
-        year: 2025,
-        earned: Math.floor(Math.random() * 20),
-        used: Math.floor(Math.random() * 10),
-        remaining: Math.floor(Math.random() * 20),
-        status: 'Archived',
-      })),
-    [],
-  );
+  const { user, token } = useContext(AppContext)!;
+
+  const fetchCredits = async () => {
+    try {
+      const response = await fetch(`/api/credits/archives`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      const res = await response.json();
+
+      if (response.ok && res.data) {
+        setCredits(res.data);
+      } else {
+        console.error('Failed to fetch:', res);
+      }
+    } catch (error) {
+      console.error('Error fetching :', error);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.id) fetchCredits();
+  }, [user, token]);
 
   // Filter table
   const filteredCredits = credits.filter(
     (c) =>
-      c.accountNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.fullName.toLowerCase().includes(searchTerm.toLowerCase()),
+      c.user.employeeNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.createdDate.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Pagination
@@ -42,52 +81,44 @@ const ArchiveCredits = () => {
     startIndex + itemsPerPage,
   );
 
-  // Highlight search
-  const highlightMatch = (text: string) => {
-    if (!searchTerm) return text;
-    const regex = new RegExp(`(${searchTerm})`, 'gi');
-    return text.split(regex).map((part, i) =>
-      regex.test(part) ? (
-        <span key={i} className="bg-yellow-200 dark:bg-yellow-600">
-          {part}
-        </span>
-      ) : (
-        part
-      ),
-    );
-  };
-
   return (
     <>
-      <Breadcrumb pageName="Archive Credits" />
+      <Breadcrumb pageName="Leave Credits" />
 
       {/* Search Bar */}
       <div className="mt-4 mb-4 flex flex-col md:flex-row md:justify-between items-start md:items-center space-y-2 md:space-y-0">
-        <input
-          type="text"
-          placeholder="Search by Account No. or Full Name..."
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setCurrentPage(1);
-          }}
-          className="w-full md:w-1/3 border border-gray-300 dark:border-gray-600 rounded px-4 py-2 shadow-sm focus:ring focus:ring-blue-200 dark:bg-gray-900 dark:text-gray-100"
-        />
-        <Search className="text-gray-600 dark:text-gray-300" />
+        <div className="flex items-center gap-2 w-full md:w-1/3">
+          <input
+            type="text"
+            placeholder="Search by Account No. or Full Name..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="w-full border rounded px-4 py-2 shadow-sm 
+              focus:ring focus:ring-blue-200 
+              bg-white text-gray-800 
+              dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200 
+              dark:placeholder-gray-400 dark:focus:ring-blue-500"
+          />
+          <Search className="text-gray-600 dark:text-gray-300" />
+        </div>
       </div>
 
       {/* Table */}
       <div className="overflow-x-auto border rounded-lg shadow bg-white dark:bg-gray-900 dark:border-gray-700">
         <div className="h-[500px] overflow-y-auto">
-          <table className="w-full min-w-[950px] text-left text-sm text-gray-700 dark:text-gray-100">
+          <table className="w-full min-w-[900px] text-sm text-gray-700 dark:text-gray-100 text-center">
             <thead className="bg-gray-100 dark:bg-gray-800 text-xs uppercase text-gray-600 dark:text-gray-300 sticky top-0">
               <tr>
-                <th className="px-6 py-3 text-center">No.</th>
-                <th className="px-6 py-3 text-center">Employee No.</th>
-                <th className="px-6 py-3 text-center">Full Name</th>
-                <th className="px-6 py-3 text-center">Year</th>
-                <th className="px-6 py-3 text-center">Remaining</th>
-                <th className="px-6 py-3 text-center">Actions</th>
+                <th className="px-6 py-3">No.</th>
+                <th className="px-6 py-3">Employee No.</th>
+                <th className="px-6 py-3">Full Name</th>
+                <th className="px-6 py-3">Email</th>
+                <th className="px-6 py-3">Credit/s</th>
+                <th className="px-6 py-3">Date</th>
+                <th className="px-6 py-3">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -95,21 +126,20 @@ const ArchiveCredits = () => {
                 paginatedCredits.map((row, index) => (
                   <tr
                     key={row.id}
-                    className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-center"
+                    className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
                   >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
-                    <td className="px-6 py-3">
-                      {highlightMatch(row.accountNo)}
-                    </td>
-                    <td className="px-6 py-3">
-                      {highlightMatch(row.fullName)}
-                    </td>
-                    <td className="px-6 py-3">{row.year}</td>
-                    <td className="px-6 py-3">{row.remaining}</td>
-
-                    <td className="px-6 py-3">
+                    <td className="px-6 py-3">{row.user.employeeNo}</td>
+                    <td className="px-6 py-3">{row.user.name}</td>
+                    <td className="px-6 py-3">{row.user.email}</td>
+                    <td className="px-6 py-3">{row.totalCredits}</td>
+                    <td className="px-6 py-3">{row.updatedDate}</td>
+                    <td className="px-6 py-3 space-x-2">
                       <button
-                        onClick={() => setShowRecover(true)}
+                        onClick={() => {
+                          setSelectedRow(row);
+                          setShowAdd(true);
+                        }}
                         className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded"
                       >
                         <ArchiveRestore size={18} />
@@ -120,7 +150,7 @@ const ArchiveCredits = () => {
               ) : (
                 <tr>
                   <td
-                    colSpan={9}
+                    colSpan={6}
                     className="px-6 py-3 text-center text-gray-500 dark:text-gray-400 italic"
                   >
                     No matching records found.
@@ -141,7 +171,6 @@ const ArchiveCredits = () => {
         >
           Previous
         </button>
-
         <div className="flex space-x-2">
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <button
@@ -150,14 +179,13 @@ const ArchiveCredits = () => {
               className={
                 page === currentPage
                   ? 'bg-blue-500 text-white px-3 py-1 rounded'
-                  : 'px-3 py-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-100 rounded'
+                  : 'px-3 py-1 border border-gray-300 dark:border-gray-700 rounded dark:text-gray-200'
               }
             >
               {page}
             </button>
           ))}
         </div>
-
         <button
           onClick={() =>
             setCurrentPage((prev) => Math.min(prev + 1, totalPages))
@@ -169,12 +197,17 @@ const ArchiveCredits = () => {
         </button>
       </div>
 
-      {/* Recover Modal */}
-      {showRecover && (
-        <CreditsRecoverModal onClose={() => setShowRecover(false)} />
+      {/* Modals */}
+      {showAdd && (
+        <RestoreArchive
+          onClose={() => setShowAdd(false)}
+          alertsRef={alertsRef}
+          refetchCredits={fetchCredits}
+          CreditsData={selectedRow}
+        />
       )}
     </>
   );
 };
 
-export default ArchiveCredits;
+export default ArhiveCredits;

@@ -214,7 +214,7 @@ function App({ alertsRef }: AppProps) {
           element={
             <>
               <PageTitle title="Credits | Human Resource Management" />
-              <Credits />
+              <Credits alertsRef={alertsRef} />
             </>
           }
         />
@@ -250,7 +250,7 @@ function App({ alertsRef }: AppProps) {
           element={
             <>
               <PageTitle title="Credits | Human Resource Management" />
-              <ArchiveCredits />
+              <ArchiveCredits alertsRef={alertsRef} />
             </>
           }
         />

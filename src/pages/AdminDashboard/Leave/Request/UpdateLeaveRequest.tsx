@@ -306,16 +306,16 @@ export default function UpdateLeaveRequestModal({
                   rows={3}
                 />
               </div>
+            </div>
 
-              {/* Footer */}
-              <div className="border-t border-gray-300 dark:border-gray-700 px-6 py-4 flex justify-end space-x-2">
-                <button
-                  type="submit"
-                  className="text-white px-4 py-2 rounded bg-[#2D3F99] hover:bg-blue-500"
-                >
-                  <ClipboardPen size={18} />
-                </button>
-              </div>
+            {/* Footer */}
+            <div className="border-t border-gray-300 dark:border-gray-700 px-6 py-4 flex justify-end space-x-2">
+              <button
+                type="submit"
+                className="text-white px-4 py-2 rounded bg-[#2D3F99] hover:bg-blue-500"
+              >
+                <ClipboardPen size={18} />
+              </button>
             </div>
           </form>
         </div>
