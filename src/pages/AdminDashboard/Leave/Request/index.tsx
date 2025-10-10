@@ -1,106 +1,98 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Breadcrumb from '../../../../components/Breadcrumbs/Breadcrumb';
 import ViewLeaveRequestModal from './ViewLeaveRequest';
 import { ClipboardPen, Eye, Search } from 'lucide-react';
 import UpdateLeaveRequestModal from './UpdateLeaveRequest';
+import { AppContext } from '../../../../context/AppContext';
+import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
+interface LeaveRequest {
+  id: string;
+  leaveId: string;
+  studentNo: string;
+  userId: string;
+  leaveTypeId: 1;
+  reason: string;
+  startDate: string;
+  endDate: string;
+  durationDays: string;
+  imageFile: string;
+  status: string;
+  approverId: string;
+  remarks: string;
+  userInformation: {
+    userId: string;
+    fullName: string;
+    email: string;
+    studentNo: string;
+  };
+  approverInformation: {
+    userId: string;
+    fullName: string;
+    email: string;
+  };
+  leaveTypeInformation: {
+    id: string;
+    name: string;
+    description: string;
+    isArchive: string;
+  };
+  createdDate: string;
+  createdTime: string;
+  updatedDate: string;
+  updatedTime: string;
+}
 
-const Request = () => {
+interface Props {
+  alertsRef: React.RefObject<AlertsContainerRef>;
+}
+const Request = ({ alertsRef }: Props) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [showView, setShowView] = useState(false);
   const [showUpdate, setShowUpdate] = useState(false);
 
+  const { user, token } = useContext(AppContext)!;
+
   const [selectedRow, setSelectedRow] = useState<any>(null);
   const itemsPerPage = 10;
 
-  // Sample Leave Requests Data
-  const initialLeaveRequests = [
-    {
-      id: 1,
-      accountNo: '20220041',
-      name: 'Lourine Ashanti Puno',
-      department: 'IT',
-      position: 'Developer',
-      date: '2025-09-15',
-      startDate: '2025-01-13',
-      endDate: '2025-01-17',
-      totalDays: 3,
-      leaveType: 'Sick Leave',
-      reason: 'Medical Appointment',
-      email: 'davacvincent@gmail.com',
-      status: 'Pending',
-      reviewedBy: 'Ahron Vincent Davac',
-      approvalDate: '2025-09-14',
-      remarks: 'Approved with Pay',
-      attachment: '',
-    },
-    {
-      id: 2,
-      accountNo: '20220042',
-      name: 'Maria Cruz',
-      department: 'HR',
-      position: 'Coordinator',
-      date: '2025-09-15',
-      startDate: '2025-02-24',
-      endDate: '2025-02-25',
-      totalDays: 2,
-      leaveType: 'Emergency Leave',
-      reason: 'Family Emergency',
-      email: 'cruzmaria@gmail.com',
-      status: 'Approved',
-      reviewedBy: 'Ahron Vincent Davac',
-      approvalDate: '2025-09-14',
-      remarks: 'Approved without Pay',
-      attachment: '',
-    },
-    {
-      id: 3,
-      accountNo: '20220043',
-      name: 'John Paul Santos',
-      department: 'Finance',
-      position: 'Analyst',
-      date: '2025-09-15',
-      startDate: '2025-03-10',
-      endDate: '2025-03-14',
-      totalDays: 5,
-      leaveType: 'Vacation Leave',
-      reason: 'Vacation',
-      email: 'santosjohnpaul@gmail.com',
-      status: 'Declined',
-      reviewedBy: 'Ahron Vincent Davac',
-      approvalDate: '2025-09-14',
-      remarks: 'Not allowed due to workload',
-      attachment: '',
-    },
-    ...Array.from({ length: 50 }, (_, i) => ({
-      id: i + 4,
-      accountNo: `202200${i + 44}`,
-      name: `User ${i}`,
-      department: 'IT',
-      position: 'Staff',
-      date: '2025-09-15',
-      startDate: '2025-04-01',
-      endDate: '2025-04-05',
-      totalDays: 5,
-      leaveType: i % 2 === 0 ? 'Vacation Leave' : 'Sick Leave',
-      reason: 'Personal',
-      email: `user${i}@gmail.com`,
-      status: i % 3 === 0 ? 'Pending' : i % 3 === 1 ? 'Approved' : 'Declined',
-      reviewedBy: 'System Admin',
-      approvalDate: '2025-09-14',
-      remarks: 'Auto generated',
-      attachment: '',
-    })),
-  ];
+  const [leaveRequest, setLeaveRequest] = useState<LeaveRequest[]>([]);
 
-  const [leaveRequestsData, setLeaveRequestsData] =
-    useState(initialLeaveRequests);
+  const fetchLeaveRequest = async () => {
+    try {
+      const response = await fetch(`/api/leave-requests`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      const res = await response.json();
+
+      if (response.ok && res.data) {
+        setLeaveRequest(res.data);
+      } else {
+        console.error('Failed to fetch employees:', res);
+      }
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.id) fetchLeaveRequest();
+  }, [user, token]);
 
   // Filtered results
-  const filteredRequests = leaveRequestsData.filter(
+  const filteredRequests = leaveRequest.filter(
     (req) =>
-      req.accountNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      req.email.toLowerCase().includes(searchTerm.toLowerCase()),
+      req.leaveId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      req.studentNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      req.userInformation.fullName
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      req.startDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      req.endDate.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Pagination
@@ -114,43 +106,28 @@ const Request = () => {
   // Status badge (unchanged as requested)
   const getStatusClasses = (status: string) => {
     switch (status) {
-      case 'Approved':
+      case 'approved':
         return 'bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium';
-      case 'Declined':
+      case 'declined':
         return 'bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium';
-      case 'Pending':
+      case 'pending':
         return 'bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium';
       default:
         return 'bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-medium';
     }
   };
 
-  // Highlight search matches
-  const highlightMatch = (text: string) => {
-    if (!searchTerm) return text;
-    const regex = new RegExp(`(${searchTerm})`, 'gi');
-    return text.split(regex).map((part, i) =>
-      regex.test(part) ? (
-        <span key={i} className="bg-yellow-200 dark:bg-yellow-800">
-          {part}
-        </span>
-      ) : (
-        part
-      ),
-    );
-  };
-
   // Save changes handler
-  const handleSaveChanges = () => {
-    if (!selectedRow) return;
+  // const handleSaveChanges = () => {
+  //   if (!selectedRow) return;
 
-    const updatedData = leaveRequestsData.map((req) =>
-      req.id === selectedRow.id ? selectedRow : req,
-    );
-    setLeaveRequestsData(updatedData);
-    setShowView(false);
-    alert('Changes saved successfully!');
-  };
+  //   const updatedData = leaveRequestsData.map((req) =>
+  //     req.id === selectedRow.id ? selectedRow : req,
+  //   );
+  //   setLeaveRequestsData(updatedData);
+  //   setShowView(false);
+  //   alert('Changes saved successfully!');
+  // };
 
   return (
     <>
@@ -183,12 +160,15 @@ const Request = () => {
             <thead className="bg-gray-100 dark:bg-gray-800 text-xs uppercase text-gray-600 dark:text-gray-300 sticky top-0 z-0">
               <tr>
                 <th className="px-6 py-3 text-center">No.</th>
-                <th className="px-6 py-3 text-center">Account No.</th>
-                <th className="px-6 py-3 text-center">Date</th>
+                <th className="px-6 py-3 text-center">Leave ID</th>
+                <th className="px-6 py-3 text-center">Employee ID</th>
+                <th className="px-6 py-3 text-center">Full Name</th>
+                <th className="px-6 py-3 text-center">Email Address</th>
                 <th className="px-6 py-3 text-center">Start Date</th>
                 <th className="px-6 py-3 text-center">End Date</th>
-                <th className="px-6 py-3 text-center">Email Address</th>
                 <th className="px-6 py-3 text-center">Status</th>
+                <th className="px-6 py-3 text-center">Application Date</th>
+
                 <th className="px-6 py-3 text-center">Action</th>
               </tr>
             </thead>
@@ -200,18 +180,21 @@ const Request = () => {
                     className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-center"
                   >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
+                    <td className="px-6 py-3">{req.leaveId}</td>
+                    <td className="px-6 py-3">{req.studentNo}</td>
                     <td className="px-6 py-3">
-                      {highlightMatch(req.accountNo)}
+                      {req.userInformation.fullName}
                     </td>
-                    <td className="px-6 py-3">{req.date}</td>
+                    <td className="px-6 py-3">{req.userInformation.email}</td>
                     <td className="px-6 py-3">{req.startDate}</td>
                     <td className="px-6 py-3">{req.endDate}</td>
-                    <td className="px-6 py-3">{highlightMatch(req.email)}</td>
                     <td className="px-6 py-3">
                       <span className={getStatusClasses(req.status)}>
                         {req.status}
                       </span>
                     </td>
+                    <td className="px-6 py-3">{req.createdDate}</td>
+
                     <td className="px-6 py-3 space-x-2">
                       <button
                         className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
@@ -290,11 +273,15 @@ const Request = () => {
       <ViewLeaveRequestModal
         isOpen={showView}
         onClose={() => setShowView(false)}
+        LeaveRequest={selectedRow}
       />
 
       <UpdateLeaveRequestModal
         isOpen={showUpdate}
         onClose={() => setShowUpdate(false)}
+        refetchLeaveRequest={fetchLeaveRequest}
+        alertsRef={alertsRef}
+        LeaveRequest={selectedRow}
       />
     </>
   );

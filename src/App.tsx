@@ -205,7 +205,7 @@ function App({ alertsRef }: AppProps) {
           element={
             <>
               <PageTitle title="Request | Human Resource Management" />
-              <Request />
+              <Request alertsRef={alertsRef} />
             </>
           }
         />
