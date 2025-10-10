@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import LogoDark from '../../../src/images/logo/logo-dark.svg';
-import Logo from '../../images/logo/logo.svg';
+import Logo from '../../../public/icons/ucc_logo.png';
 import { AppContext } from '../../context/AppContext';
 import { AlertsContainerRef } from '../../components/Alert/AlertsContainer';
 import School from '../../images/logo/school (1).svg';
@@ -73,10 +73,20 @@ const SignIn = ({ alertsRef }: LoginProps) => {
             <div className="hidden w-full xl:block xl:w-1/2">
               <div className="py-17.5 px-26 text-center">
                 <Link className="mb-5.5 inline-block" to="/">
-                  <img className="hidden dark:block" src={Logo} alt="Logo" />
-                  <img className="dark:hidden" src={LogoDark} alt="Logo" />
+                  <img
+                    className="hidden dark:block"
+                    width={600}
+                    src={Logo}
+                    alt="Logo"
+                  />
+                  <img
+                    className="dark:hidden"
+                    src={Logo}
+                    width={600}
+                    alt="Logo"
+                  />
                 </Link>
-
+                {/* 
                 <p className="2xl:px-20">
                   Education is the most powerful tool we can use to shape a
                   better future
@@ -88,7 +98,7 @@ const SignIn = ({ alertsRef }: LoginProps) => {
                     alt="School Illustration"
                     className="w-150 h-auto mx-auto"
                   />
-                </span>
+                </span> */}
               </div>
             </div>
 

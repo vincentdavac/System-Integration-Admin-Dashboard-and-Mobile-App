@@ -1,11 +1,11 @@
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import LogoDark from '../../images/logo/logo-dark.svg';
-import Logo from '../../images/logo/logo.svg';
+import Logo from '../../../public/icons/ucc_logo.png';
 import { User, Mail, Lock, Phone, IdCard } from 'lucide-react';
 import { AppContext } from '../../context/AppContext';
 import { AlertsContainerRef } from '../../components/Alert/AlertsContainer';
-import School from "../../images/logo/school (1).svg"; 
+import School from '../../images/logo/school (1).svg';
 
 interface RegisterProps {
   alertsRef: React.RefObject<AlertsContainerRef>;
@@ -76,20 +76,31 @@ const SignUp = ({ alertsRef }: RegisterProps) => {
             <div className="hidden w-full xl:block xl:w-1/2">
               <div className="py-17.5 px-26 text-center">
                 <Link className="mb-5.5 inline-block" to="/">
-                  <img className="hidden dark:block" src={Logo} alt="Logo" />
-                  <img className="dark:hidden" src={LogoDark} alt="Logo" />
+                  <img
+                    className="hidden dark:block"
+                    width={600}
+                    src={Logo}
+                    alt="Logo"
+                  />
+                  <img
+                    className="dark:hidden"
+                    src={Logo}
+                    width={600}
+                    alt="Logo"
+                  />
                 </Link>
-                <p className="2xl:px-20">
-                   Education is the most powerful tool we can use to shape a better future
+                {/* <p className="2xl:px-20">
+                  Education is the most powerful tool we can use to shape a
+                  better future
                 </p>
 
-                 <span className="mt-15 inline-block -mt-3">
-            <img 
-              src={School} 
-              alt="School Illustration" 
-              className="w-150 h-auto mx-auto"  
-            />
-          </span>
+                <span className="mt-15 inline-block -mt-3">
+                  <img
+                    src={School}
+                    alt="School Illustration"
+                    className="w-150 h-auto mx-auto"
+                  />
+                </span> */}
               </div>
             </div>
 
@@ -285,7 +296,10 @@ const SignUp = ({ alertsRef }: RegisterProps) => {
                   <div className="mt-6 text-center">
                     <p>
                       Already have an account?
-                      <Link href="/auth/signin" className="font-medium text-[#367947]">
+                      <Link
+                        to="/admin/login"
+                        className="font-medium text-[#367947]"
+                      >
                         Login
                       </Link>
                     </p>
