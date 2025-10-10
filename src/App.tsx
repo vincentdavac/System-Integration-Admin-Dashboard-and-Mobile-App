@@ -120,10 +120,12 @@ function App({ alertsRef }: AppProps) {
         <Route
           index
           element={
-            <>
-              <PageTitle title="UCC | Dashboard" />
-              <AdminDashboard alertsRef={alertsRef} />
-            </>
+            <ProtectedRoute alertsRef={alertsRef}>
+              <>
+                <PageTitle title="UCC | Human Resource Management" />
+                <AdminDashboard alertsRef={alertsRef} />
+              </>
+            </ProtectedRoute>
           }
         />
         <Route
@@ -140,10 +142,12 @@ function App({ alertsRef }: AppProps) {
         <Route
           path="/admin/employee"
           element={
-            <>
-              <PageTitle title="Employee | Human Resource Management" />
-              <Employee alertsRef={alertsRef} />
-            </>
+            <ProtectedRoute alertsRef={alertsRef}>
+              <>
+                <PageTitle title="Employee | Human Resource Management" />
+                <Employee alertsRef={alertsRef} />
+              </>
+            </ProtectedRoute>
           }
         />
         <Route
