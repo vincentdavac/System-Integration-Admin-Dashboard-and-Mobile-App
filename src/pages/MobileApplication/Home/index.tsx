@@ -202,7 +202,7 @@ const MobileHome = () => {
       </div>
 
       {/* 🔹 Sections */}
-      <div className="w-11/12 max-w-sm mt-9 flex-1 h-[600px] overflow-y-auto space-y-6 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 rounded-lg p-2">
+      <div className="w-11/12 max-w-sm mt-9 mb-25 flex-1 h-[650px] overflow-y-auto space-y-6 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 rounded-lg p-2">
         {/* Payroll */}
         <div className="bg-green-700 rounded-lg shadow flex items-center justify-between p-3 h-24 text-white relative pb-4">
           <div>

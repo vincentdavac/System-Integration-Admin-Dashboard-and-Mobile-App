@@ -12,6 +12,7 @@ interface UpdateLeaveTypesProps {
     id: string;
     name: string;
     description: string;
+    applicableDays: number;
     isArchive: string;
     createdDate: string;
     createdTime: string;
@@ -30,6 +31,9 @@ export default function UpdateLeaveTypesModal({
 
   const [name, setName] = useState(LeaveType.name || ' ');
   const [description, setDescription] = useState(LeaveType.description || ' ');
+  const [applicableDays, setApplicableDays] = useState(
+    LeaveType.applicableDays || ' ',
+  );
 
   async function handleSubmit(e: any) {
     e.preventDefault();
@@ -39,12 +43,14 @@ export default function UpdateLeaveTypesModal({
     const form = e.target;
     const Setname = form.name.value; // Get latest select value directly
     const Setdescription = form.description.value;
+    const setApplicableDays = form.applicableDays.value;
 
-    console.log(name, description);
+    console.log(name, description, applicableDays);
 
     const payload = {
       name: Setname,
       description: Setdescription,
+      applicable_days: setApplicableDays,
     };
 
     const res = await fetch(`${API_BASE_URL}/api/leave-types/${LeaveType.id}`, {
@@ -125,6 +131,20 @@ export default function UpdateLeaveTypesModal({
                   onChange={(e) => setName(e.target.value)}
                   defaultValue={LeaveType.name}
                   placeholder="Enter leave type"
+                  className="mt-1 block w-full p-2 rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm font-semibold bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100"
+                />
+              </div>
+
+              <div className="bg-white dark:bg-gray-900 p-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+                <label className="text-sm text-gray-500 dark:text-gray-400">
+                  Applicable Days
+                </label>
+                <input
+                  name="applicableDays"
+                  type="number"
+                  defaultValue={LeaveType.applicableDays}
+                  onChange={(e) => setApplicableDays(e.target.value)}
+                  placeholder="Enter Applicable Days"
                   className="mt-1 block w-full p-2 rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm font-semibold bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100"
                 />
               </div>

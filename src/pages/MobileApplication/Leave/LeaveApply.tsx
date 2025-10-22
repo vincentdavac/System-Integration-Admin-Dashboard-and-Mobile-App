@@ -43,11 +43,14 @@ const MobileLeaveApply = ({ alertsRef }: LeaveRequestProps) => {
         const data = await res.json();
         if (data.status === 'Successful request') {
           setLeaveTypes(data.data || []);
+          console.log(data.data)
         } else {
-          alertsRef.current?.addAlert(
-            'error',
-            data.message || 'Failed to fetch leave types',
-          );
+          // alertsRef.current?.addAlert(
+          //   'error',
+          //   data.message || 'Failed to fetch leave types',
+          // );
+          setLeaveTypes(data.data || []);
+          console.log(data.data)
         }
       } catch (error) {
         console.error('Error fetching leave types:', error);
@@ -102,18 +105,18 @@ const MobileLeaveApply = ({ alertsRef }: LeaveRequestProps) => {
           alertsRef.current?.addAlert('error', msg);
         });
       });
-    } else if (res.error) {
+    } else if (res.error && res.status === 'Error has occurred') {
       // Custom backend error (like date range conflict)
       alertsRef.current?.clearAlerts();
       alertsRef.current?.addAlert('error', res.error);
-    } else if (res.message) {
+    } else if (res.message  && res.status === 'Successful request') {
       // Success message from backend
       alertsRef.current?.clearAlerts();
       alertsRef.current?.addAlert('success', res.message);
       navigate('/mobile/leave');
     } else {
       console.log(res);
-      alertsRef.current?.addAlert('success', 'Leave Request Submitted!');
+      alertsRef.current?.addAlert('error', res.message);
     }
   };
 

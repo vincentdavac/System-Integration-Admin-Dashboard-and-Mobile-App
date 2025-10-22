@@ -13,6 +13,7 @@ interface LeaveType {
   name: string;
   description: string;
   isArchive: string;
+  applicableDays: number;
   createdDate: string;
   createdTime: string;
   updatedDate: string;
@@ -120,6 +121,7 @@ const Type = ({ alertsRef }: Props) => {
               <tr>
                 <th className="px-6 py-3">No.</th>
                 <th className="px-6 py-3">Name</th>
+                <th className="px-6 py-3">Applicable Days</th>
                 <th className="px-6 py-3">Description</th>
                 <th className="px-6 py-3">Date</th>
                 <th className="px-6 py-3">Time</th>
@@ -135,6 +137,7 @@ const Type = ({ alertsRef }: Props) => {
                   >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
                     <td className="px-6 py-3">{t.name}</td>
+                    <td className="px-6 py-3">{t.applicableDays}</td>
                     <td className="px-6 py-3">{t.description}</td>
                     <td className="px-6 py-3">{t.createdDate}</td>
                     <td className="px-6 py-3">{t.createdTime}</td>
