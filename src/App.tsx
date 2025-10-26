@@ -55,6 +55,10 @@ import MobileActionsHistory from './pages/MobileApplication/Actions';
 import MobileActionsView from './pages/MobileApplication/Actions/ActionsView';
 import Notifications from './pages/MobileApplication/Notifications';
 import FjpEmployee from './pages/AdminDashboard/Fjp';
+import LeaveCalendar from './pages/AdminDashboard/Leave/Calendar';
+import OfficialBusiness from './pages/AdminDashboard/OfficialBusiness';
+import EmployeeCertication from './pages/MobileApplication/CertificateOfEmployment';
+import RequestCoe from './pages/MobileApplication/CertificateOfEmployment/RequestCoe';
 interface AppProps {
   alertsRef: React.RefObject<AlertsContainerRef>;
 }
@@ -82,10 +86,7 @@ function App({ alertsRef }: AppProps) {
 
   if (loading && showLoaderRoutes.includes(pathname)) {
     return (
-      <Loader
-        title="University of Caloocan City"
-        description="Please wait a moment."
-      />
+      <Loader title="TrueTeam Solutions" description="Please wait a moment." />
     );
   }
 
@@ -122,7 +123,7 @@ function App({ alertsRef }: AppProps) {
           element={
             <ProtectedRoute alertsRef={alertsRef}>
               <>
-                <PageTitle title="UCC | Human Resource Management" />
+                <PageTitle title="TrueTeam | Human Resource Management" />
                 <AdminDashboard alertsRef={alertsRef} />
               </>
             </ProtectedRoute>
@@ -178,6 +179,15 @@ function App({ alertsRef }: AppProps) {
           }
         />
         <Route
+          path="/admin/official-business"
+          element={
+            <>
+              <PageTitle title="Official Business | Human Resource Management" />
+              <OfficialBusiness alertsRef={alertsRef} />
+            </>
+          }
+        />
+        <Route
           path="/admin/management/relations"
           element={
             <>
@@ -228,6 +238,15 @@ function App({ alertsRef }: AppProps) {
             <>
               <PageTitle title="Type | Human Resource Management" />
               <Type alertsRef={alertsRef} />
+            </>
+          }
+        />
+        <Route
+          path="/admin/leave/calendar"
+          element={
+            <>
+              <PageTitle title="Calendar | Human Resource Management" />
+              <LeaveCalendar alertsRef={alertsRef} />
             </>
           }
         />
@@ -444,6 +463,11 @@ function App({ alertsRef }: AppProps) {
         <Route
           path="/mobile/actions-view/:id"
           element={<MobileActionsView />}
+        />
+        <Route path="/mobile/coe-history" element={<EmployeeCertication />} />
+        <Route
+          path="/mobile/coe-request"
+          element={<RequestCoe alertsRef={alertsRef} />}
         />
       </Route>
     </Routes>

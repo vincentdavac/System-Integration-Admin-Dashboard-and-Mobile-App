@@ -93,7 +93,7 @@ const MobileCredits = () => {
       {/* Green Background Section */}
       <div className="w-full h-[180px] relative">
         <img
-          src="/ucc_background/ucc_green_background.png" // ✅ background image path
+          src="/ucc_background/ucc_green_background.svg" // ✅ background image path
           alt="Background"
           className="w-full h-full object-cover"
         />
@@ -124,7 +124,7 @@ const MobileCredits = () => {
           <div className="w-20 h-20   flex items-center justify-center">
             {/* You can place an image here later */}
             <img
-              src="/mobile-icons/credits.png"
+              src="/mobile-icons/credits.svg"
               alt="Icon"
               className="w-full h-full object-cover"
             />

@@ -68,21 +68,6 @@ const ArchiveEmployee = ({ alertsRef }: EmployeeProps) => {
       ? 'bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium'
       : 'bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium';
 
-  // Highlight search
-  const highlightMatch = (text: string) => {
-    if (!searchTerm) return text;
-    const regex = new RegExp(`(${searchTerm})`, 'gi');
-    return text.split(regex).map((part, i) =>
-      regex.test(part) ? (
-        <span key={i} className="bg-yellow-200">
-          {part}
-        </span>
-      ) : (
-        part
-      ),
-    );
-  };
-
   return (
     <>
       <Breadcrumb pageName="Employee" />
@@ -131,9 +116,7 @@ const ArchiveEmployee = ({ alertsRef }: EmployeeProps) => {
                     className="border-b dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
-                    <td className="px-6 py-3">
-                      {highlightMatch(emp.employeeNo)}
-                    </td>
+                    <td className="px-6 py-3">{emp.employeeNo}</td>
                     <td className="px-6 py-3">
                       <img
                         src={`https://fjp.ucc.bsit4c.com/${emp?.image}`}
@@ -148,10 +131,8 @@ const ArchiveEmployee = ({ alertsRef }: EmployeeProps) => {
                         {emp.hrmIsActive ? 'Active' : 'Inactive'}
                       </span>
                     </td>
-                    <td className="px-6 py-3">
-                      {highlightMatch(emp.fullName)}
-                    </td>
-                    <td className="px-6 py-3">{highlightMatch(emp.email)}</td>
+                    <td className="px-6 py-3">{emp.fullName}</td>
+                    <td className="px-6 py-3">{emp.email}</td>
                     <td className="px-6 py-3">{emp.createdDate}</td>
                     <td className="px-6 py-3 space-x-2">
                       <button

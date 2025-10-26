@@ -99,6 +99,8 @@ const Attendance = () => {
                 <th className="px-6 py-3 text-center">Employee No.</th>
                 <th className="px-6 py-3 text-center">Full Name</th>
                 <th className="px-6 py-3 text-center">Section</th>
+                <th className="px-6 py-3 text-center">Time In</th>
+                <th className="px-6 py-3 text-center">Time Out</th>
                 <th className="px-6 py-3 text-center">Created At</th>
                 <th className="px-6 py-3 text-center">Actions</th>
               </tr>
@@ -114,6 +116,8 @@ const Attendance = () => {
                     <td className="px-6 py-3">{row.student_no}</td>
                     <td className="px-6 py-3">{row.student_name}</td>
                     <td className="px-6 py-3">{row.section}</td>
+                    <td className="px-6 py-3">{row.time_in}</td>
+                    <td className="px-6 py-3">{row.time_out}</td>
                     <td className="px-6 py-3">{row.createdDate}</td>
 
                     <td className="px-6 py-3 space-x-2">

@@ -19,6 +19,10 @@ interface UserType {
   image?: string | null;
   isHired?: string;
   contactNumber?: string;
+  employmentType?: string;
+  department?: string;
+  hourlyRate?: string;
+  position?: string;
   createdDate?: string;
   createdTime?: string;
   updatedDate?: string;

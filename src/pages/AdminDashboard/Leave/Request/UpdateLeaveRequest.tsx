@@ -1,5 +1,5 @@
 import { ClipboardPen } from 'lucide-react';
-import UCCLogo from '/icons/ucc_logo.png';
+import UCCLogo from '/icons/new_icon.svg';
 import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
 import { AppContext } from '../../../../context/AppContext';
 import { useContext, useState } from 'react';
@@ -133,7 +133,7 @@ export default function UpdateLeaveRequestModal({
             <img src={UCCLogo} alt="Logo" width={55} className="drop-shadow" />
             <div className="leading-tight">
               <h1 className="font-bold text-sm text-white">
-                UNIVERSITY OF CALOOCAN CITY
+                TrueTeam Solutions
               </h1>
               <p className="text-xs text-white">South Campus</p>
             </div>

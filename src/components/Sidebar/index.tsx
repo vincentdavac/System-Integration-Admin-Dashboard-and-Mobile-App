@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import SidebarLinkGroup from './SidebarLinkGroup';
-import UCCLogo from '/icons/ucc_logo.png';
+import UCCLogo from '/icons/new_icon.svg';
 import {
   LayoutDashboard,
   IdCardLanyard,
@@ -18,6 +18,7 @@ import {
   CreditCard,
   Calendar,
   List,
+  BriefcaseBusiness,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -85,9 +86,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           <img src={UCCLogo} alt="Logo" width={55} className="drop-shadow" />
 
           <div className="leading-tight">
-            <h1 className="font-bold text-sm text-white">
-              UNIVERSITY OF CALOOCAN CITY
-            </h1>
+            <h1 className="font-bold text-sm text-white">TrueTeam Solutions</h1>
             <p className="text-xs text-white">South Campus</p>
           </div>
         </NavLink>
@@ -186,6 +185,19 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 >
                   <Wallet />
                   Loan Approval
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  to="/admin/official-business"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-[#6abf6d] dark:hover:bg-meta-4 ${
+                    pathname.includes('/admin/official-business') &&
+                    'bg-[#62bd66] dark:bg-meta-4'
+                  }`}
+                >
+                  <BriefcaseBusiness />
+                  Official Business
                 </NavLink>
               </li>
 
@@ -367,6 +379,19 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             >
                               <ClipboardList />
                               Type
+                            </NavLink>
+                          </li>
+
+                          <li>
+                            <NavLink
+                              to="/admin/leave/calendar"
+                              className={({ isActive }) =>
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:text-white ' +
+                                (isActive && '!text-white')
+                              }
+                            >
+                              <Calendar />
+                              Calendar
                             </NavLink>
                           </li>
                         </ul>

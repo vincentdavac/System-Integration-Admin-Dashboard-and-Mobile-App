@@ -76,17 +76,15 @@ const MobileLogin = ({ alertsRef }: LoginProps) => {
 
       <div className="w-full h-1/2 relative overflow-hidden">
         <img
-          src="/ucc_background/ucc_green_background.png"
+          src="/ucc_background/ucc_green_background.svg"
           alt="Background"
-          className="w-full h-full object-cover"
+          className="w-full h-60 object-cover"
         />
         <div className="absolute inset-0 bg-green-700/60"></div>
 
         {/* Title & Logo */}
         <div className="absolute inset-0 flex flex-col items-center justify-start text-center text-white px-4 pt-10 mt-10">
-          <h1 className="text-2xl sm:text-3xl font-bold">
-            University of Caloocan City
-          </h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">TrueTeam Solutions</h1>
           <p className="text-sm sm:text-base">
             Human Resource Management System
           </p>
@@ -109,9 +107,9 @@ const MobileLogin = ({ alertsRef }: LoginProps) => {
       {/* Overlapping Logo */}
       <div className="relative -mt-16 z-10 mb-8">
         <img
-          src="/icons/ucc_logo.png" // 🔹 logo path
+          src="/icons/new_icon.svg" // 🔹 logo path
           alt="Logo"
-          className="w-24 h-24 sm:w-28 sm:h-28"
+          className="w-23 h-23 sm:w-28 sm:h-28"
         />
       </div>
 

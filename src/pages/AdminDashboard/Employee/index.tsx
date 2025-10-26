@@ -3,10 +3,11 @@ import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
 import ActivateModal from './ActivateModal';
 import UpdateModal from './UpdateModal';
 import ArchiveModal from './ArchiveModal';
-import { RefreshCw, Search, XCircle } from 'lucide-react';
+import { Eye, RefreshCw, Search, XCircle } from 'lucide-react';
 import { AppContext } from '../../../context/AppContext';
 import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
 import API_BASE_URL from '../../../config/api';
+import ViewModal from './ViewModal';
 
 interface EmployeeProps {
   alertsRef: React.RefObject<AlertsContainerRef>;
@@ -17,6 +18,8 @@ const Employee = ({ alertsRef }: EmployeeProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showActivate, setShowActivate] = useState(false);
   const [showUpdate, setShowUpdate] = useState(false);
+  const [showView, setShowView] = useState(false);
+
   const [showArchive, setShowArchive] = useState(false);
   const itemsPerPage = 10;
   const [employees, setEmployees] = useState<any[]>([]);
@@ -100,7 +103,7 @@ const Employee = ({ alertsRef }: EmployeeProps) => {
                 <th className="px-6 py-3">No.</th>
                 <th className="px-6 py-3">Employee No.</th>
                 <th className="px-6 py-3">Image</th>
-                <th className="px-6 py-3">Section</th>
+                <th className="px-6 py-3">Department</th>
                 <th className="px-6 py-3">Full Name</th>
                 <th className="px-6 py-3">Email</th>
                 <th className="px-6 py-3">Created Date</th>
@@ -123,11 +126,21 @@ const Employee = ({ alertsRef }: EmployeeProps) => {
                         className="w-10 h-10 border-white shadow-lg"
                       />
                     </td>
-                    <td className="px-6 py-3">{emp.section}</td>
+                    <td className="px-6 py-3">{emp.department}</td>
                     <td className="px-6 py-3">{emp.fullName}</td>
                     <td className="px-6 py-3">{emp.email}</td>
                     <td className="px-6 py-3">{emp.createdDate}</td>
                     <td className="px-6 py-3 space-x-2">
+                      <button
+                        onClick={() => {
+                          setShowView(true);
+                          setSelectedEmployee(emp);
+                        }}
+                        className="bg-green-700 hover:bg-green-600 text-white px-3 py-2 rounded"
+                      >
+                        <Eye size={18} />
+                      </button>
+
                       <button
                         onClick={() => {
                           setShowUpdate(true);
@@ -165,11 +178,20 @@ const Employee = ({ alertsRef }: EmployeeProps) => {
       </div>
 
       {/* ⚙️ MODALS */}
-      {showActivate && (
+      {/* {showActivate && (
         <ActivateModal
           alertsRef={alertsRef}
           onClose={() => setShowActivate(false)}
           employee={selectedEmployee}
+          refetchEmployees={fetchEmployees}
+        />
+      )} */}
+
+      {showView && (
+        <ViewModal
+          onClose={() => setShowView(false)}
+          employee={selectedEmployee}
+          alertsRef={alertsRef}
           refetchEmployees={fetchEmployees}
         />
       )}

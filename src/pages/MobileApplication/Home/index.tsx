@@ -107,27 +107,28 @@ const MobileHome = () => {
   return (
     <div className="h-screen w-full bg-gray-50 flex flex-col items-center relative overflow-hidden">
       <div className="w-full h-1/3 relative">
+        {/* 🔹 Background Image */}
         <img
-          src="/ucc_background/ucc_green_background.png"
+          src="/ucc_background/ucc_green_background.svg"
           alt="Background"
           className="w-full h-full object-cover"
         />
         {/* Overlay */}
         <div className="absolute inset-0 bg-green-700/60"></div>
 
-        {/* Home Title */}
+        {/* 🔹 HOME Title */}
         <div className="absolute top-6 left-1/2 transform -translate-x-1/2 text-white text-base sm:text-lg font-bold">
           HOME
         </div>
 
-        {/* Header Info (below Home) */}
-        <div className="absolute mb-2 top-14 left-2 text-white text-[12px] sm:text-sm leading-snug">
+        {/* 🔹 Header Info */}
+        <div className="absolute top-14 left-2 text-white text-[12px] sm:text-sm leading-snug">
           <p>Good Day,</p>
           <p className="font-bold text-[13px] sm:text-base">{user?.fullName}</p>
           <p>Employee No: {user?.employeeNo}</p>
         </div>
 
-        {/* Profile and Notification Icon (aligned with Home) */}
+        {/* 🔹 Profile + Notification Icons */}
         <div className="absolute top-6 right-2 flex items-center gap-3">
           {/* Notification Icon */}
           <button
@@ -163,11 +164,11 @@ const MobileHome = () => {
           />
         </div>
 
-        {/* 🔹 Smaller Date and Time Card */}
+        {/* 🔹 Date and Time Card */}
         <div className="absolute inset-x-0 top-28 flex flex-col items-center">
           <button
             disabled
-            className="absolute bottom-13 right-16 px-4 py-[2px] bg-[#122979] text-white rounded-md text-[8px] font-medium z-10 mb-3"
+            className="absolute -top-5 right-8 px-3 py-[2px] bg-[#122979] text-white rounded-md text-[8px] font-medium z-10"
           >
             Today
           </button>
@@ -176,112 +177,145 @@ const MobileHome = () => {
             <p className="text-sm mt-1">{formattedTime}</p>
           </div>
         </div>
-      </div>
 
-      {/* 🔹 Vacation Leave Credits (floating above background) */}
-      <div className="absolute  mb-5 top-50 left-1/2 transform -translate-x-1/2 bg-white w-11/12 max-w-sm rounded-lg shadow p-2 z-10 h-30">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-[12px] font-medium">Leave Credits</p>
-            <p className="text-[20px] font-bold">
-              Points: {leaveCredits !== null ? leaveCredits.toFixed(2) : '—'}
-            </p>
-          </div>
-          <img
-            src="/mobile-icons/credits.png"
-            alt="Credits"
-            className="w-18 h-18 mr-2"
-          />
-        </div>
-        <button
-          onClick={() => navigate('/mobile/credits')}
-          className="mt-2 w-full py-1 bg-green-700 text-white rounded-md text-[15px]"
+        {/* 🔹 Leave Credits Card (Now correctly placed inside) */}
+        <div
+          className="absolute bottom-[-60px] left-1/2 transform -translate-x-1/2 
+    bg-white w-11/12 max-w-sm rounded-2xl shadow-lg p-4 z-10"
         >
-          View Credits
-        </button>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <p className="text-xs text-gray-500 font-medium">Leave Credits</p>
+              <p className="text-2xl font-bold text-gray-800">
+                Points: {leaveCredits !== null ? leaveCredits.toFixed(2) : '—'}
+              </p>
+            </div>
+            <img
+              src="/mobile-icons/credits.svg"
+              alt="Credits"
+              className="w-14 h-14 object-contain"
+            />
+          </div>
+
+          <button
+            onClick={() => navigate('/mobile/credits')}
+            className="w-full py-2 bg-green-700 hover:bg-green-600 text-white font-medium rounded-md text-sm transition-all"
+          >
+            View Credits
+          </button>
+        </div>
       </div>
 
       {/* 🔹 Sections */}
-      <div className="w-11/12 max-w-sm mt-9 mb-25 flex-1 h-[650px] overflow-y-auto space-y-6 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 rounded-lg p-2">
-        {/* Payroll */}
-        <div className="bg-green-700 rounded-lg shadow flex items-center justify-between p-3 h-24 text-white relative pb-4">
-          <div>
-            <p className="font-bold text-sm">PAYROLL</p>
-            {/* <p className="text-xs mt-1">Update: 0</p> */}
+      <div className="w-11/12 max-w-sm mt-20 mb-25 flex-1 h-[650px] overflow-y-auto rounded-lg p-2">
+        <div className="grid grid-cols-2 gap-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+          {/* Payroll */}
+          <div className="bg-green-700 rounded-xl shadow-lg flex flex-col justify-between p-3 h-28 text-white transition-transform hover:scale-105">
+            <div className="flex items-center justify-between">
+              <p className="font-bold text-sm">EMPLOYEE PAYROLL</p>
+              <img
+                src="/mobile-icons/payroll.svg"
+                alt="Payroll"
+                className="w-12 h-12"
+              />
+            </div>
+            <button
+              onClick={() => navigate('/mobile/payroll-history')}
+              className="w-full py-1 bg-[#122979] rounded-md text-xs shadow-md hover:bg-[#0e1f5c] transition"
+            >
+              View
+            </button>
           </div>
-          <img
-            src="/mobile-icons/payroll.png"
-            alt="Payroll"
-            className="w-18 h-18 mr-2"
-          />
 
-          {/* View Button (mas maliit, mas dikit) */}
-          <button
-            onClick={() => navigate('/mobile/payroll-history')}
-            className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 px-6 py-1 bg-[#122979] rounded-md text-xs"
-          >
-            View
-          </button>
-        </div>
-
-        {/* Attendance */}
-        <div className="bg-green-700 rounded-lg shadow flex items-center justify-between p-3 h-24 text-white relative pb-4">
-          <div>
-            <p className="font-bold text-sm">ATTENDANCE</p>
-            {/* <p className="text-xs mt-1">Update: 5</p> */}
+          {/* Attendance */}
+          <div className="bg-green-700 rounded-xl shadow-lg flex flex-col justify-between p-3 h-28 text-white transition-transform hover:scale-105">
+            <div className="flex items-center justify-between">
+              <p className="font-bold text-sm">DAILY ATTENDANCE</p>
+              <img
+                src="/mobile-icons/attendance.svg"
+                alt="Attendance"
+                className="w-12 h-12"
+              />
+            </div>
+            <button
+              onClick={() => navigate('/mobile/attendance-history')}
+              className="w-full py-1 bg-[#122979] rounded-md text-xs shadow-md hover:bg-[#0e1f5c] transition"
+            >
+              View
+            </button>
           </div>
-          <img
-            src="/mobile-icons/attendance.png"
-            alt="Attendance"
-            className="w-18 h-18 mr-2"
-          />
 
-          <button
-            onClick={() => navigate('/mobile/attendance-history')}
-            className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 px-6 py-1 bg-[#122979] rounded-md text-xs"
-          >
-            View
-          </button>
-        </div>
-
-        {/* Meeting */}
-        <div className="bg-green-700 rounded-lg shadow flex items-center justify-between p-3 h-24 text-white relative pb-4">
-          <div>
-            <p className="font-bold text-sm">MEETING</p>
-            {/* <p className="text-xs mt-1">Update: 1</p> */}
+          {/* Meeting */}
+          <div className="bg-green-700 rounded-xl shadow-lg flex flex-col justify-between p-3 h-28 text-white transition-transform hover:scale-105">
+            <div className="flex items-center justify-between">
+              <p className="font-bold text-sm">RELATION MEETING</p>
+              <img
+                src="/mobile-icons/meeting.svg"
+                alt="Meeting"
+                className="w-12 h-12"
+              />
+            </div>
+            <button
+              onClick={() => navigate('/mobile/meeting-history')}
+              className="w-full py-1 bg-[#122979] rounded-md text-xs shadow-md hover:bg-[#0e1f5c] transition"
+            >
+              View
+            </button>
           </div>
-          <img
-            src="/mobile-icons/meeting.png"
-            alt="Meeting"
-            className="w-18 h-18 mr-2"
-          />
 
-          <button
-            onClick={() => navigate('/mobile/meeting-history')}
-            className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 px-6 py-1 bg-[#122979] rounded-md text-xs"
-          >
-            View
-          </button>
-        </div>
-
-        {/* Actions */}
-        <div className="bg-green-700 rounded-lg shadow flex items-center justify-between p-3 h-24 text-white relative pb-4">
-          <div>
-            <p className="font-bold text-lm">ACTIONS</p>
-            {/* <p className="text-xs mt-1">Update: 3</p> */}
+          {/* Actions */}
+          <div className="bg-green-700 rounded-xl shadow-lg flex flex-col justify-between p-3 h-28 text-white transition-transform hover:scale-105">
+            <div className="flex items-center justify-between">
+              <p className="font-bold text-sm">RELATION ACTION</p>
+              <img
+                src="/mobile-icons/actions.svg"
+                alt="Actions"
+                className="w-12 h-12"
+              />
+            </div>
+            <button
+              onClick={() => navigate('/mobile/actions-history')}
+              className="w-full py-1 bg-[#122979] rounded-md text-xs shadow-md hover:bg-[#0e1f5c] transition"
+            >
+              View
+            </button>
           </div>
-          <img
-            src="/mobile-icons/actions.png"
-            alt="Actions"
-            className="w-18 h-18 mr-2"
-          />
 
-          <button
-            onClick={() => navigate('/mobile/actions-history')}
-            className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 px-6 py-1 bg-[#122979] rounded-md text-xs"
-          >
-            View
-          </button>
+          {/* COE */}
+          <div className="bg-green-700 rounded-xl shadow-lg flex flex-col justify-between p-3 h-28 text-white transition-transform hover:scale-105">
+            <div className="flex items-center justify-between">
+              <p className="font-bold text-sm">EMPLOYEE CERTIFICATION</p>
+              <img
+                src="/mobile-icons/coe.svg"
+                alt="Actions"
+                className="w-12 h-12"
+              />
+            </div>
+            <button
+              onClick={() => navigate('/mobile/coe-history')}
+              className="w-full py-1 bg-[#122979] rounded-md text-xs shadow-md hover:bg-[#0e1f5c] transition"
+            >
+              View
+            </button>
+          </div>
+
+          {/* OFFICIAL BUSINESS */}
+          <div className="bg-green-700 rounded-xl shadow-lg flex flex-col justify-between p-3 h-28 text-white transition-transform hover:scale-105">
+            <div className="flex items-center justify-between">
+              <p className="font-bold text-sm">OFFICIAL BUSINESS</p>
+              <img
+                src="/mobile-icons/official-business.svg"
+                alt="Actions"
+                className="w-12 h-12"
+              />
+            </div>
+            <button
+              onClick={() => navigate('/mobile/ob-history')}
+              className="w-full py-1 bg-[#122979] rounded-md text-xs shadow-md hover:bg-[#0e1f5c] transition"
+            >
+              View
+            </button>
+          </div>
         </div>
       </div>
     </div>

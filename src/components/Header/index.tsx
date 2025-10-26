@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import DropdownNotification from './DropdownNotification';
 import DropdownUser from './DropdownUser';
-import LogoIcon from '/icons/ucc_logo.png';
+import LogoIcon from '/icons/new_icon.svg';
 import DarkModeSwitcher from './DarkModeSwitcher';
 import { AlertsContainerRef } from '../Alert/AlertsContainer';
 

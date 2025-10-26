@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Logo from '../../../public/icons/ucc_logo.png';
+import Logo from '../../../public/icons/new_icon.svg';
 import { User, Mail, Lock, Phone, IdCard } from 'lucide-react';
 import { AppContext } from '../../context/AppContext';
 import { AlertsContainerRef } from '../../components/Alert/AlertsContainer';

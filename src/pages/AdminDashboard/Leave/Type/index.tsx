@@ -121,8 +121,8 @@ const Type = ({ alertsRef }: Props) => {
               <tr>
                 <th className="px-6 py-3">No.</th>
                 <th className="px-6 py-3">Name</th>
-                <th className="px-6 py-3">Applicable Days</th>
                 <th className="px-6 py-3">Description</th>
+                <th className="px-6 py-3">Applicable Day/s</th>
                 <th className="px-6 py-3">Date</th>
                 <th className="px-6 py-3">Time</th>
                 <th className="px-6 py-3">Actions</th>
@@ -137,8 +137,8 @@ const Type = ({ alertsRef }: Props) => {
                   >
                     <td className="px-6 py-3">{startIndex + index + 1}</td>
                     <td className="px-6 py-3">{t.name}</td>
-                    <td className="px-6 py-3">{t.applicableDays}</td>
                     <td className="px-6 py-3">{t.description}</td>
+                    <td className="px-6 py-3">{t.applicableDays}</td>
                     <td className="px-6 py-3">{t.createdDate}</td>
                     <td className="px-6 py-3">{t.createdTime}</td>
                     <td className="px-6 py-3 space-x-2">

@@ -1,5 +1,5 @@
 import { CalendarPlus2 } from 'lucide-react';
-import UCCLogo from '/icons/ucc_logo.png';
+import UCCLogo from '/icons/new_icon.svg';
 import { AlertsContainerRef } from '../../../../components/Alert/AlertsContainer';
 import { AppContext } from '../../../../context/AppContext';
 import { useContext, useEffect, useState } from 'react';
@@ -167,7 +167,7 @@ export default function AddActionsModal({
           <div className="flex items-center gap-3">
             <img src={UCCLogo} alt="Logo" width={55} className="drop-shadow" />
             <div className="leading-tight">
-              <h1 className="font-bold text-sm">UNIVERSITY OF CALOOCAN CITY</h1>
+              <h1 className="font-bold text-sm">TrueTeam Solutions</h1>
               <p className="text-xs">South Campus</p>
             </div>
           </div>

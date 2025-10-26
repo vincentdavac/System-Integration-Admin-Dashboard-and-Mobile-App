@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Logo from '../../../public/icons/ucc_logo.png';
+import Logo from '../../../public/icons/new_icon.svg';
 import { AppContext } from '../../context/AppContext';
 import { AlertsContainerRef } from '../../components/Alert/AlertsContainer';
 import API_BASE_URL from '../../config/api';

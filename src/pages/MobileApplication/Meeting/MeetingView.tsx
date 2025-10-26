@@ -120,7 +120,7 @@ const MobileMeetingView = () => {
       <div className="w-full min-h-screen bg-white flex flex-col">
         <div className="w-full h-[150px] relative">
           <img
-            src="/ucc_background/ucc_green_background.png"
+            src="/ucc_background/ucc_green_background.svg"
             alt="Background"
             className="w-full h-full object-cover"
           />

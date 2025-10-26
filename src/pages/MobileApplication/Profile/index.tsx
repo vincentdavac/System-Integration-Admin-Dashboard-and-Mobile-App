@@ -108,7 +108,7 @@ const MobileProfile = ({ alertsRef }: LogoutProps) => {
       {/* Green Background Section */}
       <div className="w-full h-[150px] relative">
         <img
-          src="/ucc_background/ucc_green_background.png"
+          src="/ucc_background/ucc_green_background.svg"
           alt="Background"
           className="w-full h-full object-cover"
         />
@@ -213,8 +213,12 @@ const MobileProfile = ({ alertsRef }: LogoutProps) => {
               <input
                 disabled
                 type="text"
-                placeholder="Emergency Contact"
-                defaultValue="Jose Protacio"
+                value={user?.createdDate || 'Employment Type'}
+                onChange={(e) =>
+                  setUser({ ...user, createdDate: e.target.value })
+                }
+                placeholder="Date Created"
+                defaultValue="November 08, 2025"
                 className="p-2 border rounded-md text-sm col-span-2"
               />
             </div>
@@ -235,29 +239,43 @@ const MobileProfile = ({ alertsRef }: LogoutProps) => {
               <input
                 disabled
                 type="text"
-                placeholder="Employee ID"
+                value={user?.department || 'Department'}
+                onChange={(e) =>
+                  setUser({ ...user, department: e.target.value })
+                }
+                placeholder="Department"
+                defaultValue="Finance"
+                className="p-2 border rounded-md text-sm col-span-2"
+              />
+              <input
+                disabled
+                type="text"
+                value={user?.employmentType || 'Employment Type'}
+                onChange={(e) =>
+                  setUser({ ...user, employmentType: e.target.value })
+                }
+                placeholder="Employment Type"
                 defaultValue="EMP-10023"
                 className="p-2 border rounded-md text-sm"
               />
               <input
                 disabled
                 type="text"
-                placeholder="Department"
-                defaultValue="Finance"
-                className="p-2 border rounded-md text-sm"
-              />
-              <input
-                disabled
-                type="text"
+                value={user?.position || 'Position'}
+                onChange={(e) => setUser({ ...user, position: e.target.value })}
                 placeholder="Position"
-                defaultValue="Accountant"
+                defaultValue="Professor"
                 className="p-2 border rounded-md text-sm"
               />
               <input
                 disabled
                 type="text"
-                placeholder="Date Hired"
-                defaultValue="January 10, 2020"
+                value={'PHP ' + user?.hourlyRate || 'Department'}
+                onChange={(e) =>
+                  setUser({ ...user, hourlyRate: e.target.value })
+                }
+                placeholder="Hourly Rate"
+                defaultValue="PHP 200"
                 className="p-2 border rounded-md text-sm"
               />
             </div>
