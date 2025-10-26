@@ -60,7 +60,7 @@ const Notifications = () => {
   // 🗑️ Mark notification as read and remove it locally
   const removeNotification = async (id: number) => {
     try {
-      const res = await fetch(`/api/notifications/read/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/notifications/read/${id}`, {
         method: 'PATCH',
         headers: {
           Authorization: `Bearer ${token}`, // include token if needed
@@ -88,7 +88,7 @@ const Notifications = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-white flex flex-col">
+    <div className="w-full min-h-screen bg-gray-50 flex flex-col">
       {/* ✅ Green Header Section */}
       <div className="w-full h-[150px] relative">
         <img
@@ -99,16 +99,16 @@ const Notifications = () => {
         <div className="absolute inset-0 bg-green-700/60"></div>
 
         {/* Header */}
-        <div className="absolute top-4 left-4 flex items-center text-white">
+        <div className="absolute top-4 left-4 flex items-center text-white drop-shadow-md">
           <button onClick={() => navigate('/mobile/home')} className="mr-2">
             <ArrowLeft size={24} />
           </button>
-          <h1 className="text-lg font-semibold">NOTIFICATIONS</h1>
+          <h1 className="text-lg font-semibold tracking-wide">NOTIFICATIONS</h1>
         </div>
 
         {/* Total count */}
-        <div className="absolute bottom-3 left-4 text-white text-sm">
-          Total Notifications:{' '}
+        <div className="absolute bottom-3 left-4 text-white text-sm font-medium drop-shadow-md">
+          Notifications:{' '}
           <span className="font-semibold">{totalNotifications}</span>
         </div>
       </div>
@@ -119,7 +119,7 @@ const Notifications = () => {
           notifications.map((notif) => (
             <div
               key={notif.id}
-              className="bg-gray-100 rounded-xl p-4 mb-3 shadow-sm relative flex flex-col"
+              className="bg-white rounded-2xl p-4 mb-4 shadow-md border border-gray-100 relative flex flex-col hover:shadow-lg hover:scale-[1.01] transition-all duration-200"
             >
               {/* ❌ Remove button */}
               <button
@@ -135,12 +135,17 @@ const Notifications = () => {
               </h2>
 
               {/* Message */}
-              <p className="text-sm text-gray-700 mb-2">{notif.message}</p>
+              <p className="text-sm text-gray-700 mb-2 leading-relaxed">
+                {notif.message}
+              </p>
 
               {/* Date & Time */}
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-gray-500 italic">
                 {notif.createdDate} • {notif.createdTime}
               </div>
+
+              {/* Glow highlight */}
+              <div className="absolute inset-0 rounded-2xl bg-green-100/5 blur-sm pointer-events-none"></div>
             </div>
           ))
         ) : (

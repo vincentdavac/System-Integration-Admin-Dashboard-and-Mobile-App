@@ -1,5 +1,5 @@
 import { ArrowLeft } from 'lucide-react';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertsContainerRef } from '../../../components/Alert/AlertsContainer';
 import { AppContext } from '../../../context/AppContext';
@@ -12,7 +12,7 @@ interface LeaveRequestProps {
 const RequestCoe = ({ alertsRef }: LeaveRequestProps) => {
   const navigate = useNavigate();
 
-  const { user, token } = useContext(AppContext)!;
+  const { token } = useContext(AppContext)!;
   const [purpose, setPurpose] = useState('');
   const [employmentStatus, setEmploymentStatus] = useState('');
   const [attachment, setAttachment] = useState<File | null>(null);

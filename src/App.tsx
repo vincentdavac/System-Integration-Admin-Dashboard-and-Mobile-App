@@ -59,6 +59,9 @@ import LeaveCalendar from './pages/AdminDashboard/Leave/Calendar';
 import OfficialBusiness from './pages/AdminDashboard/OfficialBusiness';
 import EmployeeCertication from './pages/MobileApplication/CertificateOfEmployment';
 import RequestCoe from './pages/MobileApplication/CertificateOfEmployment/RequestCoe';
+import OfficialBusinessMobile from './pages/MobileApplication/OfficialBusiness';
+import MobileOfficialBusinessView from './pages/MobileApplication/OfficialBusiness/ViewOB';
+import MobileApplyOfficialBusiness from './pages/MobileApplication/OfficialBusiness/ApplyOB';
 interface AppProps {
   alertsRef: React.RefObject<AlertsContainerRef>;
 }
@@ -468,6 +471,15 @@ function App({ alertsRef }: AppProps) {
         <Route
           path="/mobile/coe-request"
           element={<RequestCoe alertsRef={alertsRef} />}
+        />
+        <Route path="/mobile/ob-history" element={<OfficialBusinessMobile />} />
+        <Route
+          path="/mobile/ob-apply"
+          element={<MobileApplyOfficialBusiness alertsRef={alertsRef} />}
+        />
+        <Route
+          path="/mobile/ob-view/:id"
+          element={<MobileOfficialBusinessView />}
         />
       </Route>
     </Routes>
