@@ -235,7 +235,7 @@ const MobileHome = () => {
           {/* Attendance */}
           <div className="bg-green-700 rounded-xl shadow-lg flex flex-col justify-between p-3 h-24 text-white transition-transform hover:scale-105">
             <div className="flex items-center justify-between">
-              <p className="font-bold text-sm">DAILY ATTENDANCE</p>
+              <p className="font-bold text-sm">DAILY WORK</p>
               <img
                 src="/mobile-icons/attendance.svg"
                 alt="Attendance"
@@ -289,7 +289,7 @@ const MobileHome = () => {
           {/* COE */}
           <div className="bg-green-700 rounded-xl shadow-lg flex flex-col justify-between p-3 h-24 text-white transition-transform hover:scale-105">
             <div className="flex items-center justify-between">
-              <p className="font-bold text-sm">EMPLOYEE CERTIFICATION</p>
+              <p className="font-bold text-sm">CERTIFICATE</p>
               <img
                 src="/mobile-icons/coe.svg"
                 alt="Actions"
