@@ -106,30 +106,33 @@ const MobileHome = () => {
 
   return (
     <div className="h-screen w-full bg-gray-50 flex flex-col items-center relative overflow-hidden">
-      <div className="w-full h-1/3 relative">
+      <div className="w-full min-h-[200px] sm:min-h-[240px] relative">
         {/* 🔹 Background Image */}
         <img
           src="/ucc_background/ucc_green_background.svg"
           alt="Background"
-          className="w-full h-full object-cover"
+          className="w-full h-[220px] object-cover min-h-[220px] sm:min-h-[240px]"
         />
+
         {/* Overlay */}
         <div className="absolute inset-0 bg-green-700/60"></div>
 
         {/* 🔹 HOME Title */}
-        <div className="absolute top-6 left-1/2 transform -translate-x-1/2 text-white text-base sm:text-lg font-bold">
+        <div className="absolute top-3 sm:top-4 left-1/2 transform -translate-x-1/2 text-white text-sm sm:text-base font-bold whitespace-nowrap">
           HOME
         </div>
 
         {/* 🔹 Header Info */}
-        <div className="absolute top-14 left-2 text-white text-[12px] sm:text-sm leading-snug">
+        <div className="absolute top-9 sm:top-12 left-3 sm:left-4 text-white text-xs sm:text-sm leading-tight">
           <p>Good Day,</p>
-          <p className="font-bold text-[13px] sm:text-base">{user?.fullName}</p>
-          <p>Employee No: {user?.employeeNo}</p>
+          <p className="font-bold text-xs sm:text-sm">{user?.fullName}</p>
+          <p className="text-[11px] sm:text-xs">
+            Employee No: {user?.employeeNo}
+          </p>
         </div>
 
         {/* 🔹 Profile + Notification Icons */}
-        <div className="absolute top-6 right-2 flex items-center gap-3">
+        <div className="absolute top-3 sm:top-4 right-3 sm:right-4 flex items-center gap-2 sm:gap-3">
           {/* Notification Icon */}
           <button
             onClick={() => navigate('/mobile/notifications')}
@@ -137,7 +140,7 @@ const MobileHome = () => {
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="w-6 h-6 text-white"
+              className="w-5 h-5 sm:w-6 sm:h-6 text-white"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -151,7 +154,7 @@ const MobileHome = () => {
             </svg>
 
             {/* Notification Badge */}
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-3 h-3 sm:w-4 sm:h-4 flex items-center justify-center">
               {unreadCount}
             </span>
           </button>
@@ -160,46 +163,48 @@ const MobileHome = () => {
           <img
             src={`https://fjp.ucc.bsit4c.com/${user?.image}`}
             alt="User Profile"
-            className="w-10 h-10 rounded-full border-2 border-white shadow-md object-cover"
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-white shadow-md object-cover"
           />
         </div>
 
         {/* 🔹 Date and Time Card */}
-        <div className="absolute inset-x-0 top-28 flex flex-col items-center">
+        <div className="absolute inset-x-0 top-22 sm:top-20 flex flex-col items-center">
           <button
             disabled
-            className="absolute -top-5 right-8 px-3 py-[2px] bg-[#122979] text-white rounded-md text-[8px] font-medium z-10"
+            className="absolute -top-3 sm:-top-4 right-4 sm:right-6 px-2 sm:px-3 py-1 bg-[#122979] text-white rounded text-[10px] sm:text-xs font-medium z-10"
           >
             Today
           </button>
-          <div className="backdrop-blur-md bg-green-700/40 h-20 text-white w-10/12 max-w-sm rounded-xl shadow-md p-4 text-center border border-white/20">
-            <p className="text-lg font-semibold">{formattedDate}</p>
-            <p className="text-sm mt-1">{formattedTime}</p>
+          <div className="backdrop-blur-md bg-green-700/40 h-14 sm:h-16 text-white w-11/12 max-w-xs sm:max-w-sm rounded-lg sm:rounded-xl shadow-md p-2 sm:p-3 text-center border border-white/20">
+            <p className="text-sm sm:text-base font-semibold">
+              {formattedDate}
+            </p>
+            <p className="text-xs sm:text-sm mt-0.5 sm:mt-1">{formattedTime}</p>
           </div>
         </div>
 
-        {/* 🔹 Leave Credits Card (Now correctly placed inside) */}
+        {/* 🔹 Leave Credits Card */}
         <div
-          className="absolute bottom-[-60px] left-1/2 transform -translate-x-1/2 
-    bg-white w-11/12 max-w-sm rounded-2xl shadow-lg p-4 z-10"
+          className="absolute top-40 sm:top-24 left-1/2 transform -translate-x-1/2 
+    bg-white w-11/12 max-w-xs sm:max-w-sm rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-4 z-10"
         >
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
             <div>
               <p className="text-xs text-gray-500 font-medium">Leave Credits</p>
-              <p className="text-2xl font-bold text-gray-800">
+              <p className="text-lg sm:text-xl font-bold text-gray-800">
                 Points: {leaveCredits !== null ? leaveCredits.toFixed(2) : '—'}
               </p>
             </div>
             <img
               src="/mobile-icons/credits.svg"
               alt="Credits"
-              className="w-14 h-14 object-contain"
+              className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
             />
           </div>
 
           <button
             onClick={() => navigate('/mobile/credits')}
-            className="w-full py-2 bg-green-700 hover:bg-green-600 text-white font-medium rounded-md text-sm transition-all"
+            className="w-full py-2 bg-green-700 hover:bg-green-600 text-white font-medium rounded text-xs sm:text-sm transition-all"
           >
             View Credits
           </button>
@@ -207,10 +212,10 @@ const MobileHome = () => {
       </div>
 
       {/* 🔹 Sections */}
-      <div className="w-11/12 max-w-sm mt-20 mb-25 flex-1 h-[650px] overflow-y-auto rounded-lg p-2">
+      <div className="w-11/12 max-w-sm mt-16 mb-14 flex-1 h-[650px] overflow-y-auto rounded-lg p-2">
         <div className="grid grid-cols-2 gap-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
           {/* Payroll */}
-          <div className="bg-green-700 rounded-xl shadow-lg flex flex-col justify-between p-3 h-28 text-white transition-transform hover:scale-105">
+          <div className="bg-green-700 rounded-xl shadow-lg flex flex-col justify-between p-3 h-24 text-white transition-transform hover:scale-105">
             <div className="flex items-center justify-between">
               <p className="font-bold text-sm">EMPLOYEE PAYROLL</p>
               <img
@@ -228,7 +233,7 @@ const MobileHome = () => {
           </div>
 
           {/* Attendance */}
-          <div className="bg-green-700 rounded-xl shadow-lg flex flex-col justify-between p-3 h-28 text-white transition-transform hover:scale-105">
+          <div className="bg-green-700 rounded-xl shadow-lg flex flex-col justify-between p-3 h-24 text-white transition-transform hover:scale-105">
             <div className="flex items-center justify-between">
               <p className="font-bold text-sm">DAILY ATTENDANCE</p>
               <img
@@ -246,7 +251,7 @@ const MobileHome = () => {
           </div>
 
           {/* Meeting */}
-          <div className="bg-green-700 rounded-xl shadow-lg flex flex-col justify-between p-3 h-28 text-white transition-transform hover:scale-105">
+          <div className="bg-green-700 rounded-xl shadow-lg flex flex-col justify-between p-3 h-24 text-white transition-transform hover:scale-105">
             <div className="flex items-center justify-between">
               <p className="font-bold text-sm">RELATION MEETING</p>
               <img
@@ -264,7 +269,7 @@ const MobileHome = () => {
           </div>
 
           {/* Actions */}
-          <div className="bg-green-700 rounded-xl shadow-lg flex flex-col justify-between p-3 h-28 text-white transition-transform hover:scale-105">
+          <div className="bg-green-700 rounded-xl shadow-lg flex flex-col justify-between p-3 h-24 text-white transition-transform hover:scale-105">
             <div className="flex items-center justify-between">
               <p className="font-bold text-sm">RELATION ACTION</p>
               <img
@@ -282,7 +287,7 @@ const MobileHome = () => {
           </div>
 
           {/* COE */}
-          <div className="bg-green-700 rounded-xl shadow-lg flex flex-col justify-between p-3 h-28 text-white transition-transform hover:scale-105">
+          <div className="bg-green-700 rounded-xl shadow-lg flex flex-col justify-between p-3 h-24 text-white transition-transform hover:scale-105">
             <div className="flex items-center justify-between">
               <p className="font-bold text-sm">EMPLOYEE CERTIFICATION</p>
               <img
@@ -300,7 +305,7 @@ const MobileHome = () => {
           </div>
 
           {/* OFFICIAL BUSINESS */}
-          <div className="bg-green-700 rounded-xl shadow-lg flex flex-col justify-between p-3 h-28 text-white transition-transform hover:scale-105">
+          <div className="bg-green-700 rounded-xl shadow-lg flex flex-col justify-between p-3 h-24 text-white transition-transform hover:scale-105">
             <div className="flex items-center justify-between">
               <p className="font-bold text-sm">OFFICIAL BUSINESS</p>
               <img

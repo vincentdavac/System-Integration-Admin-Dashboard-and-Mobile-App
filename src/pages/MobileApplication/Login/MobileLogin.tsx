@@ -131,7 +131,7 @@ const MobileLogin = ({ alertsRef }: LoginProps) => {
             type="email"
             placeholder="emailaddress.bsit@gmail.com"
             autoComplete="username" // ✅ Added
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300 mb-4"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md  mb-4"
           />
 
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -148,7 +148,7 @@ const MobileLogin = ({ alertsRef }: LoginProps) => {
             type="password"
             placeholder="********"
             autoComplete="current-password" // ✅ Added
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300 mb-6"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md  mb-6"
           />
 
           <button
@@ -160,11 +160,11 @@ const MobileLogin = ({ alertsRef }: LoginProps) => {
         </form>
       </div>
 
-      {/* Footer */}
-      <div className="absolute bottom-4 text-xs text-gray-500 text-center px-2">
+      {/* Fixed Footer */}
+      <footer className="w-full text-center text-xs text-gray-500 py-4 mt-auto bg-white">
         Powered by: <br />
         BS in Information Technology 4C
-      </div>
+      </footer>
     </div>
   );
 };
