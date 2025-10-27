@@ -19,6 +19,7 @@ import {
   Calendar,
   List,
   BriefcaseBusiness,
+  Layers,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -198,6 +199,19 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 >
                   <BriefcaseBusiness />
                   Official Business
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  to="/admin/certificate-of-employment"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-[#6abf6d] dark:hover:bg-meta-4 ${
+                    pathname.includes('/admin/certificate-of-employment') &&
+                    'bg-[#62bd66] dark:bg-meta-4'
+                  }`}
+                >
+                  <Layers />
+                  Certifications
                 </NavLink>
               </li>
 

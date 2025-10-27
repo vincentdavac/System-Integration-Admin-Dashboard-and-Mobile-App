@@ -62,6 +62,7 @@ import RequestCoe from './pages/MobileApplication/CertificateOfEmployment/Reques
 import OfficialBusinessMobile from './pages/MobileApplication/OfficialBusiness';
 import MobileOfficialBusinessView from './pages/MobileApplication/OfficialBusiness/ViewOB';
 import MobileApplyOfficialBusiness from './pages/MobileApplication/OfficialBusiness/ApplyOB';
+import Certification from './pages/AdminDashboard/Certifications';
 interface AppProps {
   alertsRef: React.RefObject<AlertsContainerRef>;
 }
@@ -187,6 +188,16 @@ function App({ alertsRef }: AppProps) {
             <>
               <PageTitle title="Official Business | Human Resource Management" />
               <OfficialBusiness alertsRef={alertsRef} />
+            </>
+          }
+        />
+
+        <Route
+          path="/admin/certificate-of-employment"
+          element={
+            <>
+              <PageTitle title="Certifications | Human Resource Management" />
+              <Certification alertsRef={alertsRef} />
             </>
           }
         />
